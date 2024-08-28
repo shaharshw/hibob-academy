@@ -1,0 +1,25 @@
+
+volumes:
+  postgres-15-data:
+  redis-data:
+
+services:
+  postgres:
+    image: postgres:15.5-alpine
+    restart: always
+    hostname: postgres
+    shm_size: 1g
+    env_file:
+      - postgres-env.properties
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-15-data:/var/lib/postgresql/data
+      - ./postgres-env.properties:/postgres-env.properties
+      - ./scripts:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready --user $${POSTGRES_USER}" ]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+    command: [ "postgres", "-c", "shared_buffers=1GB" ]

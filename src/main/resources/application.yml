@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: academy
+  datasource:
+    hikari:
+      connectionTimeout: 20000
+      maximumPoolSize: 5
+      data-source-properties:
+        charSet: UTF-8
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/academy?user=bob&password=dev
+
+server:
+  port: 8080
