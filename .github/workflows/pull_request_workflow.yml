@@ -50,7 +50,7 @@ jobs:
 
       - name: gradle build
         env:
-          DATABASE_URL: ${{ secrets.DB_URL }}
+          DB_URL: ${{ secrets.DB_URL }}
         run: ./gradlew --no-daemon --console=plain build
 
       - name: Publish Unit Test Results
