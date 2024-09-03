@@ -1,12 +1,10 @@
 package com.hibob.kotlinBasic
 
-
-
 fun List<Int>.sum() : Int {
 
         var result = 0
-        map {
-            result += it
+        this.map { number ->
+            result += number
         }
 
         return result
@@ -16,9 +14,6 @@ infix fun Number.toPowerOf(exponent : Number) : Double {
 
     return Math.pow(this.toDouble(), exponent.toDouble())
 }
-
-
-
 
 fun main(args : Array<String>) {
 
