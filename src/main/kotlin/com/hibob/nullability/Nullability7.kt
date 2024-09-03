@@ -33,11 +33,16 @@ fun main() {
         .forEach { customer ->
             customer?.let {
                 val customerName = customer.name ?: "Name Unknown"
-                val accountId = customer.account?.id ?: "Account ID Unknown"
-                val accountType = customer.account?.details?.type ?: "Type Unknown"
-                val accountBalance = customer.account?.details?.balance ?: "Balance Not Available"
+                val accountInfo = customer.account?.let {
+                    val accountId = customer.account?.id ?: "Account ID Unknown"
+                    val accountType = customer.account?.details?.type ?: "Type Unknown"
+                    val accountBalance = customer.account?.details?.balance ?: "Balance Not Available"
 
-                println("Customer: $customerName, Account ID: $accountId, Account Type: $accountType, Balance: $accountBalance")
+                    "Account ID: $accountId, Account Type: $accountType, Balance: $accountBalance\""
+                } ?: "Account Unknown"
+
+
+                println("Customer: $customerName, Account: $accountInfo")
 
             } ?: println("Customer data is not available.")
         }

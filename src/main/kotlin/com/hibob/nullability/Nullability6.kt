@@ -16,10 +16,15 @@ fun main() {
     // If any information is missing, use appropriate defaults.
     departments.forEach { department ->
         val departmentName = department.name ?: "Name not provided"
-        val managerName = department.manager?.name ?: "Name not provided"
-        val managerEmail = department.manager?.contactInfo?.email ?: "Email not provided"
-        val managerPhone = department.manager?.contactInfo?.phone ?: "Phone not provided"
 
-        println("Department: $departmentName, Manager: $managerName, Email: $managerEmail, Phone: $managerPhone")
+        val managerInfo = department.manager?.let { manager ->
+            val managerName = manager.name ?: "Name not provided"
+            val managerEmail = manager.contactInfo?.email ?: "Email not provided"
+            val managerPhone = manager.contactInfo?.phone ?: "Phone not provided"
+
+            "Manager: $managerName, Email: $managerEmail, Phone: $managerPhone"
+        } ?: "Manager: Manager not provided"
+
+        println("Department: $departmentName, $managerInfo")
     }
 }
