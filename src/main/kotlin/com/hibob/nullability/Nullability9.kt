@@ -42,16 +42,24 @@ fun generateUniqueEmailsList(departments: List<DepartmentData>): Set<String> {
 
 fun reportDepartment(departments: List<DepartmentData>)  {
 
-    val report = departments
+    departments
         .forEach { department ->
-            val departmentName = department.name ?: "Name not provided"
-            val employeeData = department.manager?.let {
-
-            }
+            val departmentName = department.name ?: "Department name not provided"
+            val employeeData = department.manager?.let { manager ->
+                val managerName = manager.name ?: "Manager name not provided"
+                val contactInfo = manager.contactInfo?.let {
+                    val email = manager.contactInfo.email ?: "Email not provided"
+                    val phone = manager.contactInfo.phone ?: "Phone not provided"
+                    "email: $email, phone: $phone"
+                } ?: "Contact info not provided"
+                "Manager: name: $managerName, Contact info: $contactInfo"
+            } ?: "Manager not provided"
+            println("Department: $departmentName, $employeeData")
         }
 }
 
 fun main() {
+
     val departments = listOf(
         DepartmentData("Engineering", EmployeeData("Alice", Contact("alice@example.com", "123-456-7890"))),
         DepartmentData("Human Resources", null),
@@ -74,12 +82,8 @@ fun main() {
             println(email)
         }
 
-
     println("----------------------------")
 
-
-
-
-
+    reportDepartment(departments)
 }
 
