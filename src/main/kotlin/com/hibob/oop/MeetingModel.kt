@@ -6,13 +6,13 @@ data class Participant(
 )
 
 open class Meeting(
-    open val name : String,
-    open val location : Location,
-    private val participants : List<Participant>
+    val name : String,
+    val location : Location,
+    private val participants : MutableList<Participant>
 ) {
 
-    open fun addParticipant(participant: Participant) : Meeting =
-        Meeting(name, location, participants + participant)
+    open fun addParticipant(participant: Participant) =
+            participants.add(participant)
 
     override fun toString(): String {
         return "Meeting(name='$name', location=$location, participants=$participants)"
@@ -20,11 +20,14 @@ open class Meeting(
 }
 
 data class PersonalReview (
-    override val name : String,
-    override val location : Location,
+    val meetingName: String,
+    val meetingLocation: Location,
     val participant: Participant,
     val reviewers: List<Participant>
-) : Meeting(name, location, listOf(participant) + reviewers)
+) : Meeting(meetingName, meetingLocation, mutableListOf<Participant>().apply {
+    add(participant)
+    addAll(reviewers)
+})
 {
     init {
         println(successMessage())
