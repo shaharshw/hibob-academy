@@ -8,15 +8,15 @@ class StoreService {
 
     fun pay(cart: List<Cart>, payment: Payment): Map<String, Check> {
 
-        return cart.associate { cart ->
-            cart.clientId to checkOut(cart, payment) }
+        return cart.associate {
+            it.clientId to checkOut(it, payment) }
     }
 
-    fun checkOut(cart : Cart, payment: Payment): Check {
+    private fun checkOut(cart : Cart, payment: Payment): Check {
 
-        val totalPrice = calculateTotalPrice(listOf(cart))
+        val totalPrice = calculateTotalPrice(cart)
 
-        val status = isPaymentValid(payment, totalPrice, LocalDate.now())
+        val status = isPaymentValid(payment, totalPrice)
 
         val finalPrice = if (status == Statuses.SUCCESS) totalPrice else 0.0
 
@@ -31,19 +31,18 @@ class StoreService {
         return product.custom == true
     }
 
-    private fun calculateTotalPrice(cart: List<Cart>): Double {
-        return cart
-            .flatMap { it.products }
+    private fun calculateTotalPrice(cart: Cart): Double {
+        return cart.products
             .filter { checkProduct(it) }
             .sumOf { it.price }
     }
 
-    private fun isPaymentValid(payment: Payment, totalPrice: Double, now : LocalDate): Statuses {
+    private fun isPaymentValid(payment: Payment, totalPrice: Double): Statuses {
 
         return when (payment) {
 
             is Payment.CreditCard -> {
-                if (isCreditCardValid(payment, totalPrice, now)) Statuses.SUCCESS else Statuses.FAILURE
+                if (isCreditCardValid(payment, totalPrice)) Statuses.SUCCESS else Statuses.FAILURE
             }
 
             is Payment.PayPal -> {
@@ -54,12 +53,19 @@ class StoreService {
         }
     }
 
-    private fun isCreditCardValid(payment: Payment.CreditCard, totalPrice: Double, now : LocalDate): Boolean {
-        return ((payment.type == CreditCardType.VISA || payment.type == CreditCardType.MASTERCARD) &&
-                (payment.expiryDate.isAfter(now)) && (payment.limit > totalPrice) && (payment.number.length == 10))
-    }
+    private fun isCreditCardValid(payment: Payment.CreditCard, totalPrice: Double) =
+        isSupportedType(payment.type) && isCardDetailsValid(payment) && isNotOverTheLimit(totalPrice, payment)
+
+    private fun isSupportedType(cardType: CreditCardType) =
+        cardType == CreditCardType.MASTERCARD || cardType == CreditCardType.VISA
+
+    private fun isCardDetailsValid(payment: Payment.CreditCard) =
+        payment.expiryDate.isAfter(LocalDate.now()) && payment.number.length == 10
+
+    private fun isNotOverTheLimit(price: Double, payment: Payment.CreditCard) =
+        price < payment.limit
 
     private fun isPayPalValid(payment: Payment.PayPal): Boolean {
-        return payment.email.contains("@")
+        return payment.email.contains('@')
     }
 }
