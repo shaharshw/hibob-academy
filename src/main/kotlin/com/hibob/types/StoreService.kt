@@ -9,10 +9,11 @@ class StoreService {
     fun pay(cart: List<Cart>, payment: Payment): Map<String, Check> {
 
         return cart.associate {
-            it.clientId to checkOut(it, payment) }
+            it.clientId to checkOut(it, payment)
+        }
     }
 
-    private fun checkOut(cart : Cart, payment: Payment): Check {
+    private fun checkOut(cart: Cart, payment: Payment): Check {
 
         val totalPrice = calculateTotalPrice(cart)
 
@@ -46,23 +47,23 @@ class StoreService {
             }
 
             is Payment.PayPal -> {
-                if(isPayPalValid(payment)) Statuses.SUCCESS else Statuses.FAILURE
+                if (isPayPalValid(payment)) Statuses.SUCCESS else Statuses.FAILURE
             }
 
             is Payment.Cash -> fail("Cash payment is not allowed")
         }
     }
 
-    private fun isCreditCardValid(payment: Payment.CreditCard, totalPrice: Double) =
+    private fun isCreditCardValid(payment: Payment.CreditCard, totalPrice: Double) : Boolean =
         isSupportedType(payment.type) && isCardDetailsValid(payment) && isNotOverTheLimit(totalPrice, payment)
 
-    private fun isSupportedType(cardType: CreditCardType) =
+    private fun isSupportedType(cardType: CreditCardType) : Boolean =
         cardType == CreditCardType.MASTERCARD || cardType == CreditCardType.VISA
 
-    private fun isCardDetailsValid(payment: Payment.CreditCard) =
+    private fun isCardDetailsValid(payment: Payment.CreditCard) : Boolean =
         payment.expiryDate.isAfter(LocalDate.now()) && payment.number.length == 10
 
-    private fun isNotOverTheLimit(price: Double, payment: Payment.CreditCard) =
+    private fun isNotOverTheLimit(price: Double, payment: Payment.CreditCard) : Boolean =
         price < payment.limit
 
     private fun isPayPalValid(payment: Payment.PayPal): Boolean {
