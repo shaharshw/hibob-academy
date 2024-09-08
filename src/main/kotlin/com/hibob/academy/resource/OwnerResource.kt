@@ -29,13 +29,13 @@ class OwnerResource {
     @PUT
     @Path("/{ownerId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    fun updateOwner(owner: Owner) : Response {
+    fun updateOwner(@PathParam("ownerId") ownerId: Long, owner: Owner) : Response {
         return Response.ok(owner).build()
     }
 
     @DELETE
     @Path("/{ownerId}")
-    fun deletePet(@PathParam("ownerId") id: Long) : Response {
+    fun deletePet(@PathParam("ownerId") ownerId: Long) : Response {
         return Response.ok().build()
     }
 }
