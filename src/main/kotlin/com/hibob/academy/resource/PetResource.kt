@@ -28,14 +28,14 @@ class PetResource {
     }
 
     @PUT
-    @Path("/{id}")
-    fun updatePet(@RequestBody pet: Pet) : Response {
+    @Path("/{petId}")
+    fun updatePet(@PathParam("petId") petId : Long, @RequestBody pet: Pet) : Response {
         return Response.ok(pet).build()
     }
 
     @DELETE
-    @Path("/{id}")
-    fun deletePet(@PathParam("id") id: Long) : Response {
+    @Path("/{petId}")
+    fun deletePet(@PathParam("petId") petId: Long) : Response {
         return Response.ok().build()
     }
 }
