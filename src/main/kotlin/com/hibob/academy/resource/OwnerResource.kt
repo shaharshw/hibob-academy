@@ -15,8 +15,8 @@ class OwnerResource {
     @GET
     fun getALLOwners() : Response {
         return Response.ok(listOf(
-            Owner(1, "Shahar", 1, 1, null,null),
-            Owner(2, "Alex", 1, 2, null,null )
+            Owner(1, "Shahar", 1, 1, null, null),
+            Owner(2, "Alex", 1, 2, null, null)
         ))
             .build()
     }
@@ -27,16 +27,16 @@ class OwnerResource {
 
         owner.name = owner.name ?: run {
             if (owner.firstName.isNullOrEmpty() || owner.lastName.isNullOrEmpty()) {
-                return Response.status(Status.BAD_REQUEST).entity("Name is required").build()
+                throw BadRequestException("Name is required")
             } else {
                 "${owner.firstName} ${owner.lastName}"
             }
         }
 
         owner.name?.let { fullName ->
-            val nameParts = fullName.split(" ")
+            val nameParts = fullName.trim().split("\\s+".toRegex())
             owner.firstName = nameParts[0]
-            owner.lastName = nameParts.getOrNull(1)
+            owner.lastName = nameParts.drop(1).joinToString(" ").takeIf { it.isNotEmpty() }
         }
 
         return Response.status(Status.CREATED).entity(owner).build()
