@@ -1,5 +1,6 @@
 package com.hibob.kotlinBasic.sequences
 
+
 fun ex1() {
     // change the program to
     // 1. reuse the filter / map function
@@ -55,13 +56,29 @@ fun ex3() {
 
 fun ex4() {
     // create the list of the first 10 items of the Fibonacci seq
+    val fibonacciSeq = sequence {
+        var a = 1
+        yield(a)
 
-    val fibonacciList = generateSequence(Pair(1, 1)) { Pair(it.second, it.first + it.second) }
-        .map { it.first }
+        var b = 1
+        yield(b)
+
+        while (true) {
+            val c = a + b
+            yield(c)
+            a = b
+            b = c
+            println(c)
+        }
+    }
+
+    val fibonacciList = fibonacciSeq
         .take(10)
         .toList()
 
     println(fibonacciList)
+
+
 }
 
 fun ex5() {
