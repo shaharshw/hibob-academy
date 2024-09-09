@@ -18,7 +18,8 @@ class AuthenticationFilter : ContainerRequestFilter {
 
         if (path == "api/auth/login") return
 
-        val token = requestContext.headers["Authorization"].toString().replace("Bearer ", "")
+        val authorizationHeader = requestContext.headers["Authorization"]?.firstOrNull()
+        val token = authorizationHeader?.removePrefix("Bearer ")?.trim()
         val claims = validateToken(token)
 
         if (claims == null) {
@@ -27,6 +28,7 @@ class AuthenticationFilter : ContainerRequestFilter {
     }
 
     private fun validateToken(token: String?): Jws<Claims>? {
+
         return token?.let {
             try {
                 Jwts.parser()
@@ -37,5 +39,4 @@ class AuthenticationFilter : ContainerRequestFilter {
             }
         }
     }
-
 }
