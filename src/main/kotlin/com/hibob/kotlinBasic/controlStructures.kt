@@ -3,8 +3,7 @@ package com.hibob.kotlinBasic
 fun isValidIdentifier(s: String): Boolean {
 
     if (s.isEmpty()) return false
-    if (s[0] == '_') return true
-    if (!isLetter(s[0])) return false
+    if (!isLetter(s[0]) && s[0] != '_') return false
 
     for (c in s) {
         if (isNotLetterOrDigit(c) && c != '_') {
