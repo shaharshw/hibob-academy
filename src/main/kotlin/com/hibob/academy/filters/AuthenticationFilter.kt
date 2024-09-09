@@ -6,10 +6,13 @@ import io.jsonwebtoken.Jws
 import io.jsonwebtoken.Jwts
 import jakarta.ws.rs.container.ContainerRequestContext
 import jakarta.ws.rs.container.ContainerRequestFilter
+import jakarta.ws.rs.core.Cookie
 import jakarta.ws.rs.core.Response
+import jakarta.ws.rs.ext.Provider
 import org.springframework.stereotype.Component
 
 @Component
+@Provider
 class AuthenticationFilter : ContainerRequestFilter {
 
     override fun filter(requestContext: ContainerRequestContext) {
@@ -18,12 +21,14 @@ class AuthenticationFilter : ContainerRequestFilter {
 
         if (path == "api/auth/login") return
 
-        val authorizationHeader = requestContext.headers["Authorization"]?.firstOrNull()
-        val token = authorizationHeader?.removePrefix("Bearer ")?.trim()
+        val cookies: Map<String, Cookie> = requestContext.cookies
+        val token = cookies["Authorization"]?.value?.trim()
         val claims = validateToken(token)
 
         if (claims == null) {
-            requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build())
+            requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED)
+                .entity("User can't access to the resource")
+                .build())
         }
     }
 

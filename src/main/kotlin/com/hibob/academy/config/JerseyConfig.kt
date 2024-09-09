@@ -13,8 +13,6 @@ class JerseyInitializer : ResourceConfig() {
 
     init {
         logger.info("initializing jersey config")
-        register(SpringComponentProvider::class.java)
-        register(AuthenticationFilter::class.java)
-        packages("com.hibob.academy.resource")
+        packages("com.hibob")
     }
 }
