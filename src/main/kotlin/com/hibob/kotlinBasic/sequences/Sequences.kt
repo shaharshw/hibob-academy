@@ -68,7 +68,6 @@ fun ex4() {
             yield(c)
             a = b
             b = c
-            println(c)
         }
     }
 
