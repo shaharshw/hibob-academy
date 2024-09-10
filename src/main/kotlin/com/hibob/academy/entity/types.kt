@@ -5,7 +5,7 @@ import java.sql.Timestamp
 data class Pet(
     val id: Long,
     val name: String,
-    val type : String,
+    val type : PetType,
     val dataOfArrival : Timestamp,
     val companyId : Long
 )
@@ -18,3 +18,18 @@ data class Owner(
     var firstName : String?,
     var lastName : String?
 )
+
+enum class PetType {
+    DOG,
+    CAT,
+    BIRD,
+    FISH,
+    RABBIT;
+
+    companion object {
+        fun fromString(type: String): PetType {
+               return valueOf(type.uppercase())
+        }
+    }
+}
+
