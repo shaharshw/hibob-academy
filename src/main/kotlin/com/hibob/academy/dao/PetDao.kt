@@ -1,35 +1,14 @@
 package com.hibob.academy.dao
 
-import com.hibob.academy.entity.Owner
 import com.hibob.academy.entity.Pet
 import com.hibob.academy.entity.PetType
+import com.hibob.academy.entity.PetWithoutType
 import com.hibob.academy.utils.JooqTable
 import jakarta.inject.Inject
 import org.jooq.DSLContext
+import org.jooq.Record
+import org.jooq.RecordMapper
 import java.sql.Timestamp
-
-class PetDao @Inject constructor(
-    private val sql: DSLContext
-) {
-
-    fun getPetsByType(petType: PetType): List<Pet> {
-        val p = PetTable.instance
-
-        return sql.select(p.id, p.name, p.dateOfArrival, p.companyId)
-            .from(p)
-            .where(p.type.eq(petType.name))
-            .fetch { record ->
-                Pet(
-                    id = record[p.id].toString().toLong(),
-                    name = record[p.name],
-                    type = PetType.fromString(record[p.type]),
-                    dataOfArrival = Timestamp(record[p.dateOfArrival].time),
-                    companyId = record[p.companyId].toString().toLong()
-                )
-            }
-    }
-}
-
 
 class PetTable(tableName: String = "pets") : JooqTable(tableName) {
     val id = createUUIDField("id")
@@ -42,3 +21,41 @@ class PetTable(tableName: String = "pets") : JooqTable(tableName) {
         val instance = PetTable()
     }
 }
+
+class PetDao @Inject constructor(
+    private val sql: DSLContext
+) {
+
+    private val p = PetTable.instance
+
+    private val petMapper = RecordMapper<Record, Pet>
+    { record ->
+        Pet(
+            id = record[PetTable.instance.id].toString().toLong(),
+            name = record[PetTable.instance.name],
+            type = PetType.fromString(record[PetTable.instance.type]),
+            dataOfArrival = Timestamp(record[PetTable.instance.dateOfArrival].time),
+            companyId = record[PetTable.instance.companyId].toString().toLong()
+        )
+    }
+
+    private val petMapperWithoutType = RecordMapper<Record, PetWithoutType>
+    { record ->
+        PetWithoutType(
+            id = record[PetTable.instance.id].toString().toLong(),
+            name = record[PetTable.instance.name],
+            dataOfArrival = Timestamp(record[PetTable.instance.dateOfArrival].time),
+            companyId = record[PetTable.instance.companyId].toString().toLong()
+        )
+    }
+
+    fun getPetsByType(petType: PetType): List<PetWithoutType> {
+
+        return sql.select(p.id, p.name, p.dateOfArrival, p.companyId)
+            .from(p)
+            .where(p.type.eq(petType.name))
+            .fetch (petMapperWithoutType)
+    }
+}
+
+

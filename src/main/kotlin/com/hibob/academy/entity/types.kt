@@ -14,7 +14,7 @@ data class Owner(
     val id: Long,
     var name: String?,
     val companyId: Long,
-    val employeeId : Long,
+    val employeeId : String,
     var firstName : String?,
     var lastName : String?
 )
@@ -32,4 +32,11 @@ enum class PetType {
         }
     }
 }
+
+data class PetWithoutType(
+    val id: Long,
+    val name: String,
+    val dataOfArrival : Timestamp,
+    val companyId : Long
+)
 
