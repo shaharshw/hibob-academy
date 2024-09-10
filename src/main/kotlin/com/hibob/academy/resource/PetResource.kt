@@ -1,6 +1,7 @@
 package com.hibob.academy.resource
 
 import com.hibob.academy.entity.Pet
+import com.hibob.academy.entity.PetType
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
@@ -15,8 +16,8 @@ class PetResource {
     @GET
     fun getALLPets() : Response{
         val pets = listOf(
-            Pet(1, "Bobby", "Dog", java.sql.Timestamp(System.currentTimeMillis()), 1),
-            Pet(2, "Kitty", "Cat", java.sql.Timestamp(System.currentTimeMillis()), 1)
+            Pet(1, "Bobby", PetType.DOG, java.sql.Timestamp(System.currentTimeMillis()), 1),
+            Pet(2, "Kitty", PetType.CAT, java.sql.Timestamp(System.currentTimeMillis()), 1)
         )
         return Response.ok(pets).build()
     }
