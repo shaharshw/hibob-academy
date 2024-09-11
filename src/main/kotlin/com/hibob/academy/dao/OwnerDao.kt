@@ -5,6 +5,7 @@ import com.hibob.academy.utils.JooqTable
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.jooq.RecordMapper
+import org.springframework.stereotype.Component
 
 class OwnerTable(tableName: String = "owner") : JooqTable(tableName) {
     val id = createUUIDField("id")
@@ -17,6 +18,7 @@ class OwnerTable(tableName: String = "owner") : JooqTable(tableName) {
     }
 }
 
+@Component
 class OwnerDao(
     private val sql: DSLContext
 ) {

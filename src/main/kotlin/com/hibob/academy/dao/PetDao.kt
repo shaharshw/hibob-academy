@@ -8,6 +8,7 @@ import jakarta.inject.Inject
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.jooq.RecordMapper
+import org.springframework.stereotype.Component
 import java.sql.Timestamp
 
 class PetTable(tableName: String = "pets") : JooqTable(tableName) {
@@ -22,6 +23,7 @@ class PetTable(tableName: String = "pets") : JooqTable(tableName) {
     }
 }
 
+@Component
 class PetDao @Inject constructor(
     private val sql: DSLContext
 ) {
