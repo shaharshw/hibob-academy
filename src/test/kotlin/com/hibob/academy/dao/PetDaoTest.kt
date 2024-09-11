@@ -92,6 +92,36 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
     }
 
     @Test
+    fun `test get pets with different companyId returns zero results`() {
+        val companyId1 = 1L
+        val companyId2 = 2L
+
+        val pet1 = Pet(
+            id = UUID.randomUUID(),
+            name = "Buddy",
+            type = PetType.DOG,
+            dataOfArrival = LocalDate.of(2021, 1, 1),
+            companyId = companyId1
+        )
+
+        val pet2 = Pet(
+            id = UUID.randomUUID(),
+            name = "Max",
+            type = PetType.CAT,
+            dataOfArrival = LocalDate.of(2021, 1, 1),
+            companyId = companyId1
+        )
+
+        petDao.createPet(pet1)
+        petDao.createPet(pet2)
+
+        val pets = petDao.getAllPetsByCompanyId(companyId2)
+
+        assertTrue(pets.isEmpty())
+    }
+
+
+    @Test
     fun `test get pets by invalid type`() {
         val pet1 = Pet(
             id = UUID.randomUUID(),

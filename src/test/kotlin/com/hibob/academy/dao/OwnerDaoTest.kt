@@ -97,4 +97,35 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
         val owners = ownerDao.getAllOwnersByCompanyId(companyId)
         assertTrue(owners.isEmpty())
     }
+
+    @Test
+    fun `test get owners with different companyId returns zero results`() {
+        val companyId1 = 1L
+        val companyId2 = 2L
+
+        val owner1 = Owner(
+            id = UUID.randomUUID(),
+            name = "Shahar Shwartz",
+            companyId = companyId1,
+            employeeId = "123",
+            firstName = "Shahar",
+            lastName = "Shwartz"
+        )
+
+        val owner2 = Owner(
+            id = UUID.randomUUID(),
+            name = "Or Shwartz",
+            companyId = companyId1,
+            employeeId = "124",
+            firstName = "Or",
+            lastName = "Shwartz"
+        )
+
+        ownerDao.createOwner(owner1)
+        ownerDao.createOwner(owner2)
+
+        val owners = ownerDao.getAllOwnersByCompanyId(companyId2)
+
+        assertTrue(owners.isEmpty())
+    }
 }
