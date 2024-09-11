@@ -6,6 +6,7 @@ import org.jooq.DSLContext
 import org.jooq.Record
 import org.jooq.RecordMapper
 import org.springframework.stereotype.Component
+import org.springframework.stereotype.Repository
 
 class OwnerTable(tableName: String = "owner") : JooqTable(tableName) {
     val id = createBigIntField("id")
@@ -18,12 +19,12 @@ class OwnerTable(tableName: String = "owner") : JooqTable(tableName) {
     }
 }
 
-@Component
+@Repository
 class OwnerDao(
     private val sql: DSLContext
 ) {
 
-    private val o = OwnerTable.instance
+    private val ownerTable = OwnerTable.instance
 
     private val ownerMapper = RecordMapper<Record, Owner>
     { record ->
@@ -39,18 +40,18 @@ class OwnerDao(
 
     fun getAllOwners(): List<Owner> {
 
-        return sql.select(o.id, o.name, o.companyId, o.employeeId)
-            .from(o)
+        return sql.select(ownerTable.id, ownerTable.name, ownerTable.companyId, ownerTable.employeeId)
+            .from(ownerTable)
             .fetch (ownerMapper)
     }
 
     fun createOwner(owner: Owner) : Int {
-        return sql.insertInto(o)
-            .set(o.id, owner.id)
-            .set(o.name, owner.name)
-            .set(o.companyId, owner.companyId)
-            .set(o.employeeId, owner.employeeId)
-            .onConflict(o.companyId, o.employeeId)
+        return sql.insertInto(ownerTable)
+            .set(ownerTable.id, owner.id)
+            .set(ownerTable.name, owner.name)
+            .set(ownerTable.companyId, owner.companyId)
+            .set(ownerTable.employeeId, owner.employeeId)
+            .onConflict(ownerTable.companyId, ownerTable.employeeId)
             .doNothing()
             .execute()
     }

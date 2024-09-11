@@ -8,9 +8,9 @@ import jakarta.inject.Inject
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.jooq.RecordMapper
-import org.springframework.stereotype.Component
+import org.jooq.impl.DSL
+import org.springframework.stereotype.Repository
 import java.sql.Date
-import java.sql.Timestamp
 
 class PetTable(tableName: String = "pets") : JooqTable(tableName) {
     val id = createBigIntField("id")
@@ -18,65 +18,99 @@ class PetTable(tableName: String = "pets") : JooqTable(tableName) {
     val type = createVarcharField("type")
     val dateOfArrival = createDateField("data_of_arrival")
     val companyId = createBigIntField("company_id")
+    val ownerId = createBigIntField("owner_id")
 
     companion object {
         val instance = PetTable()
     }
 }
 
-@Component
+@Repository
 class PetDao @Inject constructor(
     private val sql: DSLContext
 ) {
 
-    private val p = PetTable.instance
+    private val petTable = PetTable.instance
 
     private val petMapper = RecordMapper<Record, Pet>
     { record ->
         Pet(
-            id = record[PetTable.instance.id].toString().toLong(),
-            name = record[PetTable.instance.name],
-            type = PetType.fromString(record[PetTable.instance.type]),
-            dataOfArrival = Date(record[PetTable.instance.dateOfArrival].time),
-            companyId = record[PetTable.instance.companyId].toString().toLong()
+            id = record[petTable.id].toString().toLong(),
+            name = record[petTable.name],
+            type = PetType.fromString(record[petTable.type]),
+            dataOfArrival = Date(record[petTable.dateOfArrival].time),
+            companyId = record[petTable.companyId].toString().toLong(),
+            ownerId = record[petTable.ownerId].toString().toLong()
         )
     }
 
     private val petMapperWithoutType = RecordMapper<Record, PetWithoutType>
     { record ->
         PetWithoutType(
-            id = record[PetTable.instance.id].toString().toLong(),
-            name = record[PetTable.instance.name],
-            dataOfArrival = Date(record[PetTable.instance.dateOfArrival].time),
-            companyId = record[PetTable.instance.companyId].toString().toLong()
+            id = record[petTable.id].toString().toLong(),
+            name = record[petTable.name],
+            dataOfArrival = Date(record[petTable.dateOfArrival].time),
+            companyId = record[petTable.companyId].toString().toLong()
         )
     }
 
     fun createPet(pet: Pet) : Int {
-        return sql.insertInto(p)
-            .set(p.id, pet.id)
-            .set(p.name, pet.name)
-            .set(p.type, pet.type.name)
-            .set(p.dateOfArrival, pet.dataOfArrival)
-            .set(p.companyId, pet.companyId)
-            .onConflict(p.companyId)
+        return sql.insertInto(petTable)
+            .set(petTable.id, pet.id)
+            .set(petTable.name, pet.name)
+            .set(petTable.type, pet.type.name)
+            .set(petTable.dateOfArrival, pet.dataOfArrival)
+            .set(petTable.companyId, pet.companyId)
+            .set(petTable.ownerId, pet.ownerId)
+            .onConflict(petTable.companyId)
             .doNothing()
             .execute()
     }
 
     fun getAllPets(): List<Pet> {
 
-        return sql.select(p.id, p.name, p.type, p.dateOfArrival, p.companyId)
-            .from(p)
+        return sql.select(
+            petTable.id,
+            petTable.name,
+            petTable.type,
+            petTable.dateOfArrival,
+            petTable.companyId,
+            petTable.ownerId
+        )
+            .from(petTable)
             .fetch (petMapper)
     }
 
     fun getPetsByType(petType: PetType): List<PetWithoutType> {
 
-        return sql.select(p.id, p.name, p.dateOfArrival, p.companyId)
-            .from(p)
-            .where(p.type.eq(petType.name))
+        return sql.select(petTable.id, petTable.name, petTable.dateOfArrival, petTable.companyId)
+            .from(petTable)
+            .where(petTable.type.eq(petType.name))
             .fetch (petMapperWithoutType)
+    }
+
+    fun getAllPetsByOwnerId(ownerId: Long) : List<Pet> {
+
+        return sql.select(
+            petTable.id,
+            petTable.name,
+            petTable.type,
+            petTable.dateOfArrival,
+            petTable.companyId,
+            petTable.ownerId
+        )
+            .from(petTable)
+            .where(petTable.ownerId.eq(ownerId))
+            .fetch (petMapper)
+    }
+
+    fun getCountPetsByType(): Map<String, Int> {
+
+        return sql.select(petTable.type, DSL.count())
+            .from(petTable)
+            .groupBy(petTable.type)
+            .fetch()
+            .associate { it[petTable.type] to (it[DSL.count()] as Int) }
     }
 }
 

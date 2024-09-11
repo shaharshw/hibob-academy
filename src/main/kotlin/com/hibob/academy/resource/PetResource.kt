@@ -2,6 +2,7 @@ package com.hibob.academy.resource
 
 import com.hibob.academy.entity.Pet
 import com.hibob.academy.entity.PetType
+import com.hibob.academy.service.PetService
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
@@ -12,13 +13,15 @@ import java.sql.Date
 @Controller
 @Path("/api/pet")
 @Produces(MediaType.APPLICATION_JSON)
-class PetResource {
+class PetResource(
+    private val petService: PetService
+) {
 
     @GET
     fun getALLPets() : Response{
         val pets = listOf(
-            Pet(1, "Bobby", PetType.DOG, Date.valueOf("2021-01-01"), 1),
-            Pet(2, "Kitty", PetType.CAT, Date.valueOf("2021-01-01"), 1)
+            Pet(1, "Bobby", PetType.DOG, Date.valueOf("2021-01-01"), 1,1L),
+            Pet(2, "Kitty", PetType.CAT, Date.valueOf("2021-01-01"), 1, 2L)
         )
         return Response.ok(pets).build()
     }
@@ -39,5 +42,23 @@ class PetResource {
     @Path("/{petId}")
     fun deletePet(@PathParam("petId") petId: Long) : Response {
         return Response.ok().build()
+    }
+
+    @GET
+    @Path("/all/{ownerId}")
+    fun getAllPetsByOwner(@PathParam("ownerId") ownerId: Long) : Response {
+        return Response.ok(
+            petService.getAllPetsByOwnerId(ownerId)
+        )
+            .build()
+    }
+
+    @GET
+    @Path("/all/types")
+    fun getCountPetsByType() : Response {
+        return Response.ok(
+            petService.getCountPetsByType()
+        )
+            .build()
     }
 }
