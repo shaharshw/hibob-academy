@@ -27,17 +27,40 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
     fun `test create owner and get all owners`() {
         val owner = Owner(
             id = 1L,
-            name = "John",
+            name = "Shahar Shwartz",
             companyId = companyId,
             employeeId = "123",
-            firstName = "John",
-            lastName = "Doe"
+            firstName = "Shahar",
+            lastName = "Shwartz"
         )
 
         ownerDao.createOwner(owner)
-        val owners = ownerDao.getAllOwners()
+        val owners = ownerDao.getAllOwnersByCompanyId(companyId)
 
         assertEquals(1, owners.size)
+        assertEquals("Shahar Shwartz", owners[0].name)
+        assertEquals("123", owners[0].employeeId)
+        assertEquals("Shahar", owners[0].firstName)
+        assertEquals("Shwartz", owners[0].lastName)
+    }
+
+    @Test
+    fun `test create owner with missing first name and last name`() {
+        val owner = Owner(
+            id = 1L,
+            name = "Shahar Shwartz Logashi",
+            companyId = companyId,
+            employeeId = "123",
+            firstName = null,
+            lastName = null
+        )
+
+        ownerDao.createOwner(owner)
+        val owners = ownerDao.getAllOwnersByCompanyId(companyId)
+
+        assertEquals(1, owners.size)
+        assertEquals("Shahar", owners[0].firstName)
+        assertEquals("Shwartz Logashi", owners[0].lastName)
     }
 
     @Test
@@ -45,26 +68,38 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
 
         val owner1 = Owner(
             id = 1L,
-            name = "John",
+            name = "Shahar Shwartz",
             companyId = companyId,
             employeeId = "123",
-            firstName = "John",
-            lastName = "Doe"
+            firstName = null,
+            lastName = null
         )
 
         val owner2 = Owner(
             id = 2L,
-            name = "Shahar",
+            name = "Or Shwartz",
             companyId = companyId,
             employeeId = "123",
-            firstName = "Shahar",
+            firstName = "Or",
             lastName = "Shwartz"
         )
 
         ownerDao.createOwner(owner1)
         ownerDao.createOwner(owner2)
 
-        val owners = ownerDao.getAllOwners()
+        val owners = ownerDao.getAllOwnersByCompanyId(companyId)
+
         assertEquals(1, owners.size)
+        assertEquals("Shahar Shwartz", owners[0].name)
+        assertEquals("123", owners[0].employeeId)
+        assertEquals("Shahar", owners[0].firstName)
+        assertEquals("Shwartz", owners[0].lastName)
+
+    }
+
+    @Test
+    fun `test get all owners when no owners exist`() {
+        val owners = ownerDao.getAllOwnersByCompanyId(companyId)
+        assertTrue(owners.isEmpty())
     }
 }

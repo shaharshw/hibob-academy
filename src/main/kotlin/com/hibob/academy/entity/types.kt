@@ -1,12 +1,12 @@
 package com.hibob.academy.entity
 
-import java.sql.Date
+import java.time.LocalDate
 
 data class Pet(
     val id: Long,
     val name: String,
     val type : PetType,
-    val dataOfArrival : Date,
+    val dataOfArrival : LocalDate,
     val companyId : Long
 )
 
@@ -32,10 +32,3 @@ enum class PetType {
         }
     }
 }
-
-data class PetWithoutType(
-    val id: Long,
-    val name: String,
-    val dataOfArrival : Date,
-    val companyId : Long
-)

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component
 class OwnerTable(tableName: String = "owner") : JooqTable(tableName) {
     val id = createBigIntField("id")
     val name = createVarcharField("name")
+    val firstName = createVarcharField("first_name")
+    val lastName = createVarcharField("last_name")
     val companyId = createBigIntField("company_id")
     val employeeId = createVarcharField("employee_id")
 
@@ -23,34 +25,40 @@ class OwnerDao(
     private val sql: DSLContext
 ) {
 
-    private val o = OwnerTable.instance
+    private val ownerTable = OwnerTable.instance
 
     private val ownerMapper = RecordMapper<Record, Owner>
     { record ->
+
+        val nameParts = record[ownerTable.name]?.split("\\s+".toRegex())
+        val firstName = nameParts?.getOrNull(0).orEmpty()
+        val lastName = nameParts?.drop(1)?.joinToString(" ").takeIf { it?.isNotEmpty() == true }
+
         Owner(
-            id = record[OwnerTable.instance.id],
-            name = record[OwnerTable.instance.name],
-            companyId = record[OwnerTable.instance.companyId],
-            employeeId = record[OwnerTable.instance.employeeId].toString(),
-            firstName = null,
-            lastName = null
+            id = record[ownerTable.id],
+            name = record[ownerTable.name],
+            companyId = record[ownerTable.companyId],
+            employeeId = record[ownerTable.employeeId].toString(),
+            firstName = firstName,
+            lastName = lastName
         )
     }
 
-    fun getAllOwners(): List<Owner> {
+    fun getAllOwnersByCompanyId(companyId : Long): List<Owner> {
 
-        return sql.select(o.id, o.name, o.companyId, o.employeeId)
-            .from(o)
+        return sql.select(ownerTable.id, ownerTable.name, ownerTable.companyId, ownerTable.employeeId)
+            .from(ownerTable)
+            .where(ownerTable.companyId.eq(companyId))
             .fetch (ownerMapper)
     }
 
     fun createOwner(owner: Owner) : Int {
-        return sql.insertInto(o)
-            .set(o.id, owner.id)
-            .set(o.name, owner.name)
-            .set(o.companyId, owner.companyId)
-            .set(o.employeeId, owner.employeeId)
-            .onConflict(o.companyId, o.employeeId)
+        return sql.insertInto(ownerTable)
+            .set(ownerTable.id, owner.id)
+            .set(ownerTable.name, owner.name)
+            .set(ownerTable.companyId, owner.companyId)
+            .set(ownerTable.employeeId, owner.employeeId)
+            .onConflict(ownerTable.companyId, ownerTable.employeeId)
             .doNothing()
             .execute()
     }

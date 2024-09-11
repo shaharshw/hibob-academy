@@ -8,8 +8,10 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.sql.Date
+import java.time.LocalDate
 
 @BobDbTest
 class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
@@ -31,14 +33,35 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
             id = 1L,
             name = "Buddy",
             type = PetType.DOG,
-            dataOfArrival = Date.valueOf("2021-01-01"),
+            dataOfArrival = LocalDate.of(2021, 1, 1),
             companyId = companyId
         )
 
         petDao.createPet(pet)
-        val pets = petDao.getAllPets()
+        val pets = petDao.getAllPetsByCompanyId(companyId)
 
         assertEquals(1, pets.size)
+        assertEquals("Buddy", pets[0].name)
+        assertEquals(PetType.DOG, pets[0].type)
+        assertEquals(LocalDate.of(2021, 1, 1), pets[0].dataOfArrival)
+    }
+
+    @Test
+    fun `test create pet with invalid type`() {
+        val invalidPetType = "INVALID_TYPE"
+
+        val exception = assertThrows<IllegalArgumentException> {
+            val pet = Pet(
+                id = 1L,
+                name = "Buddy",
+                type = PetType.fromString(invalidPetType), // This should throw an exception or handle the error
+                dataOfArrival = LocalDate.of(2021, 1, 1),
+                companyId = companyId
+            )
+            petDao.createPet(pet)
+        }
+
+        assertEquals("No enum constant com.hibob.academy.entity.PetType.$invalidPetType", exception.message)
     }
 
     @Test
@@ -47,13 +70,41 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
             id = 1L,
             name = "Buddy",
             type = PetType.CAT,
-            dataOfArrival = Date(2021, 1, 1),
+            dataOfArrival = LocalDate.of(2021, 1, 1),
+            companyId = companyId
+        )
+
+        val pet2 = Pet(
+            id = 2L,
+            name = "Max",
+            type = PetType.DOG,
+            dataOfArrival = LocalDate.of(2021, 1, 1),
+            companyId = companyId,
+        )
+
+        petDao.createPet(pet1)
+        petDao.createPet(pet2)
+        val pets = petDao.getPetsByType(PetType.DOG, companyId)
+
+        assertEquals(1, pets.size)
+        assertEquals("Max", pets[0].name)
+        assertEquals(PetType.DOG, pets[0].type)
+        assertEquals(LocalDate.of(2021, 1, 1), pets[0].dataOfArrival)
+    }
+
+    @Test
+    fun `test get pets by invalid type`() {
+        val pet1 = Pet(
+            id = 1L,
+            name = "Buddy",
+            type = PetType.DOG,
+            dataOfArrival = LocalDate.of(2021, 1, 1),
             companyId = companyId
         )
 
         petDao.createPet(pet1)
-        val pets = petDao.getPetsByType(PetType.DOG)
+        val pets = petDao.getPetsByType(PetType.CAT, companyId)
 
-        assertEquals(0, pets.size)
+        assertTrue(pets.isEmpty())
     }
 }
