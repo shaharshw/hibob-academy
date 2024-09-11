@@ -12,6 +12,7 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.sql.Date
 import java.time.LocalDate
+import java.util.*
 
 @BobDbTest
 class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
@@ -30,7 +31,7 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
     fun `test create pet and get all pets`() {
 
         val pet = Pet(
-            id = 1L,
+            id = UUID.randomUUID(),
             name = "Buddy",
             type = PetType.DOG,
             dataOfArrival = LocalDate.of(2021, 1, 1),
@@ -51,7 +52,7 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
 
         val exception = assertThrows<IllegalArgumentException> {
             val pet = Pet(
-                id = 1L,
+                id = UUID.randomUUID(),
                 name = "Buddy",
                 type = PetType.fromString(invalidPetType), // This should throw an exception or handle the error
                 dataOfArrival = LocalDate.of(2021, 1, 1),
@@ -66,7 +67,7 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
     @Test
     fun `test get pet by type`() {
         val pet1 = Pet(
-            id = 1L,
+            id = UUID.randomUUID(),
             name = "Buddy",
             type = PetType.CAT,
             dataOfArrival = LocalDate.of(2021, 1, 1),
@@ -74,7 +75,7 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
         )
 
         val pet2 = Pet(
-            id = 2L,
+            id = UUID.randomUUID(),
             name = "Max",
             type = PetType.DOG,
             dataOfArrival = LocalDate.of(2021, 1, 1),
@@ -93,7 +94,7 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
     @Test
     fun `test get pets by invalid type`() {
         val pet1 = Pet(
-            id = 1L,
+            id = UUID.randomUUID(),
             name = "Buddy",
             type = PetType.DOG,
             dataOfArrival = LocalDate.of(2021, 1, 1),

@@ -9,10 +9,11 @@ import org.jooq.Record
 import org.jooq.RecordMapper
 import org.springframework.stereotype.Component
 import java.sql.Date
+import java.util.*
 
 
 class PetTable(tableName: String = "pets") : JooqTable(tableName) {
-    val id = createBigIntField("id")
+    val id = createUUIDField("id")
     val name = createVarcharField("name")
     val type = createVarcharField("type")
     val dateOfArrival = createDateField("data_of_arrival")
@@ -33,7 +34,7 @@ class PetDao @Inject constructor(
     private val petMapper = RecordMapper<Record, Pet>
     { record ->
         Pet(
-            id = record[petTable.id].toString().toLong(),
+            id = record[petTable.id] as UUID,
             name = record[petTable.name],
             type = PetType.fromString(record[petTable.type]),
             dataOfArrival = record[PetTable.instance.dateOfArrival].toLocalDate(),

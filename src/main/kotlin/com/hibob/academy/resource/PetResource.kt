@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.Response
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestBody
 import java.time.LocalDate
+import java.util.*
 
 @Controller
 @Path("/api/pet")
@@ -18,8 +19,8 @@ class PetResource {
     @GET
     fun getALLPets() : Response{
         val pets = listOf(
-            Pet(1, "Bobby", PetType.DOG, LocalDate.parse("2021-01-01"), 1),
-            Pet(2, "Kitty", PetType.CAT, LocalDate.parse("2021-01-01"), 1)
+            Pet(UUID.randomUUID(), "Bobby", PetType.DOG, LocalDate.parse("2021-01-01"), 1),
+            Pet(UUID.randomUUID(), "Kitty", PetType.CAT, LocalDate.parse("2021-01-01"), 1)
         )
         return Response.ok(pets).build()
     }

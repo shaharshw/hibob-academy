@@ -6,9 +6,10 @@ import org.jooq.DSLContext
 import org.jooq.Record
 import org.jooq.RecordMapper
 import org.springframework.stereotype.Component
+import java.util.UUID
 
 class OwnerTable(tableName: String = "owner") : JooqTable(tableName) {
-    val id = createBigIntField("id")
+    val id = createUUIDField("id")
     val name = createVarcharField("name")
     val firstName = createVarcharField("first_name")
     val lastName = createVarcharField("last_name")
@@ -35,7 +36,7 @@ class OwnerDao(
         val lastName = nameParts?.drop(1)?.joinToString(" ").takeIf { it?.isNotEmpty() == true }
 
         Owner(
-            id = record[ownerTable.id],
+            id = record[ownerTable.id] as UUID,
             name = record[ownerTable.name],
             companyId = record[ownerTable.companyId],
             employeeId = record[ownerTable.employeeId].toString(),

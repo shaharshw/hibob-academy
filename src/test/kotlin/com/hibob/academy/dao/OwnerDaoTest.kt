@@ -16,6 +16,7 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
     private val ownerDao = OwnerDao(sql)
     val table = OwnerTable.instance
     val companyId = 1L
+    val id = UUID.randomUUID()
 
     @BeforeEach
     @AfterEach
@@ -26,7 +27,7 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
     @Test
     fun `test create owner and get all owners`() {
         val owner = Owner(
-            id = 1L,
+            id = id,
             name = "Shahar Shwartz",
             companyId = companyId,
             employeeId = "123",
@@ -45,7 +46,7 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
     @Test
     fun `test create owner with missing first name and last name`() {
         val owner = Owner(
-            id = 1L,
+            id = id,
             name = "Shahar Shwartz Logashi",
             companyId = companyId,
             employeeId = "123",
@@ -65,7 +66,7 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
     fun `test create owner with the same employeeId and companyId`() {
 
         val owner1 = Owner(
-            id = 1L,
+            id = id,
             name = "Shahar Shwartz",
             companyId = companyId,
             employeeId = "123",
@@ -74,7 +75,7 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
         )
 
         val owner2 = Owner(
-            id = 2L,
+            id = UUID.randomUUID(),
             name = "Or Shwartz",
             companyId = companyId,
             employeeId = "123",
@@ -85,7 +86,7 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
         ownerDao.createOwner(owner1)
         ownerDao.createOwner(owner2)
 
-        val expectedOwners = listOf(owner1.copy(firstName = "Shahar", lastName = "Shwartz"), owner2)
+        val expectedOwners = listOf(owner1.copy(firstName = "Shahar", lastName = "Shwartz"))
         val actualOwners = ownerDao.getAllOwnersByCompanyId(companyId)
 
         assertEquals(expectedOwners, actualOwners)
