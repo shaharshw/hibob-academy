@@ -1,12 +1,12 @@
 create table owner
 (
-    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id          SERIAL PRIMARY KEY,
     name        VARCHAR(255) NOT NULL,
     company_id  BIGINT NOT NULL,
     employee_id VARCHAR(255)
 );
 
-create index idx_owner_company_id_employee_id on owner (company_id, employee_id);
+create unique index idx_owner_company_id_employee_id on owner (company_id, employee_id);
 
 
 /*
