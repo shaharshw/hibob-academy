@@ -6,6 +6,7 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.Response.Status
 import org.springframework.stereotype.Controller
+import java.util.*
 
 @Controller
 @Path("/api/owner")
@@ -15,8 +16,8 @@ class OwnerResource {
     @GET
     fun getALLOwners() : Response {
         return Response.ok(listOf(
-            Owner(1, "Shahar", 1, 1, null, null),
-            Owner(2, "Alex", 1, 2, null, null)
+            Owner(1L, "Shahar", 1L, "1", null, null),
+            Owner(2L, "Alex", 2L, "2", null, null)
         ))
             .build()
     }
