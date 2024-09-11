@@ -1,8 +1,8 @@
 create table owner
 (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name        VARCHAR(255),
-    company_id  UUID,
+    name        VARCHAR(255) NOT NULL,
+    company_id  BIGINT NOT NULL,
     employee_id VARCHAR(255)
 );
 
