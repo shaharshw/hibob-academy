@@ -1,20 +1,19 @@
 package com.hibob.academy.entity
 
-import java.sql.Timestamp
-import java.util.UUID
+import java.sql.Date
 
 data class Pet(
     val id: Long,
     val name: String,
     val type : PetType,
-    val dataOfArrival : Timestamp,
+    val dataOfArrival : Date,
     val companyId : Long
 )
 
 data class Owner(
-    val id: UUID,
+    val id: Long,
     var name: String?,
-    val companyId: UUID,
+    val companyId: Long,
     val employeeId : String,
     var firstName : String?,
     var lastName : String?
@@ -37,7 +36,7 @@ enum class PetType {
 data class PetWithoutType(
     val id: Long,
     val name: String,
-    val dataOfArrival : Timestamp,
+    val dataOfArrival : Date,
     val companyId : Long
 )
 

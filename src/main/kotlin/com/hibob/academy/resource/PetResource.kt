@@ -7,6 +7,7 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestBody
+import java.sql.Date
 
 @Controller
 @Path("/api/pet")
@@ -16,8 +17,8 @@ class PetResource {
     @GET
     fun getALLPets() : Response{
         val pets = listOf(
-            Pet(1, "Bobby", PetType.DOG, java.sql.Timestamp(System.currentTimeMillis()), 1),
-            Pet(2, "Kitty", PetType.CAT, java.sql.Timestamp(System.currentTimeMillis()), 1)
+            Pet(1, "Bobby", PetType.DOG, Date.valueOf("2021-01-01"), 1),
+            Pet(2, "Kitty", PetType.CAT, Date.valueOf("2021-01-01"), 1)
         )
         return Response.ok(pets).build()
     }

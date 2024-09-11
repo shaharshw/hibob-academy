@@ -16,8 +16,8 @@ class OwnerResource {
     @GET
     fun getALLOwners() : Response {
         return Response.ok(listOf(
-            Owner(UUID.randomUUID(), "Shahar", UUID.randomUUID(), "1", null, null),
-            Owner(UUID.randomUUID(), "Alex", UUID.randomUUID(), "2", null, null)
+            Owner(1L, "Shahar", 1L, "1", null, null),
+            Owner(2L, "Alex", 2L, "2", null, null)
         ))
             .build()
     }

@@ -8,9 +8,9 @@ import org.jooq.RecordMapper
 import org.springframework.stereotype.Component
 
 class OwnerTable(tableName: String = "owner") : JooqTable(tableName) {
-    val id = createUUIDField("id")
+    val id = createBigIntField("id")
     val name = createVarcharField("name")
-    val companyId = createUUIDField("company_id")
+    val companyId = createBigIntField("company_id")
     val employeeId = createVarcharField("employee_id")
 
     companion object {

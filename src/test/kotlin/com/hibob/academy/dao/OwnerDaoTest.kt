@@ -15,7 +15,7 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     private val ownerDao = OwnerDao(sql)
     val table = OwnerTable.instance
-    val companyId = UUID.randomUUID()
+    val companyId = 1L
 
     @BeforeEach
     @AfterEach
@@ -24,21 +24,46 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
     }
 
     @Test
-    fun `test create owner`() {
+    fun `test create owner and get all owners`() {
         val owner = Owner(
-            id = UUID.randomUUID(),
+            id = 1L,
             name = "John",
-            companyId = UUID.randomUUID(),
+            companyId = companyId,
             employeeId = "123",
             firstName = "John",
             lastName = "Doe"
         )
-        val result = ownerDao.createOwner(owner)
-        assertEquals(1, result)
+
+        ownerDao.createOwner(owner)
+        val owners = ownerDao.getAllOwners()
+
+        assertEquals(1, owners.size)
     }
 
     @Test
-    fun `test get all owners`() {
+    fun `test create owner with the same employeeId and companyId`() {
+
+        val owner1 = Owner(
+            id = 1L,
+            name = "John",
+            companyId = companyId,
+            employeeId = "123",
+            firstName = "John",
+            lastName = "Doe"
+        )
+
+        val owner2 = Owner(
+            id = 2L,
+            name = "Shahar",
+            companyId = companyId,
+            employeeId = "123",
+            firstName = "Shahar",
+            lastName = "Shwartz"
+        )
+
+        ownerDao.createOwner(owner1)
+        ownerDao.createOwner(owner2)
+
         val owners = ownerDao.getAllOwners()
         assertEquals(1, owners.size)
     }
