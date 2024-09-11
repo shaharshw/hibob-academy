@@ -1,11 +1,15 @@
+
 package com.hibob.academy.resource
 
 import com.hibob.academy.entity.Pet
+import com.hibob.academy.entity.PetType
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestBody
+import java.time.LocalDate
+import java.util.*
 
 @Controller
 @Path("/api/pet")
@@ -15,8 +19,8 @@ class PetResource {
     @GET
     fun getALLPets() : Response{
         val pets = listOf(
-            Pet(1, "Bobby", "Dog", java.sql.Timestamp(System.currentTimeMillis()), 1),
-            Pet(2, "Kitty", "Cat", java.sql.Timestamp(System.currentTimeMillis()), 1)
+            Pet(1L, "Bobby", PetType.DOG, LocalDate.parse("2021-01-01"), 1),
+            Pet(2L, "Kitty", PetType.CAT, LocalDate.parse("2021-01-01"), 1)
         )
         return Response.ok(pets).build()
     }
