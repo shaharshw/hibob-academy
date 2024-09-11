@@ -11,6 +11,11 @@ import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.ext.Provider
 import org.springframework.stereotype.Component
 
+const val PATH_TO_SKIP = "api/auth/login"
+
+const val AUTH_COOKIE_NAME = "Authorization"
+
+
 @Component
 @Provider
 class AuthenticationFilter : ContainerRequestFilter {
@@ -19,29 +24,26 @@ class AuthenticationFilter : ContainerRequestFilter {
 
         val path = requestContext.uriInfo.path
 
-        if (path == "api/auth/login") return
+        if (path == PATH_TO_SKIP) return
 
         val cookies: Map<String, Cookie> = requestContext.cookies
-        val token = cookies["Authorization"]?.value?.trim()
-        val claims = validateToken(token)
-
-        if (claims == null) {
-            requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED)
-                .entity("User can't access to the resource")
-                .build())
-        }
+        val token = cookies[AUTH_COOKIE_NAME]?.value?.trim()
+        val claims = validateToken(token, requestContext)
     }
 
-    private fun validateToken(token: String?): Jws<Claims>? {
+     private fun validateToken(token: String?, requestContext: ContainerRequestContext) {
 
-        return token?.let {
-            try {
-                Jwts.parser()
-                    .setSigningKey(SessionService.SECRET_KEY)
-                    .parseClaimsJws(it)
-            } catch (e: Exception) {
-                null
-            }
-        }
-    }
+         token?.let {
+             try {
+                 Jwts.parser()
+                     .setSigningKey(SessionService.SECRET_KEY)
+             } catch (e: Exception) {
+                 requestContext.abortWith(
+                     Response.status(Response.Status.UNAUTHORIZED)
+                         .entity("User can't access to the resource")
+                         .build()
+                 )
+             }
+         }
+     }
 }
