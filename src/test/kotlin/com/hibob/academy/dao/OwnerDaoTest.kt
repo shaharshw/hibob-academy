@@ -35,13 +35,11 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
         )
 
         ownerDao.createOwner(owner)
-        val owners = ownerDao.getAllOwnersByCompanyId(companyId)
 
-        assertEquals(1, owners.size)
-        assertEquals("Shahar Shwartz", owners[0].name)
-        assertEquals("123", owners[0].employeeId)
-        assertEquals("Shahar", owners[0].firstName)
-        assertEquals("Shwartz", owners[0].lastName)
+        val expectedOwners = listOf(owner)
+        val actualOwners = ownerDao.getAllOwnersByCompanyId(companyId)
+
+        assertEquals(expectedOwners, actualOwners)
     }
 
     @Test
@@ -56,11 +54,11 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
         )
 
         ownerDao.createOwner(owner)
-        val owners = ownerDao.getAllOwnersByCompanyId(companyId)
 
-        assertEquals(1, owners.size)
-        assertEquals("Shahar", owners[0].firstName)
-        assertEquals("Shwartz Logashi", owners[0].lastName)
+        val expectedOwners = listOf(owner.copy(firstName = "Shahar", lastName = "Shwartz Logashi"))
+        val actualOwners = ownerDao.getAllOwnersByCompanyId(companyId)
+
+        assertEquals(expectedOwners, actualOwners)
     }
 
     @Test
@@ -87,14 +85,10 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
         ownerDao.createOwner(owner1)
         ownerDao.createOwner(owner2)
 
-        val owners = ownerDao.getAllOwnersByCompanyId(companyId)
+        val expectedOwners = listOf(owner1.copy(firstName = "Shahar", lastName = "Shwartz"), owner2)
+        val actualOwners = ownerDao.getAllOwnersByCompanyId(companyId)
 
-        assertEquals(1, owners.size)
-        assertEquals("Shahar Shwartz", owners[0].name)
-        assertEquals("123", owners[0].employeeId)
-        assertEquals("Shahar", owners[0].firstName)
-        assertEquals("Shwartz", owners[0].lastName)
-
+        assertEquals(expectedOwners, actualOwners)
     }
 
     @Test
