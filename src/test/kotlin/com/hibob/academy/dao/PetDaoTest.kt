@@ -43,34 +43,6 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
     }
 
     @Test
-    fun `test create pet with the same id and companyId`() {
-
-        val pet1 = Pet(
-            id = 1L,
-            name = "Buddy",
-            type = PetType.DOG,
-            dataOfArrival = Date.valueOf("2021-01-01"),
-            companyId = companyId,
-            ownerId = 1L
-        )
-
-        val pet2 = Pet(
-            id = 1L,
-            name = "Buddy",
-            type = PetType.DOG,
-            dataOfArrival = Date.valueOf("2021-01-01"),
-            companyId = companyId,
-            ownerId = 1L
-        )
-
-        petDao.createPet(pet1)
-        petDao.createPet(pet2)
-        val pets = petDao.getAllPets()
-
-        assertEquals(1, pets.size)
-    }
-
-    @Test
     fun `test get pet by type`() {
         val pet1 = Pet(
             id = 1L,
@@ -153,7 +125,6 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
         assertEquals(1, countPetsByType[PetType.CAT.name])
         assertEquals(2, countPetsByType[PetType.DOG.name])
     }
-
 }
 
 

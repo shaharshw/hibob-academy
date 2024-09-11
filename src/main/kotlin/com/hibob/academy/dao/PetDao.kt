@@ -62,8 +62,6 @@ class PetDao @Inject constructor(
             .set(petTable.dateOfArrival, pet.dataOfArrival)
             .set(petTable.companyId, pet.companyId)
             .set(petTable.ownerId, pet.ownerId)
-            .onConflict(petTable.companyId)
-            .doNothing()
             .execute()
     }
 
