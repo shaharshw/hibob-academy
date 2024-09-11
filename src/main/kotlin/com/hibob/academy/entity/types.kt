@@ -1,6 +1,7 @@
 package com.hibob.academy.entity
 
 import java.sql.Timestamp
+import java.util.UUID
 
 data class Pet(
     val id: Long,
@@ -11,9 +12,9 @@ data class Pet(
 )
 
 data class Owner(
-    val id: Long,
+    val id: UUID,
     var name: String?,
-    val companyId: Long,
+    val companyId: UUID,
     val employeeId : String,
     var firstName : String?,
     var lastName : String?
