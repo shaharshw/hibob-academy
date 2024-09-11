@@ -1,6 +1,6 @@
 package com.hibob.academy.resource
 
-import com.hibob.academy.filters.AUTH_COOKIE_NAME
+import com.hibob.academy.filters.AuthenticationFilter
 import com.hibob.academy.service.SessionService
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.MediaType
@@ -22,7 +22,7 @@ class AuthenticationResource(
     @Consumes(MediaType.APPLICATION_JSON)
     fun login(@RequestBody user: LoginUser): Response {
         val token = sessionService.createJwtToken(user)
-        val cookie = NewCookie.Builder(AUTH_COOKIE_NAME)
+        val cookie = NewCookie.Builder(AuthenticationFilter.AUTH_COOKIE_NAME)
             .value(token)
             .build()
 

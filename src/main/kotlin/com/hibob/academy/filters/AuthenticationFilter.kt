@@ -11,14 +11,19 @@ import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.ext.Provider
 import org.springframework.stereotype.Component
 
-const val PATH_TO_SKIP = "api/auth/login"
 
-const val AUTH_COOKIE_NAME = "Authorization"
 
 
 @Component
 @Provider
 class AuthenticationFilter : ContainerRequestFilter {
+
+    companion object {
+
+        const val PATH_TO_SKIP = "api/auth/login"
+
+        const val AUTH_COOKIE_NAME = "Authorization"
+    }
 
     override fun filter(requestContext: ContainerRequestContext) {
 

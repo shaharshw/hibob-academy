@@ -18,7 +18,6 @@ class SessionService {
 
     fun createJwtToken(user : LoginUser): String {
 
-        val now : Date = Date.from(LocalDateTime.now().toInstant(ZoneOffset.UTC))
         val expirationDate : Date = Date.from(LocalDateTime.now().plusDays(1).toInstant(ZoneOffset.UTC))
 
         return Jwts.builder()
@@ -26,7 +25,7 @@ class SessionService {
             .claim("Email", user.email)
             .claim("UserName", user.userName)
             .claim("IsAdmin", user.isAdmin)
-            .setIssuedAt(now)
+            .setIssuedAt(Date.from(LocalDateTime.now().toInstant(ZoneOffset.UTC)))
             .setExpiration(expirationDate)
             .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
             .compact()
