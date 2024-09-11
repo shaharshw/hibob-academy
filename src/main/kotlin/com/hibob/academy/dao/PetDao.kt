@@ -13,7 +13,7 @@ import java.util.*
 
 
 class PetTable(tableName: String = "pets") : JooqTable(tableName) {
-    val id = createUUIDField("id")
+    val id = createBigIntField("id")
     val name = createVarcharField("name")
     val type = createVarcharField("type")
     val dateOfArrival = createDateField("data_of_arrival")
@@ -34,7 +34,7 @@ class PetDao @Inject constructor(
     private val petMapper = RecordMapper<Record, Pet>
     { record ->
         Pet(
-            id = record[petTable.id] as UUID,
+            id = record[petTable.id],
             name = record[petTable.name],
             type = PetType.fromString(record[petTable.type]),
             dataOfArrival = record[PetTable.instance.dateOfArrival].toLocalDate(),

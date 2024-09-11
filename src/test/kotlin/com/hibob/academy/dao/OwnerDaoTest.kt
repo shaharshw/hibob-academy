@@ -16,7 +16,6 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
     private val ownerDao = OwnerDao(sql)
     val table = OwnerTable.instance
     val companyId = 1L
-    val id = UUID.randomUUID()
 
     @BeforeEach
     @AfterEach
@@ -27,7 +26,7 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
     @Test
     fun `test create owner and get all owners`() {
         val owner = Owner(
-            id = id,
+            id = 1L,
             name = "Shahar Shwartz",
             companyId = companyId,
             employeeId = "123",
@@ -46,7 +45,7 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
     @Test
     fun `test create owner with missing first name and last name`() {
         val owner = Owner(
-            id = id,
+            id = 1L,
             name = "Shahar Shwartz Logashi",
             companyId = companyId,
             employeeId = "123",
@@ -66,7 +65,7 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
     fun `test create owner with the same employeeId and companyId`() {
 
         val owner1 = Owner(
-            id = id,
+            id = 1L,
             name = "Shahar Shwartz",
             companyId = companyId,
             employeeId = "123",
@@ -75,7 +74,7 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
         )
 
         val owner2 = Owner(
-            id = UUID.randomUUID(),
+            id = 2L,
             name = "Or Shwartz",
             companyId = companyId,
             employeeId = "123",
@@ -104,7 +103,7 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
         val companyId2 = 2L
 
         val owner1 = Owner(
-            id = UUID.randomUUID(),
+            id = 1L,
             name = "Shahar Shwartz",
             companyId = companyId1,
             employeeId = "123",
@@ -113,7 +112,7 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
         )
 
         val owner2 = Owner(
-            id = UUID.randomUUID(),
+            id = 2L,
             name = "Or Shwartz",
             companyId = companyId1,
             employeeId = "124",

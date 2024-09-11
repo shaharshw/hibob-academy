@@ -19,8 +19,8 @@ class PetResource {
     @GET
     fun getALLPets() : Response{
         val pets = listOf(
-            Pet(UUID.randomUUID(), "Bobby", PetType.DOG, LocalDate.parse("2021-01-01"), 1),
-            Pet(UUID.randomUUID(), "Kitty", PetType.CAT, LocalDate.parse("2021-01-01"), 1)
+            Pet(1L, "Bobby", PetType.DOG, LocalDate.parse("2021-01-01"), 1),
+            Pet(2L, "Kitty", PetType.CAT, LocalDate.parse("2021-01-01"), 1)
         )
         return Response.ok(pets).build()
     }

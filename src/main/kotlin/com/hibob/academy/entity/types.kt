@@ -1,10 +1,9 @@
 package com.hibob.academy.entity
 
 import java.time.LocalDate
-import java.util.*
 
 data class Pet(
-    val id: UUID,
+    val id: Long,
     val name: String,
     val type : PetType,
     val dataOfArrival : LocalDate,
@@ -12,7 +11,7 @@ data class Pet(
 )
 
 data class Owner(
-    val id: UUID,
+    val id: Long,
     var name: String?,
     val companyId: Long,
     val employeeId : String,

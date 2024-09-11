@@ -31,7 +31,7 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
     fun `test create pet and get all pets`() {
 
         val pet = Pet(
-            id = UUID.randomUUID(),
+            id = 1L,
             name = "Buddy",
             type = PetType.DOG,
             dataOfArrival = LocalDate.of(2021, 1, 1),
@@ -52,7 +52,7 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
 
         val exception = assertThrows<IllegalArgumentException> {
             val pet = Pet(
-                id = UUID.randomUUID(),
+                id = 1L,
                 name = "Buddy",
                 type = PetType.fromString(invalidPetType), // This should throw an exception or handle the error
                 dataOfArrival = LocalDate.of(2021, 1, 1),
@@ -67,7 +67,7 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
     @Test
     fun `test get pet by type`() {
         val pet1 = Pet(
-            id = UUID.randomUUID(),
+            id = 1L,
             name = "Buddy",
             type = PetType.CAT,
             dataOfArrival = LocalDate.of(2021, 1, 1),
@@ -75,7 +75,7 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
         )
 
         val pet2 = Pet(
-            id = UUID.randomUUID(),
+            id = 2L,
             name = "Max",
             type = PetType.DOG,
             dataOfArrival = LocalDate.of(2021, 1, 1),
@@ -97,7 +97,7 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
         val companyId2 = 2L
 
         val pet1 = Pet(
-            id = UUID.randomUUID(),
+            id = 1L,
             name = "Buddy",
             type = PetType.DOG,
             dataOfArrival = LocalDate.of(2021, 1, 1),
@@ -105,7 +105,7 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
         )
 
         val pet2 = Pet(
-            id = UUID.randomUUID(),
+            id = 2L,
             name = "Max",
             type = PetType.CAT,
             dataOfArrival = LocalDate.of(2021, 1, 1),
@@ -124,7 +124,7 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
     @Test
     fun `test get pets by invalid type`() {
         val pet1 = Pet(
-            id = UUID.randomUUID(),
+            id = 1L,
             name = "Buddy",
             type = PetType.DOG,
             dataOfArrival = LocalDate.of(2021, 1, 1),
