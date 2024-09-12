@@ -1,6 +1,7 @@
 package com.hibob.academy.resource
 
 import com.hibob.academy.entity.Owner
+import com.hibob.academy.service.OwnerService
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
@@ -11,7 +12,9 @@ import java.util.*
 @Controller
 @Path("/api/owner")
 @Produces(MediaType.APPLICATION_JSON)
-class OwnerResource {
+class OwnerResource(
+    private val ownerService: OwnerService
+) {
 
     @GET
     fun getALLOwners() : Response {

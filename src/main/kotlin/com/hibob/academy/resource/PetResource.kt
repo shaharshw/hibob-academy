@@ -3,6 +3,7 @@ package com.hibob.academy.resource
 
 import com.hibob.academy.entity.Pet
 import com.hibob.academy.entity.PetType
+import com.hibob.academy.service.PetService
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
@@ -14,7 +15,9 @@ import java.util.*
 @Controller
 @Path("/api/pet")
 @Produces(MediaType.APPLICATION_JSON)
-class PetResource {
+class PetResource(
+    private val petService: PetService
+) {
 
     @GET
     fun getALLPets() : Response{
