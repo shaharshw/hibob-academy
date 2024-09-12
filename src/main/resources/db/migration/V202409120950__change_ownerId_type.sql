@@ -1,0 +1,3 @@
+
+ALTER TABLE pets DROP COLUMN owner_id;
+ALTER TABLE pets ADD COLUMN owner_id BIGINT;
