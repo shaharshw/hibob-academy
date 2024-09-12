@@ -1,6 +1,7 @@
 package com.hibob.academy.service
 
 import com.hibob.academy.dao.OwnerDao
+import com.hibob.academy.entity.CreateOwnerRequest
 import com.hibob.academy.entity.Owner
 import jakarta.ws.rs.BadRequestException
 import org.springframework.stereotype.Service
@@ -14,19 +15,26 @@ class OwnerService(
     fun getAllOwnersByCompanyId(companyId: Long) =
         ownerDao.getAllOwnersByCompanyId(companyId)
 
-    fun createOwner(owner: Owner): Owner {
+    fun createOwner(createOwnerRequest: CreateOwnerRequest): Long {
 
         val generatedId = UUID.randomUUID().mostSignificantBits and Long.MAX_VALUE
-        val ownerWithId = owner.copy(id = generatedId)
-        val ownerToCreate = populateOwnerNameFields(ownerWithId)
+        val owner = Owner(
+            id = generatedId,
+            name = createOwnerRequest.name,
+            companyId = createOwnerRequest.companyId,
+            employeeId = createOwnerRequest.employeeId,
+            firstName = createOwnerRequest.firstName,
+            lastName = createOwnerRequest.lastName
+            )
 
-        val isSuccessful = ownerDao.createOwner(ownerToCreate)
+        val ownerToCreate = populateOwnerNameFields(owner)
+        val ownerId = ownerDao.createOwner(ownerToCreate)
 
-        if (!isSuccessful) {
-            throw BadRequestException("Owner with the same employeeId and companyId already exists")
+        if (ownerId == 0L) {
+            throw BadRequestException("Owner creation failed")
         }
 
-        return ownerToCreate
+        return ownerId
     }
 
     private fun populateOwnerNameFields(owner: Owner): Owner {

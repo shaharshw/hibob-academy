@@ -21,24 +21,6 @@ class OwnerTable(tableName: String = "owner") : JooqTable(tableName) {
 }
 
 @Component
-class OwnerMapper : RecordMapper<Record, Owner> {
-    override fun map(record: Record): Owner {
-        val nameParts = record.getValue("name", String::class.java)?.split("\\s+".toRegex())
-        val firstName = nameParts?.getOrNull(0).orEmpty()
-        val lastName = nameParts?.drop(1)?.joinToString(" ").takeIf { it?.isNotEmpty() == true }
-
-        return Owner(
-            id = record.getValue("id", Long::class.java),
-            name = record.getValue("name", String::class.java),
-            companyId = record.getValue("company_id", Long::class.java),
-            employeeId = record.getValue("employee_id", String::class.java),
-            firstName = firstName,
-            lastName = lastName
-        )
-    }
-}
-
-@Component
 class OwnerDao(
     private val sql: DSLContext
 ) {
@@ -71,15 +53,18 @@ class OwnerDao(
             .fetch(ownerMapper)
     }
 
-    fun createOwner(owner: Owner): Boolean {
-        return sql.insertInto(ownerTable)
+    fun createOwner(owner: Owner): Long {
+        val record = sql.insertInto(ownerTable)
             .set(ownerTable.id, owner.id)
             .set(ownerTable.name, owner.name)
             .set(ownerTable.companyId, owner.companyId)
             .set(ownerTable.employeeId, owner.employeeId)
             .onConflict(ownerTable.companyId, ownerTable.employeeId)
             .doNothing()
-            .execute() > 0
+            .returning(ownerTable.id)
+            .fetchOne()
+
+        return record?.getValue(ownerTable.id) ?: 0L
     }
 
     fun getOwnerById(ownerId: Long): Owner? {

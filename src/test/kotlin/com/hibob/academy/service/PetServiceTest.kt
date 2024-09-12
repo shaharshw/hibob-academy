@@ -2,7 +2,7 @@ package com.hibob.academy.service
 
 import com.hibob.academy.dao.PetDao
 import com.hibob.academy.entity.Owner
-import com.hibob.academy.entity.Pet
+import com.hibob.academy.entity.OwnerById
 import jakarta.ws.rs.BadRequestException
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -26,7 +26,12 @@ class PetServiceTest {
             lastName = "Shwartz"
         )
 
-        whenever(petDaoMock.getOwnerByPetId(petId)).thenReturn(owner)
+        val ownerById = OwnerById(
+            petExists = true,
+            owner = owner
+        )
+
+        whenever(petDaoMock.getOwnerByPetId(petId)).thenReturn(ownerById)
 
         val actualOwner = petService.getOwnerByPetId(petId)
 
@@ -39,11 +44,27 @@ class PetServiceTest {
 
         whenever(petDaoMock.getOwnerByPetId(petId)).thenReturn(null)
 
+        val actualOwner = petService.getOwnerByPetId(petId)
+
+        assertNull(actualOwner)
+    }
+
+    @Test
+    fun `test get owner by pet id when pet has no owner`() {
+        val petId = 1L
+
+        val ownerById = OwnerById(
+            petExists = false,
+            owner = null
+        )
+
+        whenever(petDaoMock.getOwnerByPetId(petId)).thenReturn(ownerById)
+
         val exception = assertThrows<BadRequestException> {
             petService.getOwnerByPetId(petId)
         }
 
-        assertEquals("Pet with ID $petId not found", exception.message)
+        assertEquals("Pet with id $petId does not have an owner", exception.message)
     }
 
     @Test

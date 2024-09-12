@@ -1,6 +1,7 @@
 package com.hibob.academy.dao
 
 import com.hibob.academy.entity.Owner
+import com.hibob.academy.entity.OwnerById
 import com.hibob.academy.entity.Pet
 import com.hibob.academy.entity.PetType
 import com.hibob.academy.utils.JooqTable
@@ -46,6 +47,15 @@ class PetDao @Inject constructor(
         )
     }
 
+    private val ownerByIdMapper = RecordMapper<Record, OwnerById> { record ->
+        OwnerById(
+            petExists = record[petTable.ownerId] != null,
+            owner = ownerMapper.map(record)
+        )
+    }
+
+    private val ownerMapper = OwnerDao.ownerMapper
+
     fun createPet(pet: Pet) : Int {
         return sql.insertInto(petTable)
             .set(petTable.id, pet.id)
@@ -79,16 +89,15 @@ class PetDao @Inject constructor(
             .fetchOne(petMapper)
     }
 
-    fun getOwnerByPetId(petId: Long): Owner? {
+    fun getOwnerByPetId(petId: Long): OwnerById? {
 
         val ownerTable = OwnerTable.instance
-        val ownerMapper = OwnerDao.ownerMapper
 
         return sql.select(ownerTable.id, ownerTable.name, ownerTable.companyId, ownerTable.employeeId)
             .from(petTable)
             .join(ownerTable).on(petTable.ownerId.eq(ownerTable.id))
             .where(petTable.id.eq(petId))
-            .fetchOne(ownerMapper)
+            .fetchOne(ownerByIdMapper)
     }
 
     fun assignOwnerToPet(petId: Long, ownerId: Long): Boolean {

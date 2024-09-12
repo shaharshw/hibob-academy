@@ -1,5 +1,6 @@
 package com.hibob.academy.resource
 
+import com.hibob.academy.entity.CreateOwnerRequest
 import com.hibob.academy.entity.Owner
 import com.hibob.academy.service.OwnerService
 import jakarta.ws.rs.*
@@ -24,10 +25,10 @@ class OwnerResource(
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    fun createOwner(owner: Owner): Response {
+        fun createOwner(createOwnerRequest: CreateOwnerRequest): Response {
 
-        val owner = ownerService.createOwner(owner)
-        return Response.status(Status.CREATED).entity(owner).build()
+        val ownerId = ownerService.createOwner(createOwnerRequest)
+        return Response.status(Status.CREATED).entity(ownerId).build()
     }
 
     @PUT

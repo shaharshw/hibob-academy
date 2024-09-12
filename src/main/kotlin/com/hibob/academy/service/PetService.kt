@@ -19,6 +19,12 @@ class PetService(
 
     fun getOwnerByPetId(petId: Long): Owner? {
 
-        return petDao.getOwnerByPetId(petId) ?: throw BadRequestException("Pet with ID $petId not found")
+        val ownerById = petDao.getOwnerByPetId(petId) ?: return null
+
+        if (!ownerById.petExists) {
+            throw BadRequestException("Pet with id $petId does not have an owner")
+        }
+
+        return ownerById.owner
     }
 }

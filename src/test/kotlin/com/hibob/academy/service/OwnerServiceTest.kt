@@ -1,6 +1,7 @@
 package com.hibob.academy.service
 
 import com.hibob.academy.dao.OwnerDao
+import com.hibob.academy.entity.CreateOwnerRequest
 import com.hibob.academy.entity.Owner
 import jakarta.ws.rs.BadRequestException
 import org.junit.jupiter.api.Assertions.*
@@ -14,8 +15,7 @@ class OwnerServiceTest {
 
     @Test
     fun `test create owner successfully`() {
-        val owner = Owner(
-            id = null,
+        val createOwnerRequest = CreateOwnerRequest(
             name = "Shahar Shwartz",
             companyId = 1L,
             employeeId = "123",
@@ -23,16 +23,15 @@ class OwnerServiceTest {
             lastName = "Shwartz"
         )
 
-        whenever(ownerDaoMock.createOwner(any())).thenReturn(true)
-        val createdOwner = ownerService.createOwner(owner)
+        whenever(ownerDaoMock.createOwner(any())).thenReturn(1L)
+        val createdOwnerId = ownerService.createOwner(createOwnerRequest)
         verify(ownerDaoMock).createOwner(any())
-        assertEquals(owner.copy(id = createdOwner.id), createdOwner)
+        assertEquals(1L, createdOwnerId)
     }
 
     @Test
     fun `test create owner with missing first name and last name`() {
-        val owner = Owner(
-            id = null,
+        val createOwnerRequest = CreateOwnerRequest(
             name = "Shahar Shwartz Logashi",
             companyId = 1L,
             employeeId = "123",
@@ -40,18 +39,15 @@ class OwnerServiceTest {
             lastName = null
         )
 
-        whenever(ownerDaoMock.createOwner(any())).thenReturn(true)
-        val expectedOwner = owner.copy(firstName = "Shahar", lastName = "Shwartz Logashi")
-        val createdOwner = ownerService.createOwner(owner)
+        whenever(ownerDaoMock.createOwner(any())).thenReturn(1L)
+        val createdOwnerId = ownerService.createOwner(createOwnerRequest)
         verify(ownerDaoMock).createOwner(any())
-
-        assertEquals(expectedOwner.copy(id = createdOwner.id), createdOwner)
+        assertEquals(1L, createdOwnerId)
     }
 
     @Test
     fun `test create owner with missing name and first or last name throws exception`() {
-        val owner = Owner(
-            id = 1L,
+        val createOwnerRequest = CreateOwnerRequest(
             name = null,
             companyId = 1L,
             employeeId = "123",
@@ -60,7 +56,7 @@ class OwnerServiceTest {
         )
 
         assertThrows(BadRequestException::class.java) {
-            ownerService.createOwner(owner)
+            ownerService.createOwner(createOwnerRequest)
         }
 
         verify(ownerDaoMock, never()).createOwner(any())
@@ -86,8 +82,7 @@ class OwnerServiceTest {
 
     @Test
     fun `test create owner with the same employeeId and companyId`() {
-        val owner1 = Owner(
-            id = null,
+        val createOwnerRequest1 = CreateOwnerRequest(
             name = "Shahar Shwartz",
             companyId = 1L,
             employeeId = "123",
@@ -95,8 +90,7 @@ class OwnerServiceTest {
             lastName = "Shwartz"
         )
 
-        val owner2 = Owner(
-            id = null,
+        val createOwnerRequest2 = CreateOwnerRequest(
             name = "Or Shwartz",
             companyId = 1L,
             employeeId = "123",
@@ -104,15 +98,14 @@ class OwnerServiceTest {
             lastName = "Shwartz"
         )
 
-        whenever(ownerDaoMock.createOwner(any())).thenReturn(true).thenReturn(false)
+        whenever(ownerDaoMock.createOwner(any())).thenReturn(1L).thenReturn(0L)
 
-        val createdOwner1 = ownerService.createOwner(owner1)
-        assertEquals(owner1.copy(id = createdOwner1.id), createdOwner1)
+        val createdOwnerId1 = ownerService.createOwner(createOwnerRequest1)
+        assertEquals(1L, createdOwnerId1)
 
         val exception = assertThrows(BadRequestException::class.java) {
-            ownerService.createOwner(owner2)
+            ownerService.createOwner(createOwnerRequest2)
         }
-        assertEquals("Owner with the same employeeId and companyId already exists", exception.message)
-
+        assertEquals("Owner creation failed", exception.message)
     }
 }
