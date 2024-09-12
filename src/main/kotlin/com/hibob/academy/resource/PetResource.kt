@@ -49,6 +49,16 @@ class PetResource(
     @PUT
     @Path("/{petId}/owner/{ownerId}")
     fun assignOwnerToPet(@PathParam("petId") petId: Long, @PathParam("ownerId") ownerId: Long) : Response {
-        return Response.ok().build()
+
+        val updatePet = petService.assignOwnerToPet(petId, ownerId)
+        return Response.ok(updatePet).build()
+    }
+
+    @GET
+    @Path("/{petId}/owner")
+    fun getOwnerByPetId(@PathParam("petId") petId: Long) : Response {
+
+        val owner = petService.getOwnerByPetId(petId)
+        return Response.ok(owner).build()
     }
 }

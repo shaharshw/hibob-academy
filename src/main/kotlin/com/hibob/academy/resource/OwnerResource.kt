@@ -17,32 +17,16 @@ class OwnerResource(
 ) {
 
     @GET
-    fun getALLOwners() : Response {
-        return Response.ok(listOf(
-            Owner(1L, "Shahar", 1L, "1", null, null),
-            Owner(2L, "Alex", 2L, "2", null, null)
-        ))
-            .build()
+    @Path("/all/{companyId}")
+    fun getALLOwners(@PathParam("companyId") companyId : Long) : Response {
+        return Response.ok(ownerService.getAllOwnersByCompanyId(companyId)).build()
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     fun createOwner(owner: Owner): Response {
 
-        owner.name = owner.name ?: run {
-            if (owner.firstName.isNullOrEmpty() || owner.lastName.isNullOrEmpty()) {
-                throw BadRequestException("Name is required")
-            } else {
-                "${owner.firstName} ${owner.lastName}"
-            }
-        }
-
-        owner.name?.let { fullName ->
-            val nameParts = fullName.trim().split("\\s+".toRegex())
-            owner.firstName = nameParts[0]
-            owner.lastName = nameParts.drop(1).joinToString(" ").takeIf { it.isNotEmpty() }
-        }
-
+        val owner = ownerService.createOwner(owner)
         return Response.status(Status.CREATED).entity(owner).build()
     }
 

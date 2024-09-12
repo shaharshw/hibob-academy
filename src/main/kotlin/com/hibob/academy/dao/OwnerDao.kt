@@ -63,4 +63,12 @@ class OwnerDao(
             .doNothing()
             .execute()
     }
+
+    fun getOwnerById(ownerId: Long): Owner? {
+
+        return sql.select(ownerTable.id, ownerTable.name, ownerTable.companyId, ownerTable.employeeId)
+            .from(ownerTable)
+            .where(ownerTable.id.eq(ownerId))
+            .fetchOne(ownerMapper)
+    }
 }

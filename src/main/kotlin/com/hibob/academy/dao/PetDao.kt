@@ -71,4 +71,20 @@ class PetDao @Inject constructor(
             .where(petTable.type.eq(petType.name).and(petTable.companyId.eq(companyId)))
             .fetch (petMapper)
     }
+
+    fun getPetById(petId: Long): Pet? {
+        return sql.selectFrom(petTable)
+            .where(petTable.id.eq(petId))
+            .fetchOne(petMapper)
+    }
+
+    fun assignOwnerToPet(petId: Long, ownerId: Long): Pet? {
+
+        sql.update(petTable)
+            .set(petTable.ownerId, ownerId)
+            .where(petTable.id.eq(petId))
+            .execute()
+
+        return getPetById(petId)
+    }
 }

@@ -127,4 +127,29 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
 
         assertTrue(owners.isEmpty())
     }
+
+    @Test
+    fun `test get owner by id`() {
+        val owner = Owner(
+            id = 1L,
+            name = "Shahar Shwartz",
+            companyId = companyId,
+            employeeId = "123",
+            firstName = "Shahar",
+            lastName = "Shwartz"
+        )
+
+        ownerDao.createOwner(owner)
+
+        val expectedOwner = owner
+        val actualOwner = ownerDao.getOwnerById(owner.id)
+
+        assertEquals(expectedOwner, actualOwner)
+    }
+
+    @Test
+    fun `test get owner by id when owner does not exist`() {
+        val owner = ownerDao.getOwnerById(1L)
+        assertNull(owner)
+    }
 }
