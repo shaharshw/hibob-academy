@@ -18,6 +18,7 @@ class PetTable(tableName: String = "pets") : JooqTable(tableName) {
     val type = createVarcharField("type")
     val dateOfArrival = createDateField("data_of_arrival")
     val companyId = createBigIntField("company_id")
+    val ownerId = createBigIntField("owner_id")
 
     companion object {
         val instance = PetTable()
@@ -38,7 +39,8 @@ class PetDao @Inject constructor(
             name = record[petTable.name],
             type = PetType.fromString(record[petTable.type]),
             dataOfArrival = record[PetTable.instance.dateOfArrival].toLocalDate(),
-            companyId = record[petTable.companyId].toString().toLong()
+            companyId = record[petTable.companyId].toString().toLong(),
+            ownerId = record[petTable.ownerId].toString().toLong()
         )
     }
 
@@ -50,12 +52,13 @@ class PetDao @Inject constructor(
             .set(petTable.type, pet.type.name)
             .set(petTable.dateOfArrival, Date.valueOf(pet.dataOfArrival))
             .set(petTable.companyId, pet.companyId)
+            .set(petTable.ownerId, pet.ownerId)
             .execute()
     }
 
     fun getAllPetsByCompanyId(companyId : Long): List<Pet> {
 
-        return sql.select(petTable.id, petTable.name, petTable.type, petTable.dateOfArrival, petTable.companyId)
+        return sql.select(petTable.id, petTable.name, petTable.type, petTable.dateOfArrival, petTable.companyId, petTable.ownerId)
             .from(petTable)
             .where(petTable.companyId.eq(companyId))
             .fetch (petMapper)
@@ -63,7 +66,7 @@ class PetDao @Inject constructor(
 
     fun getPetsByType(petType: PetType, companyId: Long): List<Pet> {
 
-        return sql.select(petTable.id, petTable.name, petTable.type, petTable.dateOfArrival, petTable.companyId)
+        return sql.select(petTable.id, petTable.name, petTable.type, petTable.dateOfArrival, petTable.companyId, petTable.ownerId)
             .from(petTable)
             .where(petTable.type.eq(petType.name).and(petTable.companyId.eq(companyId)))
             .fetch (petMapper)

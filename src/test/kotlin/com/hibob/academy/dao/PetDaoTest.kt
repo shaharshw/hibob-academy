@@ -35,7 +35,8 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
             name = "Buddy",
             type = PetType.DOG,
             dataOfArrival = LocalDate.of(2021, 1, 1),
-            companyId = companyId
+            companyId = companyId,
+            ownerId = 1L
         )
 
         petDao.createPet(pet)
@@ -56,7 +57,8 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
                 name = "Buddy",
                 type = PetType.fromString(invalidPetType), // This should throw an exception or handle the error
                 dataOfArrival = LocalDate.of(2021, 1, 1),
-                companyId = companyId
+                companyId = companyId,
+                ownerId = 1L
             )
             petDao.createPet(pet)
         }
@@ -71,7 +73,8 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
             name = "Buddy",
             type = PetType.CAT,
             dataOfArrival = LocalDate.of(2021, 1, 1),
-            companyId = companyId
+            companyId = companyId,
+            ownerId = 1L
         )
 
         val pet2 = Pet(
@@ -80,6 +83,7 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
             type = PetType.DOG,
             dataOfArrival = LocalDate.of(2021, 1, 1),
             companyId = companyId,
+            ownerId = 1L
         )
 
         petDao.createPet(pet1)
@@ -101,7 +105,8 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
             name = "Buddy",
             type = PetType.DOG,
             dataOfArrival = LocalDate.of(2021, 1, 1),
-            companyId = companyId1
+            companyId = companyId1,
+            ownerId = 1L
         )
 
         val pet2 = Pet(
@@ -109,7 +114,8 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
             name = "Max",
             type = PetType.CAT,
             dataOfArrival = LocalDate.of(2021, 1, 1),
-            companyId = companyId1
+            companyId = companyId1,
+            ownerId = 1L
         )
 
         petDao.createPet(pet1)
@@ -128,7 +134,8 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
             name = "Buddy",
             type = PetType.DOG,
             dataOfArrival = LocalDate.of(2021, 1, 1),
-            companyId = companyId
+            companyId = companyId,
+            ownerId = 1L
         )
 
         petDao.createPet(pet1)

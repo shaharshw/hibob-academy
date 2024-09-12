@@ -22,8 +22,8 @@ class PetResource(
     @GET
     fun getALLPets() : Response{
         val pets = listOf(
-            Pet(1L, "Bobby", PetType.DOG, LocalDate.parse("2021-01-01"), 1),
-            Pet(2L, "Kitty", PetType.CAT, LocalDate.parse("2021-01-01"), 1)
+            Pet(1L, "Bobby", PetType.DOG, LocalDate.parse("2021-01-01"), 1, 1L),
+            Pet(2L, "Kitty", PetType.CAT, LocalDate.parse("2021-01-01"), 1, 2L)
         )
         return Response.ok(pets).build()
     }
@@ -43,6 +43,12 @@ class PetResource(
     @DELETE
     @Path("/{petId}")
     fun deletePet(@PathParam("petId") petId: Long) : Response {
+        return Response.ok().build()
+    }
+
+    @PUT
+    @Path("/{petId}/owner/{ownerId}")
+    fun assignOwnerToPet(@PathParam("petId") petId: Long, @PathParam("ownerId") ownerId: Long) : Response {
         return Response.ok().build()
     }
 }
