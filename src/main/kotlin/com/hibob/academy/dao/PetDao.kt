@@ -1,5 +1,6 @@
 package com.hibob.academy.dao
 
+import com.hibob.academy.entity.Owner
 import com.hibob.academy.entity.Pet
 import com.hibob.academy.entity.PetType
 import com.hibob.academy.utils.JooqTable
@@ -39,11 +40,10 @@ class PetDao @Inject constructor(
             name = record[petTable.name],
             type = PetType.fromString(record[petTable.type]),
             dataOfArrival = record[PetTable.instance.dateOfArrival].toLocalDate(),
-            companyId = record[petTable.companyId].toString().toLong(),
-            ownerId = record[petTable.ownerId].toString().toLong()
+            companyId = record[petTable.companyId],
+            ownerId = record[petTable.ownerId]
         )
     }
-
 
     fun createPet(pet: Pet) : Int {
         return sql.insertInto(petTable)
@@ -78,13 +78,23 @@ class PetDao @Inject constructor(
             .fetchOne(petMapper)
     }
 
-    fun assignOwnerToPet(petId: Long, ownerId: Long): Pet? {
+    fun getOwnerByPetId(petId: Long): Owner? {
 
-        sql.update(petTable)
+        val ownerTable = OwnerTable.instance
+        val ownerMapper = OwnerMapper()
+
+        return sql.select(ownerTable.id, ownerTable.name, ownerTable.companyId, ownerTable.employeeId)
+            .from(petTable)
+            .join(ownerTable).on(petTable.ownerId.eq(ownerTable.id))
+            .where(petTable.id.eq(petId))
+            .fetchOne(ownerMapper)
+    }
+
+    fun assignOwnerToPet(petId: Long, ownerId: Long): Boolean? {
+
+        return sql.update(petTable)
             .set(petTable.ownerId, ownerId)
             .where(petTable.id.eq(petId))
-            .execute()
-
-        return getPetById(petId)
+            .execute() > 0
     }
 }

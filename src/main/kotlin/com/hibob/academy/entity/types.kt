@@ -8,7 +8,7 @@ data class Pet(
     val type : PetType,
     val dataOfArrival : LocalDate,
     val companyId : Long,
-    val ownerId : Long
+    val ownerId : Long?
 )
 
 data class Owner(

@@ -10,18 +10,15 @@ import org.springframework.stereotype.Service
 @Service
 class PetService(
     private val petDao: PetDao,
-    private val ownerDao: OwnerDao
 ) {
 
-    fun assignOwnerToPet(petId: Long, ownerId: Long) {
+    fun assignOwnerToPet(petId: Long, ownerId: Long) : Boolean? {
 
-        val pet = petDao.getPetById(petId) ?: throw BadRequestException("Pet with ID $petId not found")
-        petDao.assignOwnerToPet(pet.id, ownerId)
+        return petDao.assignOwnerToPet(petId, ownerId)
     }
 
     fun getOwnerByPetId(petId: Long): Owner? {
 
-        val pet = petDao.getPetById(petId) ?: throw BadRequestException("Pet with ID $petId not found")
-        return ownerDao.getOwnerById(pet.ownerId)
+        return petDao.getOwnerByPetId(petId)
     }
 }

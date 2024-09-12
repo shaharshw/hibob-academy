@@ -22,28 +22,31 @@ class OwnerTable(tableName: String = "owner") : JooqTable(tableName) {
 }
 
 @Component
+class OwnerMapper : RecordMapper<Record, Owner> {
+    override fun map(record: Record): Owner {
+        val nameParts = record.getValue("name", String::class.java)?.split("\\s+".toRegex())
+        val firstName = nameParts?.getOrNull(0).orEmpty()
+        val lastName = nameParts?.drop(1)?.joinToString(" ").takeIf { it?.isNotEmpty() == true }
+
+        return Owner(
+            id = record.getValue("id", Long::class.java),
+            name = record.getValue("name", String::class.java),
+            companyId = record.getValue("company_id", Long::class.java),
+            employeeId = record.getValue("employee_id", String::class.java),
+            firstName = firstName,
+            lastName = lastName
+        )
+    }
+}
+
+@Component
 class OwnerDao(
     private val sql: DSLContext
 ) {
 
     private val ownerTable = OwnerTable.instance
 
-    private val ownerMapper = RecordMapper<Record, Owner>
-    { record ->
-
-        val nameParts = record[ownerTable.name]?.split("\\s+".toRegex())
-        val firstName = nameParts?.getOrNull(0).orEmpty()
-        val lastName = nameParts?.drop(1)?.joinToString(" ").takeIf { it?.isNotEmpty() == true }
-
-        Owner(
-            id = record[ownerTable.id],
-            name = record[ownerTable.name],
-            companyId = record[ownerTable.companyId],
-            employeeId = record[ownerTable.employeeId].toString(),
-            firstName = firstName,
-            lastName = lastName
-        )
-    }
+    private val ownerMapper = OwnerMapper()
 
     fun getAllOwnersByCompanyId(companyId : Long): List<Owner> {
 

@@ -10,7 +10,8 @@ class OwnerService(
     private val ownerDao: OwnerDao
 ) {
 
-    fun getAllOwnersByCompanyId(companyId: Long) = ownerDao.getAllOwnersByCompanyId(companyId)
+    fun getAllOwnersByCompanyId(companyId: Long) =
+        ownerDao.getAllOwnersByCompanyId(companyId)
 
     fun createOwner(owner: Owner): Owner {
         val ownerToCreate = populateOwnerNameFields(owner)
