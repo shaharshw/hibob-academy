@@ -142,7 +142,7 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
         ownerDao.createOwner(owner)
 
         val expectedOwner = owner
-        val actualOwner = ownerDao.getOwnerById(owner.id)
+        val actualOwner = ownerDao.getOwnerById(owner.id!!)
 
         assertEquals(expectedOwner, actualOwner)
     }

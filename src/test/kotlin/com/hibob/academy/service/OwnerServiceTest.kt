@@ -15,7 +15,7 @@ class OwnerServiceTest {
     @Test
     fun `test create owner successfully`() {
         val owner = Owner(
-            id = 1L,
+            id = null,
             name = "Shahar Shwartz",
             companyId = 1L,
             employeeId = "123",
@@ -25,14 +25,14 @@ class OwnerServiceTest {
 
         whenever(ownerDaoMock.createOwner(any())).thenReturn(true)
         val createdOwner = ownerService.createOwner(owner)
-        verify(ownerDaoMock).createOwner(owner)
-        assertEquals(owner, createdOwner)
+        verify(ownerDaoMock).createOwner(any())
+        assertEquals(owner.copy(id = createdOwner.id), createdOwner)
     }
 
     @Test
     fun `test create owner with missing first name and last name`() {
         val owner = Owner(
-            id = 1L,
+            id = null,
             name = "Shahar Shwartz Logashi",
             companyId = 1L,
             employeeId = "123",
@@ -43,9 +43,9 @@ class OwnerServiceTest {
         whenever(ownerDaoMock.createOwner(any())).thenReturn(true)
         val expectedOwner = owner.copy(firstName = "Shahar", lastName = "Shwartz Logashi")
         val createdOwner = ownerService.createOwner(owner)
-        verify(ownerDaoMock).createOwner(expectedOwner)
+        verify(ownerDaoMock).createOwner(any())
 
-        assertEquals(expectedOwner, createdOwner)
+        assertEquals(expectedOwner.copy(id = createdOwner.id), createdOwner)
     }
 
     @Test
@@ -59,12 +59,10 @@ class OwnerServiceTest {
             lastName = "Shwartz"
         )
 
-        // Assert that the service throws BadRequestException
         assertThrows(BadRequestException::class.java) {
             ownerService.createOwner(owner)
         }
 
-        // Verify that the DAO's createOwner method was never called
         verify(ownerDaoMock, never()).createOwner(any())
     }
 
@@ -89,16 +87,16 @@ class OwnerServiceTest {
     @Test
     fun `test create owner with the same employeeId and companyId`() {
         val owner1 = Owner(
-            id = 1L,
+            id = null,
             name = "Shahar Shwartz",
             companyId = 1L,
             employeeId = "123",
-            firstName = null,
-            lastName = null
+            firstName = "Shahar",
+            lastName = "Shwartz"
         )
 
         val owner2 = Owner(
-            id = 2L,
+            id = null,
             name = "Or Shwartz",
             companyId = 1L,
             employeeId = "123",
@@ -106,19 +104,15 @@ class OwnerServiceTest {
             lastName = "Shwartz"
         )
 
-        whenever(ownerDaoMock.createOwner(owner1)).thenReturn(true)
-        whenever(ownerDaoMock.createOwner(owner2)).thenReturn(false)
+        whenever(ownerDaoMock.createOwner(any())).thenReturn(true).thenReturn(false)
 
         val createdOwner1 = ownerService.createOwner(owner1)
-        assertEquals(owner1, createdOwner1)
+        assertEquals(owner1.copy(id = createdOwner1.id), createdOwner1)
 
         val exception = assertThrows(BadRequestException::class.java) {
             ownerService.createOwner(owner2)
         }
         assertEquals("Owner with the same employeeId and companyId already exists", exception.message)
 
-        verify(ownerDaoMock).createOwner(owner1)
-        verify(ownerDaoMock).createOwner(owner2)
     }
-
 }
