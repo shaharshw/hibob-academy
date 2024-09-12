@@ -14,8 +14,13 @@ class OwnerService(
         ownerDao.getAllOwnersByCompanyId(companyId)
 
     fun createOwner(owner: Owner): Owner {
+
         val ownerToCreate = populateOwnerNameFields(owner)
-        ownerDao.createOwner(ownerToCreate)
+        val isSuccessful = ownerDao.createOwner(ownerToCreate)
+        if (!isSuccessful) {
+            throw BadRequestException("Owner with the same employeeId and companyId already exists")
+        }
+
         return ownerToCreate
     }
 

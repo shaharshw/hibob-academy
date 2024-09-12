@@ -10,9 +10,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import java.sql.Date
 import java.time.LocalDate
-import java.util.*
 
 @BobDbTest
 class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
@@ -125,7 +123,6 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
 
         assertTrue(pets.isEmpty())
     }
-
 
     @Test
     fun `test get pets by invalid type`() {

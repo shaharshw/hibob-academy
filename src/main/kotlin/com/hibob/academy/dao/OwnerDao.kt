@@ -6,7 +6,6 @@ import org.jooq.DSLContext
 import org.jooq.Record
 import org.jooq.RecordMapper
 import org.springframework.stereotype.Component
-import java.util.UUID
 
 class OwnerTable(tableName: String = "owner") : JooqTable(tableName) {
     val id = createBigIntField("id")
@@ -46,17 +45,33 @@ class OwnerDao(
 
     private val ownerTable = OwnerTable.instance
 
-    private val ownerMapper = OwnerMapper()
+    companion object {
+        val ownerMapper = RecordMapper<Record, Owner>
+        { record ->
+            val nameParts = record.getValue("name", String::class.java)?.split("\\s+".toRegex())
+            val firstName = nameParts?.getOrNull(0).orEmpty()
+            val lastName = nameParts?.drop(1)?.joinToString(" ").takeIf { it?.isNotEmpty() == true }
 
-    fun getAllOwnersByCompanyId(companyId : Long): List<Owner> {
+            Owner(
+                id = record.getValue("id", Long::class.java),
+                name = record.getValue("name", String::class.java),
+                companyId = record.getValue("company_id", Long::class.java),
+                employeeId = record.getValue("employee_id", String::class.java),
+                firstName = firstName,
+                lastName = lastName
+            )
+        }
+    }
+
+    fun getAllOwnersByCompanyId(companyId: Long): List<Owner> {
 
         return sql.select(ownerTable.id, ownerTable.name, ownerTable.companyId, ownerTable.employeeId)
             .from(ownerTable)
             .where(ownerTable.companyId.eq(companyId))
-            .fetch (ownerMapper)
+            .fetch(ownerMapper)
     }
 
-    fun createOwner(owner: Owner) : Int {
+    fun createOwner(owner: Owner): Boolean {
         return sql.insertInto(ownerTable)
             .set(ownerTable.id, owner.id)
             .set(ownerTable.name, owner.name)
@@ -64,7 +79,7 @@ class OwnerDao(
             .set(ownerTable.employeeId, owner.employeeId)
             .onConflict(ownerTable.companyId, ownerTable.employeeId)
             .doNothing()
-            .execute()
+            .execute() > 0
     }
 
     fun getOwnerById(ownerId: Long): Owner? {

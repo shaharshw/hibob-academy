@@ -29,6 +29,7 @@ class PetTable(tableName: String = "pets") : JooqTable(tableName) {
 @Component
 class PetDao @Inject constructor(
     private val sql: DSLContext
+
 ) {
 
     private val petTable = PetTable.instance
@@ -81,7 +82,7 @@ class PetDao @Inject constructor(
     fun getOwnerByPetId(petId: Long): Owner? {
 
         val ownerTable = OwnerTable.instance
-        val ownerMapper = OwnerMapper()
+        val ownerMapper = OwnerDao.ownerMapper
 
         return sql.select(ownerTable.id, ownerTable.name, ownerTable.companyId, ownerTable.employeeId)
             .from(petTable)
