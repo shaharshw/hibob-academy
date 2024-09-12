@@ -33,22 +33,30 @@ class AuthenticationFilter : ContainerRequestFilter {
 
         val cookies: Map<String, Cookie> = requestContext.cookies
         val token = cookies[AUTH_COOKIE_NAME]?.value?.trim()
-        val claims = validateToken(token, requestContext)
+
+        if (token.isNullOrEmpty()) {
+            return respondUnauthorized(requestContext)
+        }
+
+        validateToken(token, requestContext)
     }
 
-     private fun validateToken(token: String?, requestContext: ContainerRequestContext) {
+     private fun validateToken(token: String, requestContext: ContainerRequestContext) {
 
-         token?.let {
+         token.let {
              try {
                  Jwts.parser()
                      .setSigningKey(SessionService.SECRET_KEY)
              } catch (e: Exception) {
-                 requestContext.abortWith(
-                     Response.status(Response.Status.UNAUTHORIZED)
-                         .entity("User can't access to the resource")
-                         .build()
-                 )
+                 respondUnauthorized(requestContext)
              }
          }
      }
+
+    private fun respondUnauthorized(requestContext: ContainerRequestContext) {
+        requestContext.abortWith(
+            Response.status(Response.Status.UNAUTHORIZED)
+                .entity("User can't access to the resource")
+                .build())
+    }
 }
