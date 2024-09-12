@@ -90,7 +90,7 @@ class PetDao @Inject constructor(
             .fetchOne(ownerMapper)
     }
 
-    fun assignOwnerToPet(petId: Long, ownerId: Long): Boolean? {
+    fun assignOwnerToPet(petId: Long, ownerId: Long): Boolean {
 
         return sql.update(petTable)
             .set(petTable.ownerId, ownerId)

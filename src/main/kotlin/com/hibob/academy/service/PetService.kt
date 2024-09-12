@@ -12,13 +12,13 @@ class PetService(
     private val petDao: PetDao,
 ) {
 
-    fun assignOwnerToPet(petId: Long, ownerId: Long) : Boolean? {
+    fun assignOwnerToPet(petId: Long, ownerId: Long) : Boolean {
 
         return petDao.assignOwnerToPet(petId, ownerId)
     }
 
     fun getOwnerByPetId(petId: Long): Owner? {
 
-        return petDao.getOwnerByPetId(petId)
+        return petDao.getOwnerByPetId(petId) ?: throw BadRequestException("Pet with ID $petId not found")
     }
 }

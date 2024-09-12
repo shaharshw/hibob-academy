@@ -183,18 +183,17 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
         petDao.createPet(pet)
 
         val ownerId = 2L
-        val updatedPet = petDao.assignOwnerToPet(pet.id, ownerId)
-        val expectedPet = pet.copy(ownerId = ownerId)
+        val result = petDao.assignOwnerToPet(pet.id, ownerId) ?: false
         val actualPet = petDao.getPetById(pet.id)
 
-        assertEquals(ownerId, updatedPet?.ownerId)
-        assertEquals(expectedPet, actualPet)
+        assertTrue(result)
+        assertEquals(ownerId, actualPet?.ownerId)
     }
 
     @Test
     fun `test assign owner to pet when pet does not exist`() {
         val ownerId = 2L
-        val updatedPet = petDao.assignOwnerToPet(1L, ownerId)
-        assertNull(updatedPet)
+        val result = petDao.assignOwnerToPet(1L, ownerId) ?: false
+        assertFalse(result)
     }
 }
