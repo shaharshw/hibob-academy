@@ -4,6 +4,7 @@ import com.hibob.academy.dao.OwnerDao
 import com.hibob.academy.entity.Owner
 import jakarta.ws.rs.BadRequestException
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class OwnerService(
@@ -15,8 +16,12 @@ class OwnerService(
 
     fun createOwner(owner: Owner): Owner {
 
-        val ownerToCreate = populateOwnerNameFields(owner)
+        val generatedId = UUID.randomUUID().mostSignificantBits and Long.MAX_VALUE
+        val ownerWithId = owner.copy(id = generatedId)
+        val ownerToCreate = populateOwnerNameFields(ownerWithId)
+
         val isSuccessful = ownerDao.createOwner(ownerToCreate)
+
         if (!isSuccessful) {
             throw BadRequestException("Owner with the same employeeId and companyId already exists")
         }

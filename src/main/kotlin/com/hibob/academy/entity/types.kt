@@ -12,7 +12,7 @@ data class Pet(
 )
 
 data class Owner(
-    val id: Long,
+    val id: Long?,
     var name: String?,
     val companyId: Long,
     val employeeId : String,
