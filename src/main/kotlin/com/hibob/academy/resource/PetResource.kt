@@ -61,4 +61,22 @@ class PetResource(
         val owner = petService.getOwnerByPetId(petId)
         return Response.ok(owner).build()
     }
+
+    @GET
+    @Path("/all/{ownerId}")
+    fun getAllPetsByOwner(@PathParam("ownerId") ownerId: Long) : Response {
+        return Response.ok(
+            petService.getAllPetsByOwnerId(ownerId)
+        )
+            .build()
+    }
+
+    @GET
+    @Path("/all/types")
+    fun getCountPetsByType() : Response {
+        return Response.ok(
+            petService.getCountPetsByType()
+        )
+            .build()
+    }
 }
