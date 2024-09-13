@@ -7,6 +7,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.*
 
@@ -63,7 +64,6 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     @Test
     fun `test create owner with the same employeeId and companyId`() {
-
         val owner1 = Owner(
             id = 1L,
             name = "Shahar Shwartz",
@@ -83,7 +83,12 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
         )
 
         ownerDao.createOwner(owner1)
-        ownerDao.createOwner(owner2)
+
+        val exception = assertThrows<IllegalStateException> {
+            ownerDao.createOwner(owner2)
+        }
+
+        assertEquals("Owner creation failed. No record was inserted.", exception.message)
 
         val expectedOwners = listOf(owner1.copy(firstName = "Shahar", lastName = "Shwartz"))
         val actualOwners = ownerDao.getAllOwnersByCompanyId(companyId)

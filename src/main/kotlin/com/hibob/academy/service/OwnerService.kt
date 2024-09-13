@@ -25,17 +25,12 @@ class OwnerService(
             employeeId = createOwnerRequest.employeeId,
             firstName = createOwnerRequest.firstName,
             lastName = createOwnerRequest.lastName
-            )
+        )
 
         val ownerToCreate = populateOwnerNameFields(owner)
-        val ownerId = ownerDao.createOwner(ownerToCreate)
-
-        if (ownerId == 0L) {
-            throw BadRequestException("Owner creation failed")
-        }
-
-        return ownerId
+        return ownerDao.createOwner(ownerToCreate)
     }
+
 
     private fun populateOwnerNameFields(owner: Owner): Owner {
 

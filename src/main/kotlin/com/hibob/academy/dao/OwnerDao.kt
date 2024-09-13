@@ -64,8 +64,13 @@ class OwnerDao(
             .returning(ownerTable.id)
             .fetchOne()
 
-        return record?.getValue(ownerTable.id) ?: 0L
+        if (record?.getValue(ownerTable.id) == null) {
+            throw IllegalStateException("Owner creation failed. No record was inserted.")
+        }
+
+        return record.getValue(ownerTable.id)
     }
+
 
     fun getOwnerById(ownerId: Long): Owner? {
 

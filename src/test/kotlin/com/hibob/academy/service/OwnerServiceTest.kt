@@ -6,6 +6,7 @@ import com.hibob.academy.entity.Owner
 import jakarta.ws.rs.BadRequestException
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.*
 
 class OwnerServiceTest {
@@ -98,14 +99,14 @@ class OwnerServiceTest {
             lastName = "Shwartz"
         )
 
-        whenever(ownerDaoMock.createOwner(any())).thenReturn(1L).thenReturn(0L)
+        whenever(ownerDaoMock.createOwner(any())).thenReturn(1L).thenThrow(IllegalStateException("Owner creation failed. No record was inserted."))
 
         val createdOwnerId1 = ownerService.createOwner(createOwnerRequest1)
         assertEquals(1L, createdOwnerId1)
 
-        val exception = assertThrows(BadRequestException::class.java) {
+        val exception = assertThrows<IllegalStateException> {
             ownerService.createOwner(createOwnerRequest2)
         }
-        assertEquals("Owner creation failed", exception.message)
+        assertEquals("Owner creation failed. No record was inserted.", exception.message)
     }
 }

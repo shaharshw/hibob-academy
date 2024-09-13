@@ -1,5 +1,7 @@
 package com.hibob.academy.dao
 
+import com.hibob.academy.entity.CreateOwnerRequest
+import com.hibob.academy.entity.Owner
 import com.hibob.academy.entity.Pet
 import com.hibob.academy.entity.PetType
 import com.hibob.academy.utils.BobDbTest
@@ -16,6 +18,7 @@ import java.time.LocalDate
 class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     private val petDao = PetDao(sql)
+    private val ownerDao = OwnerDao(sql)
     val table = PetTable.instance
     val companyId = 1L
 
@@ -192,5 +195,64 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
         val ownerId = 2L
         val result = petDao.assignOwnerToPet(1L, ownerId) ?: false
         assertFalse(result)
+    }
+
+    @Test
+    fun `test get owner by pet id when owner exists`() {
+        val owner = Owner(
+            id = 1L,
+            name = "Shahar Shwartz",
+            companyId = companyId,
+            employeeId = "12345",
+            firstName = "Shahar",
+            lastName = "Shwartz"
+        )
+
+        val pet = Pet(
+            id = 1L,
+            name = "Buddy",
+            type = PetType.DOG,
+            dataOfArrival = LocalDate.of(2021, 1, 1),
+            companyId = companyId,
+            ownerId = owner.id
+        )
+
+        ownerDao.createOwner(owner)
+        petDao.createPet(pet)
+
+        val ownerById = petDao.getOwnerByPetId(pet.id)
+
+        assertNotNull(ownerById)
+        assertTrue(ownerById!!.petExists)
+        assertEquals(owner, ownerById.owner)
+
+        sql.deleteFrom(OwnerTable.instance).where(OwnerTable.instance.companyId.eq(companyId)).execute()
+    }
+
+    @Test
+    fun `test get owner by pet id when owner does not exist`() {
+        val pet = Pet(
+            id = 1L,
+            name = "Buddy",
+            type = PetType.DOG,
+            dataOfArrival = LocalDate.of(2021, 1, 1),
+            companyId = companyId,
+            ownerId = null
+        )
+
+        petDao.createPet(pet)
+
+        val ownerById = petDao.getOwnerByPetId(pet.id)
+
+        assertNotNull(ownerById)
+        assertTrue(ownerById!!.petExists)
+        assertNull(ownerById.owner)
+    }
+
+    @Test
+    fun `test get owner by pet id when pet does not exist`() {
+        val ownerById = petDao.getOwnerByPetId(1L)
+        assertNull(ownerById)
+        assertFalse(ownerById?.petExists ?: false)
     }
 }

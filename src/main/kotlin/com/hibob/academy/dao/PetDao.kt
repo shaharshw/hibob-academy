@@ -49,8 +49,10 @@ class PetDao @Inject constructor(
 
     private val ownerByIdMapper = RecordMapper<Record, OwnerById> { record ->
         OwnerById(
-            petExists = record[petTable.ownerId] != null,
-            owner = ownerMapper.map(record)
+            petExists = record["pet_id"] != null,
+            owner = record["id"]?.let {
+                ownerMapper.map(record)
+            }
         )
     }
 
@@ -90,12 +92,17 @@ class PetDao @Inject constructor(
     }
 
     fun getOwnerByPetId(petId: Long): OwnerById? {
-
         val ownerTable = OwnerTable.instance
 
-        return sql.select(ownerTable.id, ownerTable.name, ownerTable.companyId, ownerTable.employeeId)
+        return sql.select(
+            petTable.id.`as`("pet_id"),
+            ownerTable.id,
+            ownerTable.name,
+            ownerTable.companyId,
+            ownerTable.employeeId
+        )
             .from(petTable)
-            .join(ownerTable).on(petTable.ownerId.eq(ownerTable.id))
+            .leftJoin(ownerTable).on(petTable.ownerId.eq(ownerTable.id))
             .where(petTable.id.eq(petId))
             .fetchOne(ownerByIdMapper)
     }
