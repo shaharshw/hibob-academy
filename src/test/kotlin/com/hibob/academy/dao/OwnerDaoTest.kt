@@ -93,7 +93,7 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
             lastName = "Shwartz"
         )
 
-        ownerDao.createOwner(createOwnerRequest1)
+        val ownerId = ownerDao.createOwner(createOwnerRequest1)
 
         val exception = assertThrows<BadRequestException> {
             ownerDao.createOwner(createOwnerRequest2)
@@ -102,7 +102,7 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
         assertEquals("Owner creation failed. No record was inserted.", exception.message)
 
         val expectedOwner = Owner(
-            id = 1L,
+            id = ownerId,
             name = "Shahar Shwartz",
             companyId = companyId,
             employeeId = "123",

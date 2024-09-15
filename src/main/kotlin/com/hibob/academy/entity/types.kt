@@ -1,9 +1,18 @@
 package com.hibob.academy.entity
 
+import jakarta.ws.rs.BadRequestException
 import java.time.LocalDate
 
 data class Pet(
     val id: Long,
+    val name: String,
+    val type : PetType,
+    val dataOfArrival : LocalDate,
+    val companyId : Long,
+    val ownerId : Long?
+)
+
+data class CreatePetRequest(
     val name: String,
     val type : PetType,
     val dataOfArrival : LocalDate,
@@ -42,7 +51,11 @@ enum class PetType {
 
     companion object {
         fun fromString(type: String): PetType {
-            return valueOf(type.uppercase())
+            return try {
+                valueOf(type.uppercase())
+            } catch (e: IllegalArgumentException) {
+                throw IllegalArgumentException("Invalid pet type: $type")
+            }
         }
     }
 }

@@ -1,17 +1,14 @@
 package com.hibob.academy.dao
 
-import com.hibob.academy.entity.Owner
-import com.hibob.academy.entity.OwnerById
-import com.hibob.academy.entity.Pet
-import com.hibob.academy.entity.PetType
+import com.hibob.academy.entity.*
 import com.hibob.academy.utils.JooqTable
 import jakarta.inject.Inject
+import jakarta.ws.rs.BadRequestException
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.jooq.RecordMapper
 import org.springframework.stereotype.Component
 import java.sql.Date
-import java.util.*
 
 
 class PetTable(tableName: String = "pets") : JooqTable(tableName) {
@@ -58,15 +55,17 @@ class PetDao @Inject constructor(
 
     private val ownerMapper = OwnerDao.ownerMapper
 
-    fun createPet(pet: Pet) : Int {
-        return sql.insertInto(petTable)
-            .set(petTable.id, pet.id)
+    fun createPet(pet: CreatePetRequest) : Long {
+        val record = sql.insertInto(petTable)
             .set(petTable.name, pet.name)
             .set(petTable.type, pet.type.name)
             .set(petTable.dateOfArrival, Date.valueOf(pet.dataOfArrival))
             .set(petTable.companyId, pet.companyId)
             .set(petTable.ownerId, pet.ownerId)
-            .execute()
+            .returning(petTable.id)
+            .fetchOne()
+
+        return record?.getValue(petTable.id) ?: throw BadRequestException("Failed to create pet")
     }
 
     fun getAllPetsByCompanyId(companyId : Long): List<Pet> {
