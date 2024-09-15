@@ -3,6 +3,7 @@ package com.hibob.unitest
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 class UserServiceTest {
@@ -75,6 +76,7 @@ class UserServiceTest {
         whenever(notificationServiceMock.sendEmail(user.email, "Welcome ${user.name}!")).thenReturn(true)
 
         val result = userService.verifyUserEmail(user.id, token)
+        verify(notificationServiceMock).sendEmail(user.email, "Welcome ${user.name}!")
         assertTrue(result)
     }
 
