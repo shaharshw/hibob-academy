@@ -199,8 +199,7 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     @Test
     fun `test get owner by pet id when owner exists`() {
-        val owner = Owner(
-            id = 1L,
+        val owner = CreateOwnerRequest(
             name = "Shahar Shwartz",
             companyId = companyId,
             employeeId = "12345",
@@ -208,23 +207,24 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
             lastName = "Shwartz"
         )
 
+        val ownerId = ownerDao.createOwner(owner)
+
         val pet = Pet(
             id = 1L,
             name = "Buddy",
             type = PetType.DOG,
             dataOfArrival = LocalDate.of(2021, 1, 1),
             companyId = companyId,
-            ownerId = owner.id
+            ownerId = ownerId
         )
 
-        ownerDao.createOwner(owner)
         petDao.createPet(pet)
 
         val ownerById = petDao.getOwnerByPetId(pet.id)
 
         assertNotNull(ownerById)
         assertTrue(ownerById!!.petExists)
-        assertEquals(owner, ownerById.owner)
+        assertEquals(ownerId, ownerById.owner?.id)
 
         sql.deleteFrom(OwnerTable.instance).where(OwnerTable.instance.companyId.eq(companyId)).execute()
     }

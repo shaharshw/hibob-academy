@@ -1,5 +1,6 @@
 package com.hibob.academy.dao
 
+import com.hibob.academy.entity.CreateOwnerRequest
 import com.hibob.academy.entity.Owner
 import com.hibob.academy.utils.JooqTable
 import jakarta.ws.rs.BadRequestException
@@ -52,9 +53,8 @@ class OwnerDao(
             .fetch(ownerMapper)
     }
 
-    fun createOwner(owner: Owner): Long {
+    fun createOwner(owner: CreateOwnerRequest): Long {
         val record = sql.insertInto(ownerTable)
-            .set(ownerTable.id, owner.id)
             .set(ownerTable.name, owner.name)
             .set(ownerTable.companyId, owner.companyId)
             .set(ownerTable.employeeId, owner.employeeId)
