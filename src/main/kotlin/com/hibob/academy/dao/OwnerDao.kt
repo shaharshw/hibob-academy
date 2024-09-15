@@ -2,6 +2,7 @@ package com.hibob.academy.dao
 
 import com.hibob.academy.entity.Owner
 import com.hibob.academy.utils.JooqTable
+import jakarta.ws.rs.BadRequestException
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.jooq.RecordMapper
@@ -63,7 +64,7 @@ class OwnerDao(
             .fetchOne()
 
         if (record?.getValue(ownerTable.id) == null) {
-            throw IllegalStateException("Owner creation failed. No record was inserted.")
+            throw BadRequestException("Owner creation failed. No record was inserted.")
         }
 
         return record.getValue(ownerTable.id)

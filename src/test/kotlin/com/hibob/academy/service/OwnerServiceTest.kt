@@ -99,12 +99,12 @@ class OwnerServiceTest {
             lastName = "Shwartz"
         )
 
-        whenever(ownerDaoMock.createOwner(any())).thenReturn(1L).thenThrow(IllegalStateException("Owner creation failed. No record was inserted."))
+        whenever(ownerDaoMock.createOwner(any())).thenReturn(1L).thenThrow(BadRequestException("Owner creation failed. No record was inserted."))
 
         val createdOwnerId1 = ownerService.createOwner(createOwnerRequest1)
         assertEquals(1L, createdOwnerId1)
 
-        val exception = assertThrows<IllegalStateException> {
+        val exception = assertThrows<BadRequestException> {
             ownerService.createOwner(createOwnerRequest2)
         }
         assertEquals("Owner creation failed. No record was inserted.", exception.message)

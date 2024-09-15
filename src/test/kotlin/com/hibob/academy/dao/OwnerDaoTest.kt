@@ -2,6 +2,7 @@ package com.hibob.academy.dao
 
 import com.hibob.academy.entity.Owner
 import com.hibob.academy.utils.BobDbTest
+import jakarta.ws.rs.BadRequestException
 import org.jooq.DSLContext
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
@@ -84,7 +85,7 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
 
         ownerDao.createOwner(owner1)
 
-        val exception = assertThrows<IllegalStateException> {
+        val exception = assertThrows<BadRequestException> {
             ownerDao.createOwner(owner2)
         }
 
