@@ -2,11 +2,13 @@ package com.hibob.academy.dao
 
 import com.hibob.academy.entity.Owner
 import com.hibob.academy.utils.BobDbTest
+import jakarta.ws.rs.BadRequestException
 import org.jooq.DSLContext
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.*
 
@@ -63,7 +65,6 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     @Test
     fun `test create owner with the same employeeId and companyId`() {
-
         val owner1 = Owner(
             id = 1L,
             name = "Shahar Shwartz",
@@ -83,7 +84,12 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
         )
 
         ownerDao.createOwner(owner1)
-        ownerDao.createOwner(owner2)
+
+        val exception = assertThrows<BadRequestException> {
+            ownerDao.createOwner(owner2)
+        }
+
+        assertEquals("Owner creation failed. No record was inserted.", exception.message)
 
         val expectedOwners = listOf(owner1.copy(firstName = "Shahar", lastName = "Shwartz"))
         val actualOwners = ownerDao.getAllOwnersByCompanyId(companyId)
@@ -126,5 +132,30 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
         val owners = ownerDao.getAllOwnersByCompanyId(companyId2)
 
         assertTrue(owners.isEmpty())
+    }
+
+    @Test
+    fun `test get owner by id`() {
+        val owner = Owner(
+            id = 1L,
+            name = "Shahar Shwartz",
+            companyId = companyId,
+            employeeId = "123",
+            firstName = "Shahar",
+            lastName = "Shwartz"
+        )
+
+        ownerDao.createOwner(owner)
+
+        val expectedOwner = owner
+        val actualOwner = ownerDao.getOwnerById(owner.id!!)
+
+        assertEquals(expectedOwner, actualOwner)
+    }
+
+    @Test
+    fun `test get owner by id when owner does not exist`() {
+        val owner = ownerDao.getOwnerById(1L)
+        assertNull(owner)
     }
 }

@@ -1,5 +1,7 @@
 package com.hibob.academy.dao
 
+import com.hibob.academy.entity.Owner
+import com.hibob.academy.entity.OwnerById
 import com.hibob.academy.entity.Pet
 import com.hibob.academy.entity.PetType
 import com.hibob.academy.utils.JooqTable
@@ -18,6 +20,7 @@ class PetTable(tableName: String = "pets") : JooqTable(tableName) {
     val type = createVarcharField("type")
     val dateOfArrival = createDateField("data_of_arrival")
     val companyId = createBigIntField("company_id")
+    val ownerId = createBigIntField("owner_id")
 
     companion object {
         val instance = PetTable()
@@ -27,6 +30,7 @@ class PetTable(tableName: String = "pets") : JooqTable(tableName) {
 @Component
 class PetDao @Inject constructor(
     private val sql: DSLContext
+
 ) {
 
     private val petTable = PetTable.instance
@@ -38,10 +42,21 @@ class PetDao @Inject constructor(
             name = record[petTable.name],
             type = PetType.fromString(record[petTable.type]),
             dataOfArrival = record[PetTable.instance.dateOfArrival].toLocalDate(),
-            companyId = record[petTable.companyId].toString().toLong()
+            companyId = record[petTable.companyId],
+            ownerId = record[petTable.ownerId]
         )
     }
 
+    private val ownerByIdMapper = RecordMapper<Record, OwnerById> { record ->
+        OwnerById(
+            petExists = record["pet_id"] != null,
+            owner = record["id"]?.let {
+                ownerMapper.map(record)
+            }
+        )
+    }
+
+    private val ownerMapper = OwnerDao.ownerMapper
 
     fun createPet(pet: Pet) : Int {
         return sql.insertInto(petTable)
@@ -50,12 +65,13 @@ class PetDao @Inject constructor(
             .set(petTable.type, pet.type.name)
             .set(petTable.dateOfArrival, Date.valueOf(pet.dataOfArrival))
             .set(petTable.companyId, pet.companyId)
+            .set(petTable.ownerId, pet.ownerId)
             .execute()
     }
 
     fun getAllPetsByCompanyId(companyId : Long): List<Pet> {
 
-        return sql.select(petTable.id, petTable.name, petTable.type, petTable.dateOfArrival, petTable.companyId)
+        return sql.select(petTable.id, petTable.name, petTable.type, petTable.dateOfArrival, petTable.companyId, petTable.ownerId)
             .from(petTable)
             .where(petTable.companyId.eq(companyId))
             .fetch (petMapper)
@@ -63,9 +79,39 @@ class PetDao @Inject constructor(
 
     fun getPetsByType(petType: PetType, companyId: Long): List<Pet> {
 
-        return sql.select(petTable.id, petTable.name, petTable.type, petTable.dateOfArrival, petTable.companyId)
+        return sql.select(petTable.id, petTable.name, petTable.type, petTable.dateOfArrival, petTable.companyId, petTable.ownerId)
             .from(petTable)
             .where(petTable.type.eq(petType.name).and(petTable.companyId.eq(companyId)))
             .fetch (petMapper)
+    }
+
+    fun getPetById(petId: Long): Pet? {
+        return sql.selectFrom(petTable)
+            .where(petTable.id.eq(petId))
+            .fetchOne(petMapper)
+    }
+
+    fun getOwnerByPetId(petId: Long): OwnerById? {
+        val ownerTable = OwnerTable.instance
+
+        return sql.select(
+            petTable.id.`as`("pet_id"),
+            ownerTable.id,
+            ownerTable.name,
+            ownerTable.companyId,
+            ownerTable.employeeId
+        )
+            .from(petTable)
+            .leftJoin(ownerTable).on(petTable.ownerId.eq(ownerTable.id))
+            .where(petTable.id.eq(petId))
+            .fetchOne(ownerByIdMapper)
+    }
+
+    fun assignOwnerToPet(petId: Long, ownerId: Long): Boolean {
+
+        return sql.update(petTable)
+            .set(petTable.ownerId, ownerId)
+            .where(petTable.id.eq(petId))
+            .execute() > 0
     }
 }
