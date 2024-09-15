@@ -17,14 +17,16 @@ class PetService(
         return petDao.assignOwnerToPet(petId, ownerId)
     }
 
-    fun getOwnerByPetId(petId: Long): Owner? {
 
-        val ownerById = petDao.getOwnerByPetId(petId) ?: return null
+    fun getOwnerByPetId(petId: Long): Owner {
+        val ownerById = petDao.getOwnerByPetId(petId)
+            ?: throw BadRequestException("Pet with id $petId does not exist")
 
         if (!ownerById.petExists) {
             throw BadRequestException("Pet with id $petId does not have an owner")
         }
 
         return ownerById.owner
+            ?: throw BadRequestException("Owner information for pet with id $petId is missing")
     }
 }

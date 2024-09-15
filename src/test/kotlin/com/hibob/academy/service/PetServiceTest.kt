@@ -44,9 +44,11 @@ class PetServiceTest {
 
         whenever(petDaoMock.getOwnerByPetId(petId)).thenReturn(null)
 
-        val actualOwner = petService.getOwnerByPetId(petId)
+        val exception = assertThrows<BadRequestException> {
+            petService.getOwnerByPetId(petId)
+        }
 
-        assertNull(actualOwner)
+        assertEquals("Pet with id $petId does not exist", exception.message)
     }
 
     @Test
@@ -65,6 +67,24 @@ class PetServiceTest {
         }
 
         assertEquals("Pet with id $petId does not have an owner", exception.message)
+    }
+
+    @Test
+    fun `test get owner by pet id when owner information is missing`() {
+        val petId = 1L
+
+        val ownerById = OwnerById(
+            petExists = true,
+            owner = null
+        )
+
+        whenever(petDaoMock.getOwnerByPetId(petId)).thenReturn(ownerById)
+
+        val exception = assertThrows<BadRequestException> {
+            petService.getOwnerByPetId(petId)
+        }
+
+        assertEquals("Owner information for pet with id $petId is missing", exception.message)
     }
 
     @Test
