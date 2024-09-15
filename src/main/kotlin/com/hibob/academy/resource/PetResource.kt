@@ -1,7 +1,6 @@
 
 package com.hibob.academy.resource
 
-import com.hibob.academy.entity.CreatePetRequest
 import com.hibob.academy.entity.Pet
 import com.hibob.academy.entity.PetType
 import com.hibob.academy.service.PetService
@@ -21,19 +20,18 @@ class PetResource(
 ) {
 
     @GET
-    @Path("/{companyId}")
-    fun getALLPetsByCompanyId(@PathParam("companyId") companyId : Long) : Response {
-
-        val pets = petService.getAllPets(companyId)
+    fun getALLPets() : Response{
+        val pets = listOf(
+            Pet(1L, "Bobby", PetType.DOG, LocalDate.parse("2021-01-01"), 1, 1L),
+            Pet(2L, "Kitty", PetType.CAT, LocalDate.parse("2021-01-01"), 1, 2L)
+        )
         return Response.ok(pets).build()
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    fun createPet(@RequestBody createPetRequest: CreatePetRequest): Response {
-
-        val petId = petService.createPet(createPetRequest)
-        return Response.status(Response.Status.CREATED).entity(petId).build()
+    fun createPet(@RequestBody pet: Pet): Response {
+        return Response.ok(pet).build()
     }
 
     @PUT

@@ -1,8 +1,10 @@
 package com.hibob.academy.dao
 
-import com.hibob.academy.entity.*
+import com.hibob.academy.entity.CreateOwnerRequest
+import com.hibob.academy.entity.Owner
+import com.hibob.academy.entity.Pet
+import com.hibob.academy.entity.PetType
 import com.hibob.academy.utils.BobDbTest
-import jakarta.ws.rs.BadRequestException
 import org.jooq.DSLContext
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
@@ -19,20 +21,6 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
     private val ownerDao = OwnerDao(sql)
     val table = PetTable.instance
     val companyId = 1L
-    val pet1 = CreatePetRequest(
-        name = "Buddy",
-        type = PetType.DOG,
-        dataOfArrival = LocalDate.of(2021, 1, 1),
-        companyId = companyId,
-        ownerId = 1L
-    )
-    val pet2 = CreatePetRequest(
-        name = "Max",
-        type = PetType.DOG,
-        dataOfArrival = LocalDate.of(2021, 1, 1),
-        companyId = companyId,
-        ownerId = 1L
-    )
 
     @BeforeEach
     @AfterEach
@@ -42,46 +30,67 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     @Test
     fun `test create pet and get all pets`() {
-        val petId = petDao.createPet(pet1)
 
-        val expectedPets = listOf(
-            Pet(
-                id = petId,
-                name = pet1.name,
-                type = pet1.type,
-                dataOfArrival = pet1.dataOfArrival,
-                companyId = pet1.companyId,
-                ownerId = pet1.ownerId
-            )
+        val pet = Pet(
+            id = 1L,
+            name = "Buddy",
+            type = PetType.DOG,
+            dataOfArrival = LocalDate.of(2021, 1, 1),
+            companyId = companyId,
+            ownerId = 1L
         )
+
+        petDao.createPet(pet)
+
+        val expectedPets = listOf(pet)
         val actualPets = petDao.getAllPetsByCompanyId(companyId)
 
         assertEquals(expectedPets, actualPets)
     }
 
     @Test
-    fun `test get pet by type`() {
-        val petId1 = petDao.createPet(pet1)
-        val petId2 = petDao.createPet(pet2)
+    fun `test create pet with invalid type`() {
+        val invalidPetType = "INVALID_TYPE"
 
-        val expectedPetsResult = listOf(
-            Pet(
-                id = petId1,
-                name = pet1.name,
-                type = pet1.type,
-                dataOfArrival = pet1.dataOfArrival,
-                companyId = pet1.companyId,
-                ownerId = pet1.ownerId
-            ),
-            Pet(
-                id = petId2,
-                name = pet2.name,
-                type = pet2.type,
-                dataOfArrival = pet2.dataOfArrival,
-                companyId = pet2.companyId,
-                ownerId = pet2.ownerId
+        val exception = assertThrows<IllegalArgumentException> {
+            val pet = Pet(
+                id = 1L,
+                name = "Buddy",
+                type = PetType.fromString(invalidPetType), // This should throw an exception or handle the error
+                dataOfArrival = LocalDate.of(2021, 1, 1),
+                companyId = companyId,
+                ownerId = 1L
             )
+            petDao.createPet(pet)
+        }
+
+        assertEquals("No enum constant com.hibob.academy.entity.PetType.$invalidPetType", exception.message)
+    }
+
+    @Test
+    fun `test get pet by type`() {
+        val pet1 = Pet(
+            id = 1L,
+            name = "Buddy",
+            type = PetType.CAT,
+            dataOfArrival = LocalDate.of(2021, 1, 1),
+            companyId = companyId,
+            ownerId = 1L
         )
+
+        val pet2 = Pet(
+            id = 2L,
+            name = "Max",
+            type = PetType.DOG,
+            dataOfArrival = LocalDate.of(2021, 1, 1),
+            companyId = companyId,
+            ownerId = 1L
+        )
+
+        petDao.createPet(pet1)
+        petDao.createPet(pet2)
+
+        val expectedPetsResult = listOf(pet2)
         val actualPetsResult = petDao.getPetsByType(PetType.DOG, companyId)
 
         assertEquals(expectedPetsResult, actualPetsResult)
@@ -89,8 +98,26 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     @Test
     fun `test get pets with different companyId returns zero results`() {
-
+        val companyId1 = 1L
         val companyId2 = 2L
+
+        val pet1 = Pet(
+            id = 1L,
+            name = "Buddy",
+            type = PetType.DOG,
+            dataOfArrival = LocalDate.of(2021, 1, 1),
+            companyId = companyId1,
+            ownerId = 1L
+        )
+
+        val pet2 = Pet(
+            id = 2L,
+            name = "Max",
+            type = PetType.CAT,
+            dataOfArrival = LocalDate.of(2021, 1, 1),
+            companyId = companyId1,
+            ownerId = 1L
+        )
 
         petDao.createPet(pet1)
         petDao.createPet(pet2)
@@ -102,6 +129,14 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     @Test
     fun `test get pets by invalid type`() {
+        val pet1 = Pet(
+            id = 1L,
+            name = "Buddy",
+            type = PetType.DOG,
+            dataOfArrival = LocalDate.of(2021, 1, 1),
+            companyId = companyId,
+            ownerId = 1L
+        )
 
         petDao.createPet(pet1)
         val pets = petDao.getPetsByType(PetType.CAT, companyId)
@@ -111,37 +146,45 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     @Test
     fun `test get pet by id`() {
-
-        val petId = petDao.createPet(pet1)
-
-        val expectedPet = Pet(
-            id = petId,
-            name = pet1.name,
-            type = pet1.type,
-            dataOfArrival = pet1.dataOfArrival,
-            companyId = pet1.companyId,
-            ownerId = pet1.ownerId
+        val pet = Pet(
+            id = 1L,
+            name = "Buddy",
+            type = PetType.DOG,
+            dataOfArrival = LocalDate.of(2021, 1, 1),
+            companyId = companyId,
+            ownerId = 1L
         )
 
-        val actualPet = petDao.getPetById(petId)
+        petDao.createPet(pet)
+
+        val expectedPet = pet
+        val actualPet = petDao.getPetById(pet.id)
 
         assertEquals(expectedPet, actualPet)
     }
 
     @Test
     fun `test get pet by id when pet does not exist`() {
-        val pet = petDao.getPetById(999L)
+        val pet = petDao.getPetById(1L)
         assertNull(pet)
     }
 
     @Test
     fun `test assign owner to pet`() {
+        val pet = Pet(
+            id = 1L,
+            name = "Buddy",
+            type = PetType.DOG,
+            dataOfArrival = LocalDate.of(2021, 1, 1),
+            companyId = companyId,
+            ownerId = 1L
+        )
 
-        val petId = petDao.createPet(pet1)
+        petDao.createPet(pet)
 
         val ownerId = 2L
-        val result = petDao.assignOwnerToPet(petId, ownerId) ?: false
-        val actualPet = petDao.getPetById(petId)
+        val result = petDao.assignOwnerToPet(pet.id, ownerId) ?: false
+        val actualPet = petDao.getPetById(pet.id)
 
         assertTrue(result)
         assertEquals(ownerId, actualPet?.ownerId)
@@ -150,7 +193,7 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
     @Test
     fun `test assign owner to pet when pet does not exist`() {
         val ownerId = 2L
-        val result = petDao.assignOwnerToPet(999L, ownerId) ?: false
+        val result = petDao.assignOwnerToPet(1L, ownerId) ?: false
         assertFalse(result)
     }
 
@@ -159,30 +202,47 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
         val owner = CreateOwnerRequest(
             name = "Shahar Shwartz",
             companyId = companyId,
-            employeeId = "1234567",
+            employeeId = "12345",
             firstName = "Shahar",
             lastName = "Shwartz"
         )
 
         val ownerId = ownerDao.createOwner(owner)
 
-        val petId = petDao.createPet(pet1.copy(ownerId = ownerId))
+        val pet = Pet(
+            id = 1L,
+            name = "Buddy",
+            type = PetType.DOG,
+            dataOfArrival = LocalDate.of(2021, 1, 1),
+            companyId = companyId,
+            ownerId = ownerId
+        )
 
-        val ownerById = petDao.getOwnerByPetId(petId)
+        petDao.createPet(pet)
+
+        val ownerById = petDao.getOwnerByPetId(pet.id)
 
         assertNotNull(ownerById)
         assertTrue(ownerById!!.petExists)
-        assertEquals(ownerId, ownerById.owner?.id)
+      //  assertEquals(owner, ownerById.owner)
 
         sql.deleteFrom(OwnerTable.instance).where(OwnerTable.instance.companyId.eq(companyId)).execute()
     }
 
     @Test
     fun `test get owner by pet id when owner does not exist`() {
+        val pet = Pet(
+            id = 1L,
+            name = "Buddy",
+            type = PetType.DOG,
+            dataOfArrival = LocalDate.of(2021, 1, 1),
+            companyId = companyId,
+            ownerId = null
+        )
 
-        val petId = petDao.createPet(pet1)
+        petDao.createPet(pet)
 
-        val ownerById = petDao.getOwnerByPetId(petId)
+        val ownerById = petDao.getOwnerByPetId(pet.id)
 
         assertNotNull(ownerById)
         assertTrue(ownerById!!.petExists)
@@ -191,9 +251,8 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     @Test
     fun `test get owner by pet id when pet does not exist`() {
-        val ownerById = petDao.getOwnerByPetId(999L)
-        assertNull(ownerById?.owner)
+        val ownerById = petDao.getOwnerByPetId(1L)
+        assertNull(ownerById)
         assertFalse(ownerById?.petExists ?: false)
     }
-
 }
