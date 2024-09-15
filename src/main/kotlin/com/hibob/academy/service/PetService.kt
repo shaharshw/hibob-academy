@@ -18,7 +18,7 @@ class PetService(
     }
 
 
-    fun getOwnerByPetId(petId: Long): String {
+    fun getOwnerByPetId(petId: Long): Owner? {
         val ownerById = petDao.getOwnerByPetId(petId)
             ?: throw BadRequestException("Some error occurred while fetching owner information for pet with id $petId")
 
@@ -26,6 +26,6 @@ class PetService(
             throw BadRequestException("Pet with id $petId does not exist")
         }
 
-        return ownerById.owner?.let { "Owner: ${it.name}" } ?: "This pet does not have an owner"
+        return ownerById.owner
     }
 }

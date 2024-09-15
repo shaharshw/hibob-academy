@@ -35,7 +35,7 @@ class PetServiceTest {
 
         val actualOwner = petService.getOwnerByPetId(petId)
 
-        assertEquals("Owner: Shahar Shwartz", actualOwner)
+        assertEquals(owner, actualOwner)
     }
 
     @Test
@@ -64,7 +64,7 @@ class PetServiceTest {
 
         val actualOwner = petService.getOwnerByPetId(petId)
 
-        assertEquals("This pet does not have an owner", actualOwner)
+        assertNull(actualOwner)
     }
 
     @Test
@@ -80,7 +80,7 @@ class PetServiceTest {
 
         val actualOwner = petService.getOwnerByPetId(petId)
 
-        assertEquals("This pet does not have an owner", actualOwner)
+        assertNull(actualOwner)
     }
 
     @Test
