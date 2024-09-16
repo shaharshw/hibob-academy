@@ -1,5 +1,6 @@
 package com.hibob.academy.dao
 
+import com.hibob.academy.entity.CreateOwnerRequest
 import com.hibob.academy.entity.Owner
 import com.hibob.academy.utils.BobDbTest
 import jakarta.ws.rs.BadRequestException
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import java.util.*
 
 @BobDbTest
 class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
@@ -27,8 +27,7 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     @Test
     fun `test create owner and get all owners`() {
-        val owner = Owner(
-            id = 1L,
+        val createOwnerRequest = CreateOwnerRequest(
             name = "Shahar Shwartz",
             companyId = companyId,
             employeeId = "123",
@@ -36,18 +35,24 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
             lastName = "Shwartz"
         )
 
-        ownerDao.createOwner(owner)
+        val ownerId = ownerDao.createOwner(createOwnerRequest)
+        val expectedOwner = Owner(
+            id = ownerId,
+            name = "Shahar Shwartz",
+            companyId = companyId,
+            employeeId = "123",
+            firstName = "Shahar",
+            lastName = "Shwartz"
+        )
 
-        val expectedOwners = listOf(owner)
         val actualOwners = ownerDao.getAllOwnersByCompanyId(companyId)
 
-        assertEquals(expectedOwners, actualOwners)
+        assertEquals(listOf(expectedOwner), actualOwners)
     }
 
     @Test
     fun `test create owner with missing first name and last name`() {
-        val owner = Owner(
-            id = 1L,
+        val createOwnerRequest = CreateOwnerRequest(
             name = "Shahar Shwartz Logashi",
             companyId = companyId,
             employeeId = "123",
@@ -55,27 +60,32 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
             lastName = null
         )
 
-        ownerDao.createOwner(owner)
+        val ownerId = ownerDao.createOwner(createOwnerRequest)
+        val expectedOwner = Owner(
+            id = ownerId,
+            name = "Shahar Shwartz Logashi",
+            companyId = companyId,
+            employeeId = "123",
+            firstName = "Shahar",
+            lastName = "Shwartz Logashi"
+        )
 
-        val expectedOwners = listOf(owner.copy(firstName = "Shahar", lastName = "Shwartz Logashi"))
         val actualOwners = ownerDao.getAllOwnersByCompanyId(companyId)
 
-        assertEquals(expectedOwners, actualOwners)
+        assertEquals(listOf(expectedOwner), actualOwners)
     }
 
     @Test
     fun `test create owner with the same employeeId and companyId`() {
-        val owner1 = Owner(
-            id = 1L,
+        val createOwnerRequest1 = CreateOwnerRequest(
             name = "Shahar Shwartz",
             companyId = companyId,
             employeeId = "123",
-            firstName = null,
-            lastName = null
+            firstName = "Shahar",
+            lastName = "Shwartz"
         )
 
-        val owner2 = Owner(
-            id = 2L,
+        val createOwnerRequest2 = CreateOwnerRequest(
             name = "Or Shwartz",
             companyId = companyId,
             employeeId = "123",
@@ -83,18 +93,25 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
             lastName = "Shwartz"
         )
 
-        ownerDao.createOwner(owner1)
+        val ownerId = ownerDao.createOwner(createOwnerRequest1)
 
         val exception = assertThrows<BadRequestException> {
-            ownerDao.createOwner(owner2)
+            ownerDao.createOwner(createOwnerRequest2)
         }
 
         assertEquals("Owner creation failed. No record was inserted.", exception.message)
 
-        val expectedOwners = listOf(owner1.copy(firstName = "Shahar", lastName = "Shwartz"))
+        val expectedOwner = Owner(
+            id = ownerId,
+            name = "Shahar Shwartz",
+            companyId = companyId,
+            employeeId = "123",
+            firstName = "Shahar",
+            lastName = "Shwartz"
+        )
         val actualOwners = ownerDao.getAllOwnersByCompanyId(companyId)
 
-        assertEquals(expectedOwners, actualOwners)
+        assertEquals(listOf(expectedOwner), actualOwners)
     }
 
     @Test
@@ -108,8 +125,7 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
         val companyId1 = 1L
         val companyId2 = 2L
 
-        val owner1 = Owner(
-            id = 1L,
+        val createOwnerRequest1 = CreateOwnerRequest(
             name = "Shahar Shwartz",
             companyId = companyId1,
             employeeId = "123",
@@ -117,8 +133,7 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
             lastName = "Shwartz"
         )
 
-        val owner2 = Owner(
-            id = 2L,
+        val createOwnerRequest2 = CreateOwnerRequest(
             name = "Or Shwartz",
             companyId = companyId1,
             employeeId = "124",
@@ -126,8 +141,8 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
             lastName = "Shwartz"
         )
 
-        ownerDao.createOwner(owner1)
-        ownerDao.createOwner(owner2)
+        ownerDao.createOwner(createOwnerRequest1)
+        ownerDao.createOwner(createOwnerRequest2)
 
         val owners = ownerDao.getAllOwnersByCompanyId(companyId2)
 
@@ -136,8 +151,7 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     @Test
     fun `test get owner by id`() {
-        val owner = Owner(
-            id = 1L,
+        val createOwnerRequest = CreateOwnerRequest(
             name = "Shahar Shwartz",
             companyId = companyId,
             employeeId = "123",
@@ -145,10 +159,17 @@ class OwnerDaoTest @Autowired constructor(private val sql: DSLContext) {
             lastName = "Shwartz"
         )
 
-        ownerDao.createOwner(owner)
+        val ownerId = ownerDao.createOwner(createOwnerRequest)
+        val expectedOwner = Owner(
+            id = ownerId,
+            name = "Shahar Shwartz",
+            companyId = companyId,
+            employeeId = "123",
+            firstName = "Shahar",
+            lastName = "Shwartz"
+        )
 
-        val expectedOwner = owner
-        val actualOwner = ownerDao.getOwnerById(owner.id!!)
+        val actualOwner = ownerDao.getOwnerById(ownerId)
 
         assertEquals(expectedOwner, actualOwner)
     }

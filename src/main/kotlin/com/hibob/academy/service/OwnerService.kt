@@ -17,22 +17,12 @@ class OwnerService(
 
     fun createOwner(createOwnerRequest: CreateOwnerRequest): Long {
 
-        val generatedId = UUID.randomUUID().mostSignificantBits and Long.MAX_VALUE
-        val owner = Owner(
-            id = generatedId,
-            name = createOwnerRequest.name,
-            companyId = createOwnerRequest.companyId,
-            employeeId = createOwnerRequest.employeeId,
-            firstName = createOwnerRequest.firstName,
-            lastName = createOwnerRequest.lastName
-        )
-
-        val ownerToCreate = populateOwnerNameFields(owner)
+        val ownerToCreate = populateOwnerNameFields(createOwnerRequest)
         return ownerDao.createOwner(ownerToCreate)
     }
 
 
-    private fun populateOwnerNameFields(owner: Owner): Owner {
+    private fun populateOwnerNameFields(owner: CreateOwnerRequest): CreateOwnerRequest {
 
         owner.name = owner.name ?: run {
             if (owner.firstName.isNullOrEmpty() || owner.lastName.isNullOrEmpty()) {
