@@ -132,12 +132,12 @@ class PetDao @Inject constructor(
             .fetch (petMapper)
     }
 
-    fun getCountPetsByType(): Map<String, Int> {
+    fun getCountPetsByType(): Map<PetType, Int> {
 
         return sql.select(petTable.type, DSL.count())
             .from(petTable)
             .groupBy(petTable.type)
             .fetch()
-            .associate { it[petTable.type] to (it[DSL.count()] as Int) }
+            .associate { PetType.fromString(it [petTable.type]) to (it[DSL.count()] as Int) }
     }
 }

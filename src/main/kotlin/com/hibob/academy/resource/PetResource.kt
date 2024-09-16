@@ -62,7 +62,7 @@ class PetResource(
     }
 
     @GET
-    @Path("/all/{ownerId}")
+    @Path("/owner/{ownerId}")
     fun getAllPetsByOwner(@PathParam("ownerId") ownerId: Long) : Response {
         return Response.ok(
             petService.getAllPetsByOwnerId(ownerId)
@@ -71,7 +71,7 @@ class PetResource(
     }
 
     @GET
-    @Path("/all/types")
+    @Path("/types/count")
     fun getCountPetsByType() : Response {
         return Response.ok(
             petService.getCountPetsByType()
