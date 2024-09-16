@@ -32,6 +32,8 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
         ownerId = 1L
     )
 
+
+
     @BeforeEach
     @AfterEach
     fun cleanup() {
@@ -196,26 +198,9 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     @Test
     fun `test get all pets by owner id`() {
-        val pet1 = Pet(
-            id = 1L,
-            name = "Buddy",
-            type = PetType.CAT,
-            dataOfArrival = LocalDate.of(2021, 1, 1),
-            companyId = companyId,
-            ownerId = 1L
-        )
-
-        val pet2 = Pet(
-            id = 2L,
-            name = "Buddy",
-            type = PetType.CAT,
-            dataOfArrival = LocalDate.of(2021, 1, 1),
-            companyId = companyId,
-            ownerId = 2L
-        )
 
         petDao.createPet(pet1)
-        petDao.createPet(pet2)
+
         val pets = petDao.getAllPetsByOwnerId(1L)
 
         assertEquals(1, pets.size)
@@ -224,44 +209,17 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
     @Test
     fun `test get all pets by owner id when owner does not exist`() {
 
-        val pet = Pet(
-            id = 1L,
-            name = "Buddy",
-            type = PetType.CAT,
-            dataOfArrival = LocalDate.of(2021, 1, 1),
-            companyId = companyId,
-            ownerId = 2L
-        )
-
-        petDao.createPet(pet)
-        val pets = petDao.getAllPetsByOwnerId(1L)
+        petDao.createPet(pet1)
+        val pets = petDao.getAllPetsByOwnerId(999L)
         assertTrue(pets.isEmpty())
     }
 
     @Test
     fun `test get count pets by type`() {
-        val pet1 = Pet(
-            id = 1L,
+
+        val pet3 = CreatePetRequest(
             name = "Buddy",
             type = PetType.CAT,
-            dataOfArrival = LocalDate.of(2021, 1, 1),
-            companyId = companyId,
-            ownerId = 1L
-        )
-
-        val pet2 = Pet(
-            id = 2L,
-            name = "Buddy",
-            type = PetType.DOG,
-            dataOfArrival = LocalDate.of(2021, 1, 1),
-            companyId = companyId,
-            ownerId = 2L
-        )
-
-        val pet3 = Pet(
-            id = 3L,
-            name = "Buddy",
-            type = PetType.DOG,
             dataOfArrival = LocalDate.of(2021, 1, 1),
             companyId = companyId,
             ownerId = 3L
@@ -274,7 +232,7 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
         val countPetsByType = petDao.getCountPetsByType()
 
         assertEquals(2, countPetsByType.size)
-        assertEquals(1, countPetsByType[PetType.CAT.name])
-        assertEquals(2, countPetsByType[PetType.DOG.name])
+        assertEquals(1, countPetsByType[PetType.CAT])
+        assertEquals(2, countPetsByType[PetType.DOG])
     }
 }

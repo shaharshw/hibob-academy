@@ -128,8 +128,8 @@ class PetServiceTest {
     @Test
     fun `test get count pets by type`() {
         val petCountByType = mapOf(
-            "DOG" to 2,
-            "CAT" to 1
+            PetType.DOG to 2,
+            PetType.CAT to 1
         )
 
         whenever(petDaoMock.getCountPetsByType()).thenReturn(petCountByType)
