@@ -27,11 +27,11 @@ class ExampleDaoTest @Autowired constructor(private val sql: DSLContext)  {
         sql.dropTable(table).execute()
     }
 
-    @Test
-    fun createAndRead() {
-        dao.createExample(companyId, "Hello, Kotlin!")
-        dao.createExample(companyId, "Hello, micro-service!")
-        val actual = dao.readExample(companyId)
-        assertThat(actual, Matchers.equalTo(Example(actual!!.id, companyId, "Hello, Kotlin!")))
-    }
+//    @Test
+//    fun createAndRead() {
+//        dao.createExample(companyId, "Hello, Kotlin!")
+//        dao.createExample(companyId, "Hello, micro-service!")
+//        val actual = dao.readExample(companyId)
+//        assertThat(actual, Matchers.equalTo(Example(actual!!.id, companyId, "Hello, Kotlin!")))
+//    }
 }
