@@ -240,9 +240,12 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
     fun `test create pets`() {
         val pets = listOf(pet1, pet2)
 
-        val petIds = petDao.createPets(pets)
+        petDao.createPets(pets)
 
-        assertEquals(2, petIds.size)
+        val actualPets = petDao.getAllPetsByCompanyId(companyId)
+
+        assertEquals(2, actualPets.size)
+
     }
 
 }

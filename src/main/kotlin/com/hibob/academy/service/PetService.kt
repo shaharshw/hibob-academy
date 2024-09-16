@@ -44,7 +44,12 @@ class PetService(
     fun getCountPetsByType(companyId: Long) : Map<PetType, Int> =
         petDao.getCountPetsByType(companyId)
 
-    fun createPets(pets: List<CreatePetRequest>) : List<Long> =
-        petDao.createPets(pets)
+    fun createPets(pets: List<CreatePetRequest>) {
+        try {
+            petDao.createPets(pets)
+        } catch (e: Exception) {
+            throw BadRequestException("Some error occurred while creating pets")
+        }
+    }
 
 }

@@ -170,4 +170,56 @@ class PetServiceTest {
 
         assertEquals(petCountByType, actualPetCountByType)
     }
+
+    @Test
+    fun `test create pets`() {
+        val pets = listOf(
+            CreatePetRequest(
+                name = "Buddy",
+                type = PetType.DOG,
+                dataOfArrival = LocalDate.of(2021, 1, 1),
+                companyId = companyId,
+                ownerId = 1L
+            ),
+            CreatePetRequest(
+                name = "Mittens",
+                type = PetType.CAT,
+                dataOfArrival = LocalDate.of(2021, 2, 1),
+                companyId = companyId,
+                ownerId = 1L
+            )
+        )
+
+        petService.createPets(pets)
+
+        verify(petDaoMock).createPets(pets)
+    }
+
+    @Test
+    fun `test create pets when some error occurred`() {
+        val pets = listOf(
+            CreatePetRequest(
+                name = "Buddy",
+                type = PetType.DOG,
+                dataOfArrival = LocalDate.of(2021, 1, 1),
+                companyId = companyId,
+                ownerId = 1L
+            ),
+            CreatePetRequest(
+                name = "Mittens",
+                type = PetType.CAT,
+                dataOfArrival = LocalDate.of(2021, 2, 1),
+                companyId = companyId,
+                ownerId = 1L
+            )
+        )
+
+        whenever(petDaoMock.createPets(pets)).thenThrow(BadRequestException("Some error occurred while creating pets"))
+
+        val exception = assertThrows<BadRequestException> {
+            petService.createPets(pets)
+        }
+
+        assertEquals("Some error occurred while creating pets", exception.message)
+    }
 }
