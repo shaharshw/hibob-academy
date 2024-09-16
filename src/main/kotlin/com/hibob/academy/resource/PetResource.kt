@@ -80,10 +80,10 @@ class PetResource(
     }
 
     @GET
-    @Path("/types/count")
-    fun getCountPetsByType() : Response {
+    @Path("/types/count/{companyId}")
+    fun getCountPetsByType(@PathParam("companyId") companyId: Long) : Response {
         return Response.ok(
-            petService.getCountPetsByType()
+            petService.getCountPetsByType(companyId)
         )
             .build()
     }

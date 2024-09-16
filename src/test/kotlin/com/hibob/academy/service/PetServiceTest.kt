@@ -13,6 +13,7 @@ class PetServiceTest {
 
     private val petDaoMock = mock<PetDao> {}
     private val petService = PetService(petDaoMock)
+    private val companyId = 999L
 
     @Test
     fun `test get owner by pet id`() {
@@ -20,7 +21,7 @@ class PetServiceTest {
         val owner = Owner(
             id = 1L,
             name = "Shahar Shwartz",
-            companyId = 1L,
+            companyId = companyId,
             employeeId = "123",
             firstName = "Shahar",
             lastName = "Shwartz"
@@ -163,9 +164,9 @@ class PetServiceTest {
             PetType.CAT to 1
         )
 
-        whenever(petDaoMock.getCountPetsByType()).thenReturn(petCountByType)
+        whenever(petDaoMock.getCountPetsByType(companyId)).thenReturn(petCountByType)
 
-        val actualPetCountByType = petService.getCountPetsByType()
+        val actualPetCountByType = petService.getCountPetsByType(companyId)
 
         assertEquals(petCountByType, actualPetCountByType)
     }

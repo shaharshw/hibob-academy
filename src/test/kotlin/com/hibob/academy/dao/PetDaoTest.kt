@@ -229,7 +229,7 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
         petDao.createPet(pet2)
         petDao.createPet(pet3)
 
-        val countPetsByType = petDao.getCountPetsByType()
+        val countPetsByType = petDao.getCountPetsByType(companyId)
 
         assertEquals(2, countPetsByType.size)
         assertEquals(1, countPetsByType[PetType.CAT])
