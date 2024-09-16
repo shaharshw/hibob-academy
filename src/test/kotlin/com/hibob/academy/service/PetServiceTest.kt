@@ -1,10 +1,7 @@
 package com.hibob.academy.service
 
 import com.hibob.academy.dao.PetDao
-import com.hibob.academy.entity.Owner
-import com.hibob.academy.entity.OwnerById
-import com.hibob.academy.entity.Pet
-import com.hibob.academy.entity.PetType
+import com.hibob.academy.entity.*
 import jakarta.ws.rs.BadRequestException
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -108,6 +105,40 @@ class PetServiceTest {
         val actualResult = petService.assignOwnerToPet(petId, ownerId)
 
         assertFalse(actualResult)
+    }
+
+    @Test
+    fun `test adopt pets`() {
+        val ownerId = 1L
+        val petIds = listOf(1L, 2L)
+        val adoptPetsRequest = AdoptPetsRequest(ownerId, petIds)
+
+        whenever(petDaoMock.assignOwnerToPet(any(), any())).thenReturn(true)
+
+        val results = petService.adoptPets(adoptPetsRequest)
+
+        verify(petDaoMock, times(2)).assignOwnerToPet(any(), any())
+
+        petIds.forEach { petId ->
+            verify(petDaoMock).assignOwnerToPet(petId, ownerId)
+        }
+
+        assertEquals(mapOf(1L to true, 2L to true), results)
+
+    }
+
+    @Test
+    fun `test adopt pets when some error occurred`() {
+
+        val ownerId = 1L
+        val petIds = listOf(1L, 2L)
+        val adoptPetsRequest = AdoptPetsRequest(ownerId, petIds)
+
+        whenever(petDaoMock.assignOwnerToPet(any(), any())).thenReturn(false)
+
+        val results = petService.adoptPets(adoptPetsRequest)
+
+        assertEquals(mapOf(1L to false, 2L to false), results)
     }
 
     @Test

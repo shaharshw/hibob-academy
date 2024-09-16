@@ -1,5 +1,6 @@
 package com.hibob.academy.resource
 
+import com.hibob.academy.entity.AdoptPetsRequest
 import com.hibob.academy.entity.CreatePetRequest
 import com.hibob.academy.entity.Pet
 import com.hibob.academy.service.PetService
@@ -68,6 +69,14 @@ class PetResource(
             petService.getAllPetsByOwnerId(ownerId)
         )
             .build()
+    }
+
+    @POST
+    @Path("/adopt/many")
+    fun adoptPets(@RequestBody adoptPetsRequest: AdoptPetsRequest) : Response {
+
+        val results = petService.adoptPets(adoptPetsRequest)
+        return Response.ok(results).build()
     }
 
     @GET
