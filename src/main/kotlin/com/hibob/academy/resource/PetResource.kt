@@ -78,7 +78,6 @@ class PetResource(
         val results = petService.adoptPets(adoptPetsRequest.ownerId, adoptPetsRequest.petIds)
         return Response.ok(results).build()
     }
-}
 
     @GET
     @Path("/types/count")
