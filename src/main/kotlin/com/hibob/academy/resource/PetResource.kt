@@ -78,13 +78,6 @@ class PetResource(
         petService.adoptPets(adoptPetsRequest.ownerId, adoptPetsRequest.petIds)
         return Response.ok().build()
     }
-
-    @POST
-    @Path("/many")
-    fun createPets(@RequestBody pets: List<Pet>) : Response {
-
-        return Response.ok(pets).build()
-    }
 }
 
     @GET
