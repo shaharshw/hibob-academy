@@ -6,6 +6,18 @@ plugins {
 	kotlin("plugin.spring") version "1.9.25"
 	id("org.springframework.boot") version "3.3.3"
 	id("io.spring.dependency-management") version "1.1.6"
+	id("org.flywaydb.flyway") version "10.4.1"
+}
+
+buildscript {
+	dependencies {
+		classpath("org.flywaydb:flyway-database-postgresql:10.4.1")
+	}
+}
+
+flyway {
+	url = "jdbc:postgresql://localhost:5432/academy?user=bob&password=dev"
+	driver = "org.postgresql.Driver"
 }
 
 java {
@@ -17,6 +29,8 @@ java {
 repositories {
 	mavenCentral()
 }
+
+
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter")
@@ -32,7 +46,7 @@ dependencies {
 	implementation("org.flywaydb:flyway-core")
 	implementation("org.flywaydb:flyway-database-postgresql")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	implementation("org.jooq:jooq:3.16.9")
+	implementation("org.jooq:jooq:3.17.9")
 	implementation("org.slf4j:slf4j-api")
 
 	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
