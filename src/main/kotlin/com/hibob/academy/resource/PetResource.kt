@@ -72,7 +72,7 @@ class PetResource(
     }
 
     @POST
-    @Path("/adpot/many")
+    @Path("/adopt/many")
     fun adoptPets(@RequestBody adoptPetsRequest: AdoptPetsRequest) : Response {
 
         petService.adoptPets(adoptPetsRequest.ownerId, adoptPetsRequest.petIds)
