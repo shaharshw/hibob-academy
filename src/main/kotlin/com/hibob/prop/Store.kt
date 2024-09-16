@@ -40,24 +40,24 @@ class Store(
     }
 }
 
-fun main() {
-    val store = Store(DayOfWeek.MONDAY, listOf("product1", "product2"))
-    println(store.isOpen)
-    println(store.numberOfProducts)
-    println(store.receipts)
-    println(store.receipts)
-    println(store.getReceiptsCount)
-    store.create()
-    println(store.create)
-
-    println("----------------------")
-
-    val store2 = Store(DayOfWeek.SATURDAY, listOf("product1", "product2"))
-    println(store2.isOpen)
-    println(store2.receipts)
-    println(store2.getReceiptsCount)
-    println(store2.receipts)
-    println(store2.getReceiptsCount)
-}
+//fun main() {
+//    val store = Store(DayOfWeek.MONDAY, listOf("product1", "product2"))
+//    println(store.isOpen)
+//    println(store.numberOfProducts)
+//    println(store.receipts)
+//    println(store.receipts)
+//    println(store.getReceiptsCount)
+//    store.create()
+//    println(store.create)
+//
+//    println("----------------------")
+//
+//    val store2 = Store(DayOfWeek.SATURDAY, listOf("product1", "product2"))
+//    println(store2.isOpen)
+//    println(store2.receipts)
+//    println(store2.getReceiptsCount)
+//    println(store2.receipts)
+//    println(store2.getReceiptsCount)
+//}
 
 

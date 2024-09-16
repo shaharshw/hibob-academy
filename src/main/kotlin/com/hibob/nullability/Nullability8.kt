@@ -32,7 +32,7 @@ fun initializeCompany(): Company {
     )
 }
 
-fun main() {
+fun main6() {
     val company = initializeCompany()
 
     // Print detailed information about each department, team, and team members, handling all null values appropriately.

@@ -97,11 +97,11 @@ fun ex5() {
     println(b)
 }
 
-fun main() {
-
-    ex1()
-    ex2()
-    ex3()
-    ex4()
-    ex5()
-}
+//fun main() {
+//
+//    ex1()
+//    ex2()
+//    ex3()
+//    ex4()
+//    ex5()
+//}
