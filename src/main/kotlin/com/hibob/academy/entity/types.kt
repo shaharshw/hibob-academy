@@ -64,7 +64,4 @@ data class AdoptPetsRequest(
     val petIds: List<Long>
 )
 
-data class CreatePetsRequest(
-    val pets: List<CreatePetRequest>
-)
 
