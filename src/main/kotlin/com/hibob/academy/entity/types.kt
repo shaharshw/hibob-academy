@@ -11,6 +11,14 @@ data class Pet(
     val ownerId : Long?
 )
 
+data class CreatePetRequest(
+    val name: String,
+    val type : PetType,
+    val dataOfArrival : LocalDate,
+    val companyId : Long,
+    val ownerId : Long?
+)
+
 data class Owner(
     val id: Long,
     var name: String?,
@@ -42,7 +50,11 @@ enum class PetType {
 
     companion object {
         fun fromString(type: String): PetType {
-            return valueOf(type.uppercase())
+            return try {
+                valueOf(type.uppercase())
+            } catch (e: IllegalArgumentException) {
+                throw IllegalArgumentException("Invalid pet type: $type")
+            }
         }
     }
 }

@@ -2,6 +2,7 @@ package com.hibob.academy.service
 
 import com.hibob.academy.dao.OwnerDao
 import com.hibob.academy.dao.PetDao
+import com.hibob.academy.entity.CreatePetRequest
 import com.hibob.academy.entity.Owner
 import com.hibob.academy.entity.Pet
 import jakarta.ws.rs.BadRequestException
@@ -12,11 +13,18 @@ class PetService(
     private val petDao: PetDao,
 ) {
 
+    fun getAllPets(companyId : Long): List<Pet> {
+        return petDao.getAllPetsByCompanyId(companyId)
+    }
+
     fun assignOwnerToPet(petId: Long, ownerId: Long) : Boolean {
 
         return petDao.assignOwnerToPet(petId, ownerId)
     }
 
+    fun createPet(createPetRequest: CreatePetRequest): Long {
+        return petDao.createPet(createPetRequest)
+    }
 
     fun getOwnerByPetId(petId: Long): Owner? {
         val ownerById = petDao.getOwnerByPetId(petId)
