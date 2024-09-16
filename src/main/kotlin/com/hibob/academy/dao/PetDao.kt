@@ -140,4 +140,27 @@ class PetDao @Inject constructor(
             .fetch()
             .associate { PetType.fromString(it [petTable.type]) to (it[DSL.count()] as Int) }
     }
+
+    fun createPets(pets: List<CreatePetRequest>) : List<Long> {
+
+        val insert = sql.insertInto(petTable)
+            .columns(petTable.name, petTable.type, petTable.dateOfArrival, petTable.companyId, petTable.ownerId)
+            .values(DSL.param(petTable.name), DSL.param(petTable.type), DSL.param(petTable.dateOfArrival), DSL.param(petTable.companyId), DSL.param(petTable.ownerId))
+
+        val batch = sql.batch(insert)
+
+        pets.forEach { pet ->
+            batch.bind(pet.name, pet.type.name, Date.valueOf(pet.dataOfArrival), pet.companyId, pet.ownerId)
+        }
+
+        batch.execute()
+
+        return sql.select(petTable.id)
+            .from(petTable)
+            .where(petTable.name.`in`(pets.map { it.name }))
+            .and(petTable.type.`in`(pets.map { it.type.name }))
+            .and(petTable.dateOfArrival.`in`(pets.map { Date.valueOf(it.dataOfArrival) }))
+            .and(petTable.companyId.`in`(pets.map { it.companyId }))
+            .fetchInto(Long::class.java)
+    }
 }

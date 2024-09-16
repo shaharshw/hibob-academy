@@ -16,7 +16,7 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
     private val petDao = PetDao(sql)
     private val ownerDao = OwnerDao(sql)
     val table = PetTable.instance
-    val companyId = 1L
+    val companyId = 999L
     val pet1 = CreatePetRequest(
         name = "Buddy",
         type = PetType.DOG,
@@ -235,4 +235,14 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
         assertEquals(1, countPetsByType[PetType.CAT])
         assertEquals(2, countPetsByType[PetType.DOG])
     }
+
+    @Test
+    fun `test create pets`() {
+        val pets = listOf(pet1, pet2)
+
+        val petIds = petDao.createPets(pets)
+
+        assertEquals(2, petIds.size)
+    }
+
 }

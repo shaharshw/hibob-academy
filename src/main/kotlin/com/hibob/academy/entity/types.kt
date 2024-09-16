@@ -63,3 +63,8 @@ data class AdoptPetsRequest(
     val ownerId: Long,
     val petIds: List<Long>
 )
+
+data class CreatePetsRequest(
+    val pets: List<CreatePetRequest>
+)
+

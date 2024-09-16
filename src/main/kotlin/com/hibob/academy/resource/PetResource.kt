@@ -87,4 +87,12 @@ class PetResource(
         )
             .build()
     }
+
+    @POST
+    @Path("/many")
+    fun createPets(@RequestBody pets: List<CreatePetRequest>) : Response {
+        val petIds = petService.createPets(pets)
+        return Response.ok(petIds).build()
+    }
+
 }

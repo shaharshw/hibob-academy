@@ -44,4 +44,7 @@ class PetService(
     fun getCountPetsByType() : Map<PetType, Int> =
         petDao.getCountPetsByType()
 
+    fun createPets(pets: List<CreatePetRequest>) : List<Long> =
+        petDao.createPets(pets)
+
 }
