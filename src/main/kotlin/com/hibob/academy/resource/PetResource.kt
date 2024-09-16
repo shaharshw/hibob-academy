@@ -75,8 +75,8 @@ class PetResource(
     @Path("/adopt/many")
     fun adoptPets(@RequestBody adoptPetsRequest: AdoptPetsRequest) : Response {
 
-        petService.adoptPets(adoptPetsRequest.ownerId, adoptPetsRequest.petIds)
-        return Response.ok().build()
+        val results = petService.adoptPets(adoptPetsRequest.ownerId, adoptPetsRequest.petIds)
+        return Response.ok(results).build()
     }
 }
 

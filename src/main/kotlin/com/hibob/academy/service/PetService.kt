@@ -1,6 +1,5 @@
 package com.hibob.academy.service
 
-import com.hibob.academy.dao.OwnerDao
 import com.hibob.academy.dao.PetDao
 import com.hibob.academy.entity.CreatePetRequest
 import com.hibob.academy.entity.Owner
@@ -38,18 +37,13 @@ class PetService(
         return ownerById.owner
     }
 
+    fun adoptPets(ownerId: Long, petIds: List<Long>) : Map<Long, Boolean> =
+        petIds.associateWith { petId -> petDao.assignOwnerToPet(petId, ownerId) }
+
     fun getAllPetsByOwnerId(ownerId: Long) : List<Pet> =
         petDao.getAllPetsByOwnerId(ownerId)
 
     fun getCountPetsByType() : Map<PetType, Int> =
         petDao.getCountPetsByType()
 
-    fun adoptPets(ownerId: Long, petIds: List<Long>) : Unit {
-
-        petIds.forEach { petId ->
-            if(!(petDao.assignOwnerToPet(petId, ownerId))) {
-                throw BadRequestException("Some error occurred while adopting pets")
-            }
-        }
-    }
 }

@@ -117,23 +117,29 @@ class PetServiceTest {
 
         whenever(petDaoMock.assignOwnerToPet(any(), any())).thenReturn(true)
 
-        petService.adoptPets(ownerId, petIds)
+        val results = petService.adoptPets(ownerId, petIds)
 
         verify(petDaoMock, times(2)).assignOwnerToPet(any(), any())
+
+        petIds.forEach { petId ->
+            verify(petDaoMock).assignOwnerToPet(petId, ownerId)
+        }
+
+        assertEquals(mapOf(1L to true, 2L to true), results)
+
     }
 
     @Test
     fun `test adopt pets when some error occurred`() {
+
         val ownerId = 1L
         val petIds = listOf(1L, 2L)
 
         whenever(petDaoMock.assignOwnerToPet(any(), any())).thenReturn(false)
 
-        val exception = assertThrows<BadRequestException> {
-            petService.adoptPets(ownerId, petIds)
-        }
+        val results = petService.adoptPets(ownerId, petIds)
 
-        assertEquals("Some error occurred while adopting pets", exception.message)
+        assertEquals(mapOf(1L to false, 2L to false), results)
     }
 
     @Test
