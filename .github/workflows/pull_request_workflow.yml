@@ -49,7 +49,7 @@ jobs:
           distribution: 'corretto'
 
       - name: run flyway
-          run: ./gradlew --no-daemon --console=plain flywayMigrate
+        run: ./gradlew --no-daemon --console=plain flywayMigrate
 
       - name: gradle build
         env:
