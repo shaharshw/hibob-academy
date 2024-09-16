@@ -1,10 +1,7 @@
 package com.hibob.academy.service
 
 import com.hibob.academy.dao.PetDao
-import com.hibob.academy.entity.Owner
-import com.hibob.academy.entity.OwnerById
-import com.hibob.academy.entity.Pet
-import com.hibob.academy.entity.PetType
+import com.hibob.academy.entity.*
 import jakarta.ws.rs.BadRequestException
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -114,10 +111,11 @@ class PetServiceTest {
     fun `test adopt pets`() {
         val ownerId = 1L
         val petIds = listOf(1L, 2L)
+        val adoptPetsRequest = AdoptPetsRequest(ownerId, petIds)
 
         whenever(petDaoMock.assignOwnerToPet(any(), any())).thenReturn(true)
 
-        val results = petService.adoptPets(ownerId, petIds)
+        val results = petService.adoptPets(adoptPetsRequest)
 
         verify(petDaoMock, times(2)).assignOwnerToPet(any(), any())
 
@@ -134,10 +132,11 @@ class PetServiceTest {
 
         val ownerId = 1L
         val petIds = listOf(1L, 2L)
+        val adoptPetsRequest = AdoptPetsRequest(ownerId, petIds)
 
         whenever(petDaoMock.assignOwnerToPet(any(), any())).thenReturn(false)
 
-        val results = petService.adoptPets(ownerId, petIds)
+        val results = petService.adoptPets(adoptPetsRequest)
 
         assertEquals(mapOf(1L to false, 2L to false), results)
     }
