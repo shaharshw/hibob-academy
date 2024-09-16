@@ -43,4 +43,13 @@ class PetService(
 
     fun getCountPetsByType() : Map<PetType, Int> =
         petDao.getCountPetsByType()
+
+    fun adoptPets(ownerId: Long, petIds: List<Long>) : Unit {
+
+        petIds.forEach { petId ->
+            if(!(petDao.assignOwnerToPet(petId, ownerId))) {
+                throw BadRequestException("Some error occurred while adopting pets")
+            }
+        }
+    }
 }

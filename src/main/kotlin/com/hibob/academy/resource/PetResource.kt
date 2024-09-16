@@ -1,5 +1,6 @@
 package com.hibob.academy.resource
 
+import com.hibob.academy.entity.AdoptPetsRequest
 import com.hibob.academy.entity.CreatePetRequest
 import com.hibob.academy.entity.Pet
 import com.hibob.academy.service.PetService
@@ -69,6 +70,22 @@ class PetResource(
         )
             .build()
     }
+
+    @POST
+    @Path("/adpot/many")
+    fun adoptPets(@RequestBody adoptPetsRequest: AdoptPetsRequest) : Response {
+
+        petService.adoptPets(adoptPetsRequest.ownerId, adoptPetsRequest.petIds)
+        return Response.ok().build()
+    }
+
+    @POST
+    @Path("/many")
+    fun createPets(@RequestBody pets: List<Pet>) : Response {
+
+        return Response.ok(pets).build()
+    }
+}
 
     @GET
     @Path("/types/count")
