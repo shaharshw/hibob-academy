@@ -3,11 +3,14 @@ package com.hibob.academy.service
 import com.hibob.academy.dao.PetDao
 import com.hibob.academy.entity.Owner
 import com.hibob.academy.entity.OwnerById
+import com.hibob.academy.entity.Pet
+import com.hibob.academy.entity.PetType
 import jakarta.ws.rs.BadRequestException
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.*
+import java.time.LocalDate
 
 class PetServiceTest {
 
@@ -105,5 +108,34 @@ class PetServiceTest {
         val actualResult = petService.assignOwnerToPet(petId, ownerId)
 
         assertFalse(actualResult)
+    }
+
+    @Test
+    fun `test get all pets by owner id`() {
+        val ownerId = 1L
+        val pets = listOf(
+            Pet(id = 1L, name = "Buddy", type = PetType.DOG, dataOfArrival = LocalDate.of(2021, 1, 1), companyId = 1L, ownerId = ownerId),
+            Pet(id = 2L, name = "Mittens", type = PetType.CAT, dataOfArrival = LocalDate.of(2021, 2, 1), companyId = 1L, ownerId = ownerId)
+        )
+
+        whenever(petDaoMock.getAllPetsByOwnerId(ownerId)).thenReturn(pets)
+
+        val actualPets = petService.getAllPetsByOwnerId(ownerId)
+
+        assertEquals(pets, actualPets)
+    }
+
+    @Test
+    fun `test get count pets by type`() {
+        val petCountByType = mapOf(
+            PetType.DOG to 2,
+            PetType.CAT to 1
+        )
+
+        whenever(petDaoMock.getCountPetsByType()).thenReturn(petCountByType)
+
+        val actualPetCountByType = petService.getCountPetsByType()
+
+        assertEquals(petCountByType, actualPetCountByType)
     }
 }

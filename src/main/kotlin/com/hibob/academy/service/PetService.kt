@@ -5,6 +5,7 @@ import com.hibob.academy.dao.PetDao
 import com.hibob.academy.entity.CreatePetRequest
 import com.hibob.academy.entity.Owner
 import com.hibob.academy.entity.Pet
+import com.hibob.academy.entity.PetType
 import jakarta.ws.rs.BadRequestException
 import org.springframework.stereotype.Service
 
@@ -36,4 +37,10 @@ class PetService(
 
         return ownerById.owner
     }
+
+    fun getAllPetsByOwnerId(ownerId: Long) : List<Pet> =
+        petDao.getAllPetsByOwnerId(ownerId)
+
+    fun getCountPetsByType() : Map<PetType, Int> =
+        petDao.getCountPetsByType()
 }

@@ -32,6 +32,8 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
         ownerId = 1L
     )
 
+
+
     @BeforeEach
     @AfterEach
     fun cleanup() {
@@ -194,4 +196,43 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
         assertFalse(ownerById?.petExists ?: false)
     }
 
+    @Test
+    fun `test get all pets by owner id`() {
+
+        petDao.createPet(pet1)
+
+        val pets = petDao.getAllPetsByOwnerId(1L)
+
+        assertEquals(1, pets.size)
+    }
+
+    @Test
+    fun `test get all pets by owner id when owner does not exist`() {
+
+        petDao.createPet(pet1)
+        val pets = petDao.getAllPetsByOwnerId(999L)
+        assertTrue(pets.isEmpty())
+    }
+
+    @Test
+    fun `test get count pets by type`() {
+
+        val pet3 = CreatePetRequest(
+            name = "Buddy",
+            type = PetType.CAT,
+            dataOfArrival = LocalDate.of(2021, 1, 1),
+            companyId = companyId,
+            ownerId = 3L
+        )
+
+        petDao.createPet(pet1)
+        petDao.createPet(pet2)
+        petDao.createPet(pet3)
+
+        val countPetsByType = petDao.getCountPetsByType()
+
+        assertEquals(2, countPetsByType.size)
+        assertEquals(1, countPetsByType[PetType.CAT])
+        assertEquals(2, countPetsByType[PetType.DOG])
+    }
 }

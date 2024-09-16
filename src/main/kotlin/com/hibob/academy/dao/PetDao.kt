@@ -7,6 +7,7 @@ import jakarta.ws.rs.BadRequestException
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.jooq.RecordMapper
+import org.jooq.impl.DSL
 import org.springframework.stereotype.Component
 import java.sql.Date
 import java.util.*
@@ -114,5 +115,29 @@ class PetDao @Inject constructor(
             .set(petTable.ownerId, ownerId)
             .where(petTable.id.eq(petId))
             .execute() > 0
+    }
+
+    fun getAllPetsByOwnerId(ownerId: Long) : List<Pet> {
+
+        return sql.select(
+            petTable.id,
+            petTable.name,
+            petTable.type,
+            petTable.dateOfArrival,
+            petTable.companyId,
+            petTable.ownerId
+        )
+            .from(petTable)
+            .where(petTable.ownerId.eq(ownerId))
+            .fetch (petMapper)
+    }
+
+    fun getCountPetsByType(): Map<PetType, Int> {
+
+        return sql.select(petTable.type, DSL.count())
+            .from(petTable)
+            .groupBy(petTable.type)
+            .fetch()
+            .associate { PetType.fromString(it [petTable.type]) to (it[DSL.count()] as Int) }
     }
 }
