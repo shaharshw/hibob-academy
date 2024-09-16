@@ -1,10 +1,7 @@
 package com.hibob.academy.service
 
 import com.hibob.academy.dao.PetDao
-import com.hibob.academy.entity.CreatePetRequest
-import com.hibob.academy.entity.Owner
-import com.hibob.academy.entity.Pet
-import com.hibob.academy.entity.PetType
+import com.hibob.academy.entity.*
 import jakarta.ws.rs.BadRequestException
 import org.springframework.stereotype.Service
 
@@ -37,8 +34,9 @@ class PetService(
         return ownerById.owner
     }
 
-    fun adoptPets(ownerId: Long, petIds: List<Long>) : Map<Long, Boolean> =
-        petIds.associateWith { petId -> petDao.assignOwnerToPet(petId, ownerId) }
+    fun adoptPets(adoptPetsRequest: AdoptPetsRequest) : Map<Long, Boolean> =
+        adoptPetsRequest.petIds
+            .associateWith { petId -> petDao.assignOwnerToPet(petId, adoptPetsRequest.ownerId) }
 
     fun getAllPetsByOwnerId(ownerId: Long) : List<Pet> =
         petDao.getAllPetsByOwnerId(ownerId)
