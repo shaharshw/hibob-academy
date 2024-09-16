@@ -89,7 +89,7 @@ class PetResource(
     }
 
     @POST
-    @Path("/many")
+    @Path("/pets/create-multiple")
     fun createPets(@RequestBody pets: List<CreatePetRequest>) : Response {
         petService.createPets(pets)
         return Response.status(Response.Status.CREATED).build()
