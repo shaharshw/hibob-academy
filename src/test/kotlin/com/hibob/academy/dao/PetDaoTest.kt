@@ -2,6 +2,7 @@ package com.hibob.academy.dao
 
 import com.hibob.academy.entity.*
 import com.hibob.academy.utils.BobDbTest
+import jakarta.ws.rs.BadRequestException
 import org.jooq.DSLContext
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
@@ -243,14 +244,25 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
         petDao.createPets(pets)
 
         val actualPets = petDao.getAllPetsByCompanyId(companyId)
+        val actualPetsAfterConvert = actualPets.map { it.toCreatePetRequest() }
 
-        assertEquals(2, actualPets.size)
-        assertEquals(pets[0].name, actualPets[0].name)
-        assertEquals(pets[1].name, actualPets[1].name)
-        assertEquals(pets[0].type, actualPets[0].type)
-        assertEquals(pets[1].type, actualPets[1].type)
-        assertEquals(pets[0].dataOfArrival, actualPets[0].dataOfArrival)
-        assertEquals(pets[1].dataOfArrival, actualPets[1].dataOfArrival)
+        assertEquals(pets, actualPetsAfterConvert)
     }
 
+    @Test
+    fun `test create pets with empty list`() {
+        val pets = emptyList<CreatePetRequest>()
+
+        assertThrows(BadRequestException::class.java) {
+            petDao.createPets(pets)
+        }
+    }
+
+    private fun Pet.toCreatePetRequest() = CreatePetRequest(
+        name = name,
+        type = type,
+        dataOfArrival = dataOfArrival,
+        companyId = companyId,
+        ownerId = ownerId
+    )
 }
