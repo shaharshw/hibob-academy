@@ -214,12 +214,12 @@ class PetServiceTest {
             )
         )
 
-        whenever(petDaoMock.createPets(pets)).thenThrow(BadRequestException("Some error occurred while creating pets"))
+        whenever(petDaoMock.createPets(pets)).thenThrow(BadRequestException("No pets to create"))
 
         val exception = assertThrows<BadRequestException> {
             petService.createPets(pets)
         }
 
-        assertEquals("Some error occurred while creating pets", exception.message)
+        assertEquals("Some error occurred while creating pets: No pets to create", exception.message)
     }
 }
