@@ -144,6 +144,10 @@ class PetDao @Inject constructor(
 
     fun createPets(pets: List<CreatePetRequest>) {
 
+        if(pets.isEmpty()) {
+            throw BadRequestException("No pets to create")
+        }
+
         val insert = sql.insertInto(petTable)
             .columns(petTable.name, petTable.type, petTable.dateOfArrival, petTable.companyId, petTable.ownerId)
             .values(

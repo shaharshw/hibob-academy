@@ -48,7 +48,7 @@ class PetService(
         try {
             petDao.createPets(pets)
         } catch (e: Exception) {
-            throw BadRequestException("Some error occurred while creating pets")
+            throw BadRequestException("Some error occurred while creating pets: ${e.message}")
         }
     }
 
