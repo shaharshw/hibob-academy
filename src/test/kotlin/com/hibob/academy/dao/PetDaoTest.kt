@@ -245,7 +245,12 @@ class PetDaoTest @Autowired constructor(private val sql: DSLContext) {
         val actualPets = petDao.getAllPetsByCompanyId(companyId)
 
         assertEquals(2, actualPets.size)
-
+        assertEquals(pets[0].name, actualPets[0].name)
+        assertEquals(pets[1].name, actualPets[1].name)
+        assertEquals(pets[0].type, actualPets[0].type)
+        assertEquals(pets[1].type, actualPets[1].type)
+        assertEquals(pets[0].dataOfArrival, actualPets[0].dataOfArrival)
+        assertEquals(pets[1].dataOfArrival, actualPets[1].dataOfArrival)
     }
 
 }
