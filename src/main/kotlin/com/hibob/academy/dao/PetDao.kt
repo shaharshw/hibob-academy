@@ -132,12 +132,34 @@ class PetDao @Inject constructor(
             .fetch (petMapper)
     }
 
-    fun getCountPetsByType(): Map<PetType, Int> {
+    fun getCountPetsByType(companyId: Long): Map<PetType, Int> {
 
         return sql.select(petTable.type, DSL.count())
             .from(petTable)
+            .where(petTable.companyId.eq(companyId))
             .groupBy(petTable.type)
             .fetch()
             .associate { PetType.fromString(it [petTable.type]) to (it[DSL.count()] as Int) }
+    }
+
+    fun createPets(pets: List<CreatePetRequest>) {
+
+        val insert = sql.insertInto(petTable)
+            .columns(petTable.name, petTable.type, petTable.dateOfArrival, petTable.companyId, petTable.ownerId)
+            .values(
+                DSL.param(petTable.name),
+                DSL.param(petTable.type),
+                DSL.param(petTable.dateOfArrival),
+                DSL.param(petTable.companyId),
+                DSL.param(petTable.ownerId)
+            )
+
+        val batch = sql.batch(insert)
+
+        pets.forEach { pet ->
+            batch.bind(pet.name, pet.type.name, Date.valueOf(pet.dataOfArrival), pet.companyId, pet.ownerId)
+        }
+
+        batch.execute()
     }
 }

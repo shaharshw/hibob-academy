@@ -80,11 +80,19 @@ class PetResource(
     }
 
     @GET
-    @Path("/types/count")
-    fun getCountPetsByType() : Response {
+    @Path("/types/count/{companyId}")
+    fun getCountPetsByType(@PathParam("companyId") companyId: Long) : Response {
         return Response.ok(
-            petService.getCountPetsByType()
+            petService.getCountPetsByType(companyId)
         )
             .build()
     }
+
+    @POST
+    @Path("/pets/create-multiple")
+    fun createPets(@RequestBody pets: List<CreatePetRequest>) : Response {
+        petService.createPets(pets)
+        return Response.status(Response.Status.CREATED).build()
+    }
+
 }

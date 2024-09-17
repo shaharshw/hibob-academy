@@ -13,6 +13,7 @@ class PetServiceTest {
 
     private val petDaoMock = mock<PetDao> {}
     private val petService = PetService(petDaoMock)
+    private val companyId = 999L
 
     @Test
     fun `test get owner by pet id`() {
@@ -20,7 +21,7 @@ class PetServiceTest {
         val owner = Owner(
             id = 1L,
             name = "Shahar Shwartz",
-            companyId = 1L,
+            companyId = companyId,
             employeeId = "123",
             firstName = "Shahar",
             lastName = "Shwartz"
@@ -163,10 +164,62 @@ class PetServiceTest {
             PetType.CAT to 1
         )
 
-        whenever(petDaoMock.getCountPetsByType()).thenReturn(petCountByType)
+        whenever(petDaoMock.getCountPetsByType(companyId)).thenReturn(petCountByType)
 
-        val actualPetCountByType = petService.getCountPetsByType()
+        val actualPetCountByType = petService.getCountPetsByType(companyId)
 
         assertEquals(petCountByType, actualPetCountByType)
+    }
+
+    @Test
+    fun `test create pets`() {
+        val pets = listOf(
+            CreatePetRequest(
+                name = "Buddy",
+                type = PetType.DOG,
+                dataOfArrival = LocalDate.of(2021, 1, 1),
+                companyId = companyId,
+                ownerId = 1L
+            ),
+            CreatePetRequest(
+                name = "Mittens",
+                type = PetType.CAT,
+                dataOfArrival = LocalDate.of(2021, 2, 1),
+                companyId = companyId,
+                ownerId = 1L
+            )
+        )
+
+        petService.createPets(pets)
+
+        verify(petDaoMock).createPets(pets)
+    }
+
+    @Test
+    fun `test create pets when some error occurred`() {
+        val pets = listOf(
+            CreatePetRequest(
+                name = "Buddy",
+                type = PetType.DOG,
+                dataOfArrival = LocalDate.of(2021, 1, 1),
+                companyId = companyId,
+                ownerId = 1L
+            ),
+            CreatePetRequest(
+                name = "Mittens",
+                type = PetType.CAT,
+                dataOfArrival = LocalDate.of(2021, 2, 1),
+                companyId = companyId,
+                ownerId = 1L
+            )
+        )
+
+        whenever(petDaoMock.createPets(pets)).thenThrow(BadRequestException("Some error occurred while creating pets"))
+
+        val exception = assertThrows<BadRequestException> {
+            petService.createPets(pets)
+        }
+
+        assertEquals("Some error occurred while creating pets", exception.message)
     }
 }
