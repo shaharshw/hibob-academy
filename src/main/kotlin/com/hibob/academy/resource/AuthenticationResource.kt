@@ -24,6 +24,7 @@ class AuthenticationResource(
         val token = sessionService.createJwtToken(user)
         val cookie = NewCookie.Builder(AuthenticationFilter.AUTH_COOKIE_NAME)
             .value(token)
+            .path("/api/")
             .build()
 
         return Response.ok().cookie(cookie).build()
