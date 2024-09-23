@@ -49,12 +49,6 @@ data class LoggedInUserWithRole(
     val role: Role
 )
 
-data class LoggedInUserWithDepartment(
-    val id: Long,
-    val companyId: Long,
-    val department: Department
-)
-
 data class CreateFeedbackRequest(
     val feedbackText: String,
     val isAnonymous: Boolean
