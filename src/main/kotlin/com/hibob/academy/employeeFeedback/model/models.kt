@@ -29,11 +29,11 @@ data class Feedback(
     val id: Long,
     val companyId: Long,
     val text: String,
-    val senderId: Long,
-    val receiverId: Long,
+    val senderId: Long?,
     val isAnonymous: Boolean,
     val status: FeedbackStatus,
-    val createdAt: LocalDate
+    val createdAt: LocalDate,
+    val lastModifiedAt: LocalDate
 )
 
 data class Respond(
@@ -42,13 +42,13 @@ data class Respond(
     val feedbackId: Long,
     val responderId: Long,
     val text: String,
-    val createdAt: LocalDate
+    val createdAt: LocalDate,
+    val lastModifiedAt: LocalDate
 )
 
 data class CreateFeedbackRequest(
     val companyId: Long,
-    val senderId: Long,
-    val receiverId: Long,
+    val senderId: Long?,
     val feedbackText: String,
     val isAnonymous: Boolean
 )
@@ -78,11 +78,15 @@ data class CreateRespondRequest(
 )
 
 data class StatusResponse(
-    val status: String
+    val status: FeedbackStatus
 )
 
 data class RespondsResponse(
     val responses: List<Respond>
+)
+
+data class UpdateFeedbackStatusRequest(
+    val status: FeedbackStatus
 )
 
 data class UpdateFeedbackResponseRequest(
