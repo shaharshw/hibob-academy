@@ -1,5 +1,6 @@
 package com.hibob.academy.employeeFeedback.dao
 
+import com.hibob.academy.employeeFeedback.dao.table.EmployeeTable
 import com.hibob.academy.employeeFeedback.dao.table.FeedbackTable
 import com.hibob.academy.employeeFeedback.model.*
 import jakarta.inject.Inject
