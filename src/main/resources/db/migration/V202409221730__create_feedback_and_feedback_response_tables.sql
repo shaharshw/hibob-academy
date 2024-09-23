@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS feedback (
                                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                         status VARCHAR(50) DEFAULT 'Unreviewed',
                                         last_modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
+);
 
 
 CREATE TABLE IF NOT EXISTS feedback_response (
@@ -16,8 +16,12 @@ CREATE TABLE IF NOT EXISTS feedback_response (
                                                  feedback_id BIGINT NOT NULL,
                                                  reviewer_id BIGINT NOT NULL,
                                                  response_text TEXT NOT NULL,
-                                                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                                                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                                 last_modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
 );
+
+CREATE UNIQUE INDEX unique_feedback_responder_idx ON feedback_response (company_id, feedback_id, reviewer_id);
 
 
 
