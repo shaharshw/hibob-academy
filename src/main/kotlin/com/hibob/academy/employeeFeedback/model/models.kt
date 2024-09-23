@@ -33,9 +33,7 @@ data class Feedback(
 
 data class Respond(
     val id: Long,
-    val companyId: Long,
     val feedbackId: Long,
-    val responderId: Long,
     val text: String,
     val createdAt: LocalDate
 )
@@ -61,15 +59,6 @@ data class FilterFeedbackRequest(
     val department: Department?,
     val status: FeedbackStatus?,
     val isAnonymous: Boolean?
-)
-
-data class FeedbackResponse(
-    val id: Long,
-    val companyId: Long,
-    val text: String,
-    val name: String,
-    val status: FeedbackStatus,
-    val createdAt: LocalDate
 )
 
 data class FeedbacksResponse(
