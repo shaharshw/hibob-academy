@@ -17,6 +17,12 @@ enum class Department {
     MANAGEMENT
 }
 
+enum class Role {
+    EMPLOYEE,
+    HR,
+    ADMIN
+}
+
 // Data class
 
 data class Feedback(
