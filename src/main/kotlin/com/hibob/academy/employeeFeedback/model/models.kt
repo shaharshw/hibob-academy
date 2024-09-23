@@ -92,3 +92,4 @@ data class UpdateFeedbackResponseRequest(
     val responseText: String,
     val append: Boolean = false
 )
+
