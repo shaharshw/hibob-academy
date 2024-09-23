@@ -27,9 +27,8 @@ enum class Role {
 
 data class Feedback(
     val id: Long,
-    val companyId: Long,
-    val text: String,
     val senderId: Long?,
+    val text: String,
     val isAnonymous: Boolean,
     val status: FeedbackStatus,
     val createdAt: LocalDate,
@@ -38,17 +37,19 @@ data class Feedback(
 
 data class Respond(
     val id: Long,
-    val companyId: Long,
     val feedbackId: Long,
-    val responderId: Long,
     val text: String,
     val createdAt: LocalDate,
     val lastModifiedAt: LocalDate
 )
 
-data class CreateFeedbackRequest(
+data class LoggedInUser(
+    val id: Long,
     val companyId: Long,
-    val senderId: Long?,
+    val role: Role
+)
+
+data class CreateFeedbackRequest(
     val feedbackText: String,
     val isAnonymous: Boolean
 )
@@ -60,17 +61,8 @@ data class FilerFeedbackRequest(
     val isAnonymous: Boolean?
 )
 
-data class FeedbackResponse(
-    val id: Long,
-    val companyId: Long,
-    val text: String,
-    val name: String,
-    val status: FeedbackStatus,
-    val createdAt: LocalDate
-)
-
 data class FeedbacksResponse(
-    val feedbacks: List<FeedbackResponse>
+    val feedbacks: List<Feedback>
 )
 
 data class CreateRespondRequest(
@@ -79,10 +71,6 @@ data class CreateRespondRequest(
 
 data class StatusResponse(
     val status: FeedbackStatus
-)
-
-data class RespondsResponse(
-    val responses: List<Respond>
 )
 
 data class UpdateFeedbackStatusRequest(

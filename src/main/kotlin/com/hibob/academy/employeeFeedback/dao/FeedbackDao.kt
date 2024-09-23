@@ -1,16 +1,13 @@
 package com.hibob.academy.employeeFeedback.dao
 
-import com.hibob.academy.employeeFeedback.dao.table.EmployeesTable
 import com.hibob.academy.employeeFeedback.dao.table.FeedbackTable
 import com.hibob.academy.employeeFeedback.model.*
-import com.hibob.academy.utils.JooqTable
 import jakarta.inject.Inject
 import jakarta.ws.rs.BadRequestException
 import org.jooq.DSLContext
 import org.jooq.RecordMapper
 import org.jooq.Record
 import org.springframework.stereotype.Repository
-import java.time.LocalDate
 
 @Repository
 class FeedbackDao @Inject constructor(
@@ -23,7 +20,6 @@ class FeedbackDao @Inject constructor(
     { record ->
         Feedback(
             id = record[feedbackTable.id],
-            companyId = record[feedbackTable.companyId],
             text = record[feedbackTable.text],
             senderId = record[feedbackTable.senderId],
             isAnonymous = record[feedbackTable.isAnonymous],
@@ -33,18 +29,20 @@ class FeedbackDao @Inject constructor(
         )
     }
 
-    private val StatusResponseMapper = RecordMapper<Record, StatusResponse>
+    private val statusResponseMapper = RecordMapper<Record, StatusResponse>
     { record ->
         StatusResponse(
             status = FeedbackStatus.valueOf(record[feedbackTable.status].uppercase())
         )
     }
 
-    fun create(feedbackRequest: CreateFeedbackRequest) : Long {
+    fun create(feedbackRequest: CreateFeedbackRequest, loggedInUser: LoggedInUser) : Long {
+        val senderId = if (feedbackRequest.isAnonymous) null else loggedInUser.id
+
         val record = sql.insertInto(feedbackTable)
-            .set(feedbackTable.companyId, feedbackRequest.companyId)
+            .set(feedbackTable.companyId, loggedInUser.companyId)
             .set(feedbackTable.text, feedbackRequest.feedbackText)
-            .set(feedbackTable.senderId, feedbackRequest.senderId)
+            .set(feedbackTable.senderId, senderId)
             .set(feedbackTable.isAnonymous, feedbackRequest.isAnonymous)
             .returning(feedbackTable.id)
             .fetchOne() ?: throw BadRequestException("Failed to create feedback")
@@ -65,7 +63,7 @@ class FeedbackDao @Inject constructor(
             .from(feedbackTable)
             .where(feedbackTable.companyId.eq(companyId))
             .and(feedbackTable.id.eq(feedbackId))
-            .fetchOne(StatusResponseMapper) ?: throw BadRequestException("Feedback with $feedbackId not found")
+            .fetchOne(statusResponseMapper) ?: throw BadRequestException("Feedback with $feedbackId not found")
     }
 
     fun updateFeedbackStatus(feedbackId: Long, companyId: Long, updateFeedbackStatusRequest: UpdateFeedbackStatusRequest) {
