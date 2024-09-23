@@ -85,3 +85,8 @@ data class RespondsResponse(
     val responses: List<Respond>
 )
 
+data class UpdateFeedbackResponseRequest(
+    val responseText: String,
+    val append: Boolean = false
+)
+
