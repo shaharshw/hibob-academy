@@ -20,7 +20,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
     private val companyId = 999L
     private val senderId = 1L
 
-    private val loggedInUser = LoggedInUser(senderId, companyId, Role.ADMIN)
+    private val loggedInUser = LoggedInUser(senderId, companyId)
 
     private val feedback1 = CreateFeedbackRequest(
         feedbackText = "Great job!",
@@ -42,7 +42,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
     fun `test create feedback and get feedback by id`() {
         val feedbackId = feedbackDao.create(feedback1, loggedInUser)
 
-        val actualFeedback = feedbackDao.getFeedbackById(feedbackId, companyId)
+        val actualFeedback = feedbackDao.getFeedbackById(companyId, feedbackId)
 
         val actualFeedbackAfterConvert = actualFeedback.toCreateFeedbackRequest()
 
@@ -54,7 +54,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
     fun `test create feedback with anonymous option`() {
         val feedbackId = feedbackDao.create(anonymousFeedback1, loggedInUser)
 
-        val actualFeedback = feedbackDao.getFeedbackById(feedbackId, companyId)
+        val actualFeedback = feedbackDao.getFeedbackById(companyId, feedbackId)
 
         val actualFeedbackAfterConvert = actualFeedback.toCreateFeedbackRequest()
 
@@ -67,12 +67,12 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
     fun `test get feedback by id with wrong id`() {
         val feedbackId = feedbackDao.create(feedback1, loggedInUser)
 
-        val actualFeedback = feedbackDao.getFeedbackById(feedbackId, loggedInUser.companyId)
+        val actualFeedback = feedbackDao.getFeedbackById(loggedInUser.companyId, feedbackId)
         val actualFeedbackAfterConvert = actualFeedback.toCreateFeedbackRequest()
         assertEquals(feedback1, actualFeedbackAfterConvert)
 
         val exception = assertThrows<BadRequestException> {
-            feedbackDao.getFeedbackById(9999, companyId)
+            feedbackDao.getFeedbackById(companyId, 9999)
         }
         assertEquals("Feedback with 9999 not found", exception.message)
     }
@@ -81,7 +81,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
     fun `test get status by id`() {
         val feedbackId = feedbackDao.create(feedback1, loggedInUser)
 
-        val status = feedbackDao.getFeedbackStatusById(feedbackId, loggedInUser.companyId)
+        val status = feedbackDao.getFeedbackStatusById(loggedInUser.companyId, feedbackId)
         val expectedStatus = StatusResponse(FeedbackStatus.UNREVIEWED)
 
         assertEquals(expectedStatus, status)
@@ -91,13 +91,13 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
     fun `test get status by id with wrong id`() {
         val feedbackId = feedbackDao.create(feedback1, loggedInUser)
 
-        val status = feedbackDao.getFeedbackStatusById(feedbackId, loggedInUser.companyId)
+        val status = feedbackDao.getFeedbackStatusById(loggedInUser.companyId, feedbackId)
         val expectedStatus = StatusResponse(FeedbackStatus.UNREVIEWED)
 
         assertEquals(expectedStatus, status)
 
         val exception = assertThrows<BadRequestException> {
-            feedbackDao.getFeedbackStatusById(9999, loggedInUser.companyId)
+            feedbackDao.getFeedbackStatusById(loggedInUser.companyId,9999 )
         }
         assertEquals("Feedback with 9999 not found", exception.message)
     }
@@ -106,22 +106,12 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
     fun `test update feedback status`() {
         val feedbackId = feedbackDao.create(feedback1, loggedInUser)
 
-        feedbackDao.updateFeedbackStatus(feedbackId, companyId, UpdateFeedbackStatusRequest(FeedbackStatus.REVIEWED))
+        feedbackDao.updateFeedbackStatus(companyId, feedbackId, UpdateFeedbackStatusRequest(FeedbackStatus.REVIEWED))
 
-        val status = feedbackDao.getFeedbackStatusById(feedbackId, companyId)
+        val status = feedbackDao.getFeedbackStatusById(companyId, feedbackId)
         val expectedStatus = StatusResponse(FeedbackStatus.REVIEWED)
 
         assertEquals(expectedStatus, status)
-    }
-
-    @Test
-    fun `test update status by id with wrong id`() {
-        feedbackDao.create(feedback1, loggedInUser)
-
-        val exception = assertThrows<BadRequestException> {
-            feedbackDao.updateFeedbackStatus(9999, companyId, UpdateFeedbackStatusRequest(FeedbackStatus.REVIEWED))
-        }
-        assertEquals("Feedback with 9999 not found", exception.message)
     }
 
     @Test

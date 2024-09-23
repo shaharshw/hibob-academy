@@ -30,20 +30,21 @@ data class Feedback(
     val senderId: Long?,
     val text: String,
     val isAnonymous: Boolean,
-    val status: FeedbackStatus,
-    val createdAt: LocalDate,
-    val lastModifiedAt: LocalDate
+    val status: FeedbackStatus
 )
 
 data class Respond(
     val id: Long,
     val feedbackId: Long,
     val text: String,
-    val createdAt: LocalDate,
-    val lastModifiedAt: LocalDate
 )
 
 data class LoggedInUser(
+    val id: Long,
+    val companyId: Long,
+)
+
+data class LoggedInUserWithRole(
     val id: Long,
     val companyId: Long,
     val role: Role
@@ -54,7 +55,7 @@ data class CreateFeedbackRequest(
     val isAnonymous: Boolean
 )
 
-data class FilerFeedbackRequest(
+data class FilterFeedbackRequest(
     val data : LocalDate?,
     val department: Department?,
     val status: FeedbackStatus?,

@@ -2,7 +2,7 @@ package com.hibob.academy.employeeFeedback.dao.table
 
 import com.hibob.academy.utils.JooqTable
 
-class EmployeesTable(tableName: String = "employees") : JooqTable(tableName) {
+class EmployeeTable(tableName: String = "employees") : JooqTable(tableName) {
     val id = createBigIntField("id")
     val companyId = createBigIntField("company_id")
     val firstName = createVarcharField("first_name")
@@ -11,7 +11,7 @@ class EmployeesTable(tableName: String = "employees") : JooqTable(tableName) {
     val department = createVarcharField("department")
 
     companion object {
-        val instance = EmployeesTable()
+        val instance = EmployeeTable()
     }
 }
 

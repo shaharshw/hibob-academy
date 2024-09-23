@@ -24,8 +24,6 @@ class FeedbackDao @Inject constructor(
             senderId = record[feedbackTable.senderId],
             isAnonymous = record[feedbackTable.isAnonymous],
             status = FeedbackStatus.valueOf(record[feedbackTable.status].uppercase()),
-            createdAt = record[feedbackTable.createdAt].toLocalDate(),
-            lastModifiedAt = record[feedbackTable.lastModifiedAt].toLocalDate()
         )
     }
 
@@ -50,7 +48,7 @@ class FeedbackDao @Inject constructor(
         return record[feedbackTable.id]
     }
 
-    fun getFeedbackById(feedbackId: Long, companyId: Long): Feedback {
+    fun getFeedbackById(companyId: Long, feedbackId: Long): Feedback {
         return sql.select()
             .from(feedbackTable)
             .where(feedbackTable.id.eq(feedbackId))
@@ -58,7 +56,7 @@ class FeedbackDao @Inject constructor(
             .fetchOne(feedbackMapper) ?: throw BadRequestException("Feedback with $feedbackId not found")
     }
 
-    fun getFeedbackStatusById(feedbackId: Long, companyId: Long) : StatusResponse {
+    fun getFeedbackStatusById(companyId: Long, feedbackId: Long) : StatusResponse {
         return sql.select(feedbackTable.status)
             .from(feedbackTable)
             .where(feedbackTable.companyId.eq(companyId))
@@ -66,16 +64,12 @@ class FeedbackDao @Inject constructor(
             .fetchOne(statusResponseMapper) ?: throw BadRequestException("Feedback with $feedbackId not found")
     }
 
-    fun updateFeedbackStatus(feedbackId: Long, companyId: Long, updateFeedbackStatusRequest: UpdateFeedbackStatusRequest) {
-        val updated = sql.update(feedbackTable)
+    fun updateFeedbackStatus(companyId: Long, feedbackId: Long, updateFeedbackStatusRequest: UpdateFeedbackStatusRequest) : Boolean {
+        return sql.update(feedbackTable)
             .set(feedbackTable.status, updateFeedbackStatusRequest.status.name)
             .where(feedbackTable.id.eq(feedbackId))
             .and(feedbackTable.companyId.eq(companyId))
-            .execute()
-
-        if (updated == 0) {
-            throw BadRequestException("Feedback with $feedbackId not found")
-        }
+            .execute() > 0
     }
 
     fun getFeedbacks(companyId: Long) : List<Feedback> {
