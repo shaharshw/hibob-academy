@@ -4,8 +4,9 @@ CREATE TABLE IF NOT EXISTS feedback (
                                         sender_id BIGINT NOT NULL,
                                         text TEXT NOT NULL,
                                         is_anonymous BOOLEAN DEFAULT FALSE,
-                                        created_at DATE DEFAULT CURRENT_DATE,
-                                        status VARCHAR(50) DEFAULT 'Unreviewed'
+                                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                        status VARCHAR(50) DEFAULT 'Unreviewed',
+                                        last_modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
 
@@ -15,7 +16,7 @@ CREATE TABLE IF NOT EXISTS feedback_response (
                                                  feedback_id BIGINT NOT NULL,
                                                  reviewer_id BIGINT NOT NULL,
                                                  response_text TEXT NOT NULL,
-                                                 created_at DATE DEFAULT CURRENT_DATE
+                                                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 
