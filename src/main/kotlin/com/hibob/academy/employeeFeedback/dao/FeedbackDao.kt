@@ -5,10 +5,12 @@ import com.hibob.academy.employeeFeedback.dao.table.FeedbackTable
 import com.hibob.academy.employeeFeedback.model.*
 import jakarta.inject.Inject
 import jakarta.ws.rs.BadRequestException
+import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.RecordMapper
 import org.jooq.Record
 import org.springframework.stereotype.Repository
+import java.sql.Date
 
 @Repository
 class FeedbackDao @Inject constructor(
@@ -73,10 +75,41 @@ class FeedbackDao @Inject constructor(
             .execute() > 0
     }
 
-    fun getFeedbacks(companyId: Long) : List<Feedback> {
-        return sql.select()
+    fun getFeedbacksByFilters(companyId: Long, filters: FilterFeedbackRequest): List<Feedback> {
+        val employeeTable = EmployeeTable.instance
+        val conditions = mutableListOf<Condition>()
+
+        filters.department?.let {
+            conditions.add(employeeTable.department.eq(it.name))
+        }
+        filters.date?.let {
+            val sqlDate = Date.valueOf(it)
+            conditions.add(feedbackTable.createdAt.gt(sqlDate))
+        }
+        filters.status?.let {
+            conditions.add(feedbackTable.status.eq(it.name))
+        }
+        filters.isAnonymous?.let {
+            conditions.add(feedbackTable.isAnonymous.eq(it))
+        }
+
+        val finalCondition = if (conditions.isEmpty()) {
+            feedbackTable.companyId.eq(companyId)
+        } else {
+            conditions.reduce { combinedCondition, currentCondition ->
+                combinedCondition.and(currentCondition)
+            }.and(feedbackTable.companyId.eq(companyId))
+        }
+
+        val query = sql.select()
             .from(feedbackTable)
-            .where(feedbackTable.companyId.eq(companyId))
-            .fetch(feedbackMapper)
+            .fullJoin(employeeTable).on(feedbackTable.senderId.eq(employeeTable.id))
+            .where(feedbackTable.companyId.eq(companyId).and(finalCondition))
+
+        return query.fetch(feedbackMapper)
     }
+
+
+
+
 }
