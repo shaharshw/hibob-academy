@@ -1,0 +1,2 @@
+ALTER TABLE feedback
+    ALTER COLUMN sender_id DROP NOT NULL;
