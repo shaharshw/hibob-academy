@@ -34,6 +34,7 @@ data class Feedback(
 data class Respond(
     val id: Long,
     val feedbackId: Long,
+    val responderId: Long,
     val text: String,
     val createdAt: LocalDate
 )
@@ -66,6 +67,7 @@ data class FeedbacksResponse(
 )
 
 data class CreateRespondRequest(
+    val feedbackId: Long,
     val text: String
 )
 
