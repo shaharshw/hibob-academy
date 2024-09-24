@@ -2,16 +2,19 @@ package com.hibob.academy.employeeFeedback.service.feedbackResponse
 
 import com.hibob.academy.employeeFeedback.dao.FeedbackResponseDao
 import com.hibob.academy.employeeFeedback.model.CreateResponseRequest
+import com.hibob.academy.employeeFeedback.model.LoggedInUser
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
 import org.mockito.kotlin.whenever
 
-class FeedbackResponseCreatorServiceTest {
+class FeedbackResponseCreatorTest {
 
     private val feedbackResponseDaoMock = mock<FeedbackResponseDao>()
-    private val feedbackResponseCreatorService = FeedbackResponseCreatorService(feedbackResponseDaoMock)
+    private val feedbackResponseCreatorService = FeedbackResponseCreator(feedbackResponseDaoMock)
+    private val loggedInUser = LoggedInUser(1L, 1L)
+
 
     @Test
     fun `test createFeedbackResponse`() {
@@ -21,7 +24,7 @@ class FeedbackResponseCreatorServiceTest {
 
         whenever(feedbackResponseDaoMock.create(any(), any())).thenReturn(responseId)
 
-        val result = feedbackResponseCreatorService.createFeedbackResponse(feedbackId, createFeedbackResponseRequest)
+        val result = feedbackResponseCreatorService.createFeedbackResponse(loggedInUser, feedbackId, createFeedbackResponseRequest)
 
         assertEquals(responseId, result)
     }
@@ -32,7 +35,7 @@ class FeedbackResponseCreatorServiceTest {
         val createFeedbackResponseRequest = CreateResponseRequest("")
 
         val exception = assertThrows(IllegalArgumentException::class.java) {
-            feedbackResponseCreatorService.createFeedbackResponse(feedbackId, createFeedbackResponseRequest)
+            feedbackResponseCreatorService.createFeedbackResponse(loggedInUser, feedbackId, createFeedbackResponseRequest)
         }
 
         assertEquals("Response text must not be blank", exception.message)
@@ -44,7 +47,7 @@ class FeedbackResponseCreatorServiceTest {
         val createFeedbackResponseRequest = CreateResponseRequest("short")
 
         val exception = assertThrows(IllegalArgumentException::class.java) {
-            feedbackResponseCreatorService.createFeedbackResponse(feedbackId, createFeedbackResponseRequest)
+            feedbackResponseCreatorService.createFeedbackResponse(loggedInUser, feedbackId, createFeedbackResponseRequest)
         }
 
         assertEquals("Response text must be at least 10 characters long", exception.message)

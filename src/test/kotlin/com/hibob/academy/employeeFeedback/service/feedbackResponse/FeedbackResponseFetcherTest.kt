@@ -1,6 +1,7 @@
 package com.hibob.academy.employeeFeedback.service.feedbackResponse
 
 import com.hibob.academy.employeeFeedback.dao.FeedbackResponseDao
+import com.hibob.academy.employeeFeedback.model.LoggedInUser
 import com.hibob.academy.employeeFeedback.model.Response
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -9,10 +10,12 @@ import org.mockito.Mockito.verify
 import org.mockito.kotlin.any
 import org.mockito.kotlin.whenever
 
-class FeedbackResponseFetcherServiceTest {
+class FeedbackResponseFetcherTest {
 
     private val feedbackResponseDaoMock = mock<FeedbackResponseDao>()
-    private val feedbackResponseFetcherService = FeedbackResponseFetcherService(feedbackResponseDaoMock)
+    private val feedbackResponseFetcherService = FeedbackResponseFetcher(feedbackResponseDaoMock)
+    private val loggedInUser = LoggedInUser(1L, 1L)
+
 
     @Test
     fun `test getResponseById`() {
@@ -21,7 +24,7 @@ class FeedbackResponseFetcherServiceTest {
 
         whenever(feedbackResponseDaoMock.getResponseById(any(), any())).thenReturn(response)
 
-        val result = feedbackResponseFetcherService.getResponseById(responseId)
+        val result = feedbackResponseFetcherService.getResponseById(loggedInUser, responseId)
 
         verify(feedbackResponseDaoMock).getResponseById(any(),any())
         assertEquals(response, result)
@@ -34,7 +37,7 @@ class FeedbackResponseFetcherServiceTest {
         whenever(feedbackResponseDaoMock.getResponseById(any(), any())).thenThrow(IllegalArgumentException("Respond with $responseId not found"))
 
         val exception = assertThrows(IllegalArgumentException::class.java) {
-            feedbackResponseFetcherService.getResponseById(responseId)
+            feedbackResponseFetcherService.getResponseById(loggedInUser, responseId)
         }
 
         assertEquals("Respond with $responseId not found", exception.message)
