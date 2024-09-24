@@ -28,7 +28,7 @@ data class Feedback(
     val status: FeedbackStatus
 )
 
-data class Respond(
+data class Response(
     val id: Long,
     val feedbackId: Long,
     val text: String,
