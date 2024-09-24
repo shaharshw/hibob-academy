@@ -37,7 +37,7 @@ class FeedbackDao @Inject constructor(
         )
     }
 
-    fun create(feedbackRequest: CreateFeedbackRequest, loggedInUser: LoggedInUser) : Long {
+    fun create(loggedInUser: LoggedInUser, feedbackRequest: CreateFeedbackRequest) : Long {
         val senderId = if (feedbackRequest.isAnonymous) null else loggedInUser.id
 
         val record = sql.insertInto(feedbackTable)
