@@ -42,7 +42,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     @Test
     fun `test create feedback and get feedback by id`() {
-        val feedbackId = feedbackDao.create(feedback1, loggedInUser)
+        val feedbackId = feedbackDao.create(loggedInUser, feedback1)
 
         val actualFeedback = feedbackDao.getFeedbackById(companyId, feedbackId)
 
@@ -54,7 +54,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     @Test
     fun `test create feedback with anonymous option`() {
-        val feedbackId = feedbackDao.create(anonymousFeedback1, loggedInUser)
+        val feedbackId = feedbackDao.create(loggedInUser, anonymousFeedback1)
 
         val actualFeedback = feedbackDao.getFeedbackById(companyId, feedbackId)
 
@@ -67,7 +67,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     @Test
     fun `test get feedback by id with wrong id`() {
-        val feedbackId = feedbackDao.create(feedback1, loggedInUser)
+        val feedbackId = feedbackDao.create(loggedInUser, feedback1)
 
         val actualFeedback = feedbackDao.getFeedbackById(loggedInUser.companyId, feedbackId)
         val actualFeedbackAfterConvert = actualFeedback.toCreateFeedbackRequest()
@@ -81,7 +81,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     @Test
     fun `test get status by id`() {
-        val feedbackId = feedbackDao.create(feedback1, loggedInUser)
+        val feedbackId = feedbackDao.create(loggedInUser, feedback1)
 
         val status = feedbackDao.getFeedbackStatusById(loggedInUser.companyId, feedbackId)
         val expectedStatus = StatusResponse(FeedbackStatus.UNREVIEWED)
@@ -91,7 +91,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     @Test
     fun `test get status by id with wrong id`() {
-        val feedbackId = feedbackDao.create(feedback1, loggedInUser)
+        val feedbackId = feedbackDao.create(loggedInUser, feedback1)
 
         val status = feedbackDao.getFeedbackStatusById(loggedInUser.companyId, feedbackId)
         val expectedStatus = StatusResponse(FeedbackStatus.UNREVIEWED)
@@ -106,7 +106,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     @Test
     fun `test update feedback status`() {
-        val feedbackId = feedbackDao.create(feedback1, loggedInUser)
+        val feedbackId = feedbackDao.create(loggedInUser, feedback1)
 
         feedbackDao.updateFeedbackStatus(companyId, feedbackId, UpdateFeedbackStatusRequest(FeedbackStatus.REVIEWED))
 
@@ -118,8 +118,8 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     @Test
     fun `test get feedbacks with isAnonymous filter`() {
-        feedbackDao.create(feedback1, loggedInUser)
-        feedbackDao.create(anonymousFeedback1, loggedInUser)
+        feedbackDao.create(loggedInUser, feedback1)
+        feedbackDao.create(loggedInUser, anonymousFeedback1)
 
         val filter = FilterFeedbackRequest(
             date = null,
@@ -138,8 +138,8 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     @Test
     fun `test get feedbacks with status filter`() {
-        val feedbackID = feedbackDao.create(feedback1, loggedInUser)
-        feedbackDao.create(anonymousFeedback1, loggedInUser)
+        val feedbackID = feedbackDao.create(loggedInUser, feedback1)
+        feedbackDao.create(loggedInUser, anonymousFeedback1)
 
         feedbackDao.updateFeedbackStatus(companyId, feedbackID, UpdateFeedbackStatusRequest(FeedbackStatus.REVIEWED))
 
@@ -160,8 +160,8 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     @Test
     fun `test get feedbacks with date filter`() {
-        feedbackDao.create(feedback1, loggedInUser)
-        feedbackDao.create(anonymousFeedback1, loggedInUser)
+        feedbackDao.create(loggedInUser, feedback1)
+        feedbackDao.create(loggedInUser, anonymousFeedback1)
 
         val filter = FilterFeedbackRequest(
             date =  LocalDate.of(2024, 9, 22),
@@ -194,7 +194,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     @Test
     fun `test get feedbacks with department filter`() {
-        feedbackDao.create(feedback1, loggedInUser)
+        feedbackDao.create(loggedInUser, feedback1)
 
         val employeeTable = EmployeeTable.instance
         val employeeId = sql.insertInto(employeeTable)
@@ -209,7 +209,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
 
         val loggedInUser2 = LoggedInUser(employeeId!!, companyId)
 
-        feedbackDao.create(feedback1, loggedInUser2)
+        feedbackDao.create(loggedInUser2, feedback1)
 
         val filter = FilterFeedbackRequest(
             date = null,
@@ -230,8 +230,8 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
 
     @Test
     fun `test get feedback without filters`() {
-        feedbackDao.create(feedback1, loggedInUser)
-        feedbackDao.create(anonymousFeedback1, loggedInUser)
+        feedbackDao.create(loggedInUser, feedback1)
+        feedbackDao.create(loggedInUser, anonymousFeedback1)
 
         val filters = FilterFeedbackRequest(
             date = null,

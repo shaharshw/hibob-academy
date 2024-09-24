@@ -39,8 +39,8 @@ class FeedbackResponseDaoTest@Autowired constructor(private val sql: DSLContext)
 
     @BeforeEach
     fun createFeedback() {
-        val feedbackId1 = feedbackDao.create(feedback1, loggedInUser)
-        val feedbackId2 = feedbackDao.create(feedback2Anonymous, loggedInUser)
+        val feedbackId1 = feedbackDao.create(loggedInUser, feedback1)
+        val feedbackId2 = feedbackDao.create(loggedInUser, feedback2Anonymous)
 
         response1 = CreateResponseRequestWithFeedbackId(
             feedbackId = feedbackId1,
