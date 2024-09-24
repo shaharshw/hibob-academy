@@ -24,8 +24,8 @@ class FeedbackResponseDaoTest@Autowired constructor(private val sql: DSLContext)
 
     private val loggedInUser = LoggedInUser(senderId, companyId)
 
-    lateinit var response1: CreateResponseRequest
-    lateinit var response2: CreateResponseRequest
+    lateinit var response1: CreateResponseRequestWithFeedbackId
+    lateinit var response2: CreateResponseRequestWithFeedbackId
 
     private val feedback1 = CreateFeedbackRequest(
         feedbackText = "Great job!",
@@ -42,12 +42,12 @@ class FeedbackResponseDaoTest@Autowired constructor(private val sql: DSLContext)
         val feedbackId1 = feedbackDao.create(feedback1, loggedInUser)
         val feedbackId2 = feedbackDao.create(feedback2Anonymous, loggedInUser)
 
-        response1 = CreateResponseRequest(
+        response1 = CreateResponseRequestWithFeedbackId(
             feedbackId = feedbackId1,
             text = "Great job!"
         )
 
-        response2 = CreateResponseRequest(
+        response2 = CreateResponseRequestWithFeedbackId(
             feedbackId = feedbackId2,
             text = "Looks good!"
         )
@@ -70,7 +70,7 @@ class FeedbackResponseDaoTest@Autowired constructor(private val sql: DSLContext)
 
         val responseId = feedbackResponseDao.create(response1, loggedInUser)
 
-        val actualRespond = feedbackResponseDao.getResponseById(responseId, companyId)
+        val actualRespond = feedbackResponseDao.getResponseById(companyId, responseId)
         val actualRespondAfterConvert = actualRespond.toCreateRespondRequest()
 
         assertTrue(responseId > 0)
@@ -143,8 +143,8 @@ class FeedbackResponseDaoTest@Autowired constructor(private val sql: DSLContext)
         assertEquals(exceptedRespond, actualRespondAfterConvert)
     }
 
-    private fun Response.toCreateRespondRequest(): CreateResponseRequest {
-        return CreateResponseRequest(
+    private fun Response.toCreateRespondRequest(): CreateResponseRequestWithFeedbackId {
+        return CreateResponseRequestWithFeedbackId(
             feedbackId = feedbackId,
             text = text
         )

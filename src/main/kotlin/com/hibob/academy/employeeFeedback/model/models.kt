@@ -66,6 +66,10 @@ data class FeedbacksResponse(
 )
 
 data class CreateResponseRequest(
+    val text: String
+)
+
+data class CreateResponseRequestWithFeedbackId(
     val feedbackId: Long,
     val text: String
 )
