@@ -30,14 +30,14 @@ class FeedbackTable(tableName: String = "feedback") : JooqTable(tableName) {
     }
 }
 
-class FeedbackResponseTable(tableName: String = "respond") : JooqTable(tableName) {
+class FeedbackResponseTable(tableName: String = "feedback_response") : JooqTable(tableName) {
     val id = createBigIntField("id")
     val companyId = createBigIntField("company_id")
     val feedbackId = createBigIntField("feedback_id")
     val responderId = createBigIntField("reviewer_id")
     val text = createVarcharField("response_text")
     val createdAt = createDateField("created_at")
-    val lastModifiedAt = createDateField("last_modified_at")
+    val lastModifiedAt = createTimestampField("last_modified_at")
 
     companion object {
         val instance = FeedbackResponseTable()

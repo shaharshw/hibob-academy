@@ -20,7 +20,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
     private val companyId = 999L
     private val senderId = 1L
 
-    private val loggedInUser = LoggedInUser(senderId, companyId, Role.ADMIN)
+    private val loggedInUser = LoggedInUser(senderId, companyId)
 
     private val feedback1 = CreateFeedbackRequest(
         feedbackText = "Great job!",

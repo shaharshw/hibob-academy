@@ -35,7 +35,7 @@ data class Feedback(
     val lastModifiedAt: LocalDate
 )
 
-data class Respond(
+data class Response(
     val id: Long,
     val feedbackId: Long,
     val responderId: Long,
@@ -47,7 +47,6 @@ data class Respond(
 data class LoggedInUser(
     val id: Long,
     val companyId: Long,
-    val role: Role
 )
 
 data class CreateFeedbackRequest(
@@ -66,7 +65,7 @@ data class FeedbacksResponse(
     val feedbacks: List<Feedback>
 )
 
-data class CreateRespondRequest(
+data class CreateResponseRequest(
     val feedbackId: Long,
     val text: String
 )
@@ -80,6 +79,7 @@ data class UpdateFeedbackStatusRequest(
 )
 
 data class UpdateFeedbackResponseRequest(
+    val responseId: Long,
     val responseText: String,
     val append: Boolean = false
 )
