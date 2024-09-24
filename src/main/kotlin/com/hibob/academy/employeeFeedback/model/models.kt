@@ -2,8 +2,6 @@ package com.hibob.academy.employeeFeedback.model
 
 import java.time.LocalDate
 
-// Enum
-
 enum class FeedbackStatus {
     UNREVIEWED,
     REVIEWED
@@ -21,8 +19,6 @@ enum class Role {
     HR,
     ADMIN
 }
-
-// Data class
 
 data class Feedback(
     val id: Long,
@@ -81,5 +77,3 @@ data class UpdateFeedbackResponseRequest(
     val responseText: String,
     val append: Boolean = false
 )
-
-
