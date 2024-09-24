@@ -12,15 +12,15 @@ class FeedbackFetcher(
     private val feedbackDao: FeedbackDao
 ) {
 
-    fun getFeedbackById(loggedInUser: LoggedInUser, feedbackId: Long) : Feedback {
-        return feedbackDao.getFeedbackById(loggedInUser.companyId, feedbackId)
+    fun getFeedbackById(companyId: Long, feedbackId: Long) : Feedback {
+        return feedbackDao.getFeedbackById(companyId, feedbackId)
     }
 
-    fun getFeedbacks(loggedInUser: LoggedInUser, filters: FilterFeedbackRequest) : List<Feedback> {
-        return feedbackDao.getFeedbacksByFilters(loggedInUser.companyId, filters)
+    fun getFeedbacksByCompany(companyId: Long, filters: FilterFeedbackRequest) : List<Feedback> {
+        return feedbackDao.getFeedbacksByFilters(companyId, filters)
     }
 
-    fun getFeedbackStatusById(loggedInUser: LoggedInUser, feedbackId: Long) : StatusResponse {
-        return feedbackDao.getFeedbackStatusById(loggedInUser.companyId, feedbackId)
+    fun getFeedbackStatusById(companyId: Long, feedbackId: Long) : StatusResponse {
+        return feedbackDao.getFeedbackStatusById(companyId, feedbackId)
     }
 }
