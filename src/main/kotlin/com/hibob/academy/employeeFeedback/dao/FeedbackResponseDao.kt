@@ -31,7 +31,7 @@ class FeedbackResponseDao @Inject constructor(
         )
     }
 
-    fun create(createRespondRequest: CreateResponseRequestWithFeedbackId, loggedInUser: LoggedInUser) : Long {
+    fun create(loggedInUser: LoggedInUser, createRespondRequest: CreateResponseRequestWithFeedbackId) : Long {
         val record = sql.insertInto(feedbackResponseTable)
             .set(feedbackResponseTable.companyId, loggedInUser.companyId)
             .set(feedbackResponseTable.responderId, loggedInUser.id)
@@ -54,7 +54,7 @@ class FeedbackResponseDao @Inject constructor(
             .fetchOne(feedbackResponseMapper) ?: throw BadRequestException("Respond with $responseId not found")
     }
 
-    fun updateResponse(updateFeedbackResponseRequest: UpdateFeedbackResponseRequest, loggedInUser: LoggedInUser): Boolean {
+    fun updateResponse(loggedInUser: LoggedInUser, updateFeedbackResponseRequest: UpdateFeedbackResponseRequest): Boolean {
         val newText = if (updateFeedbackResponseRequest.append) {
             DSL.concat(feedbackResponseTable.text, DSL.inline("\n"), DSL.inline(updateFeedbackResponseRequest.responseText))
         } else {

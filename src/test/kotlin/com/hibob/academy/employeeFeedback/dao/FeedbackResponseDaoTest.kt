@@ -68,7 +68,7 @@ class FeedbackResponseDaoTest@Autowired constructor(private val sql: DSLContext)
     @Test
     fun `test create response`() {
 
-        val responseId = feedbackResponseDao.create(response1, loggedInUser)
+        val responseId = feedbackResponseDao.create(loggedInUser, response1)
 
         val actualRespond = feedbackResponseDao.getResponseById(companyId, responseId)
         val actualRespondAfterConvert = actualRespond.toCreateRespondRequest()
@@ -79,16 +79,16 @@ class FeedbackResponseDaoTest@Autowired constructor(private val sql: DSLContext)
 
     @Test
     fun `test create response with existing response`() {
-        feedbackResponseDao.create(response1, loggedInUser)
+        feedbackResponseDao.create(loggedInUser, response1)
 
         assertThrows<BadRequestException> {
-            feedbackResponseDao.create(response1, loggedInUser)
+            feedbackResponseDao.create(loggedInUser, response1)
         }
     }
 
     @Test
     fun `test get response by id`() {
-        val responseId = feedbackResponseDao.create(response1, loggedInUser)
+        val responseId = feedbackResponseDao.create(loggedInUser, response1)
 
         val actualRespond = feedbackResponseDao.getResponseById(companyId, responseId)
         val actualRespondAfterConvert = actualRespond.toCreateRespondRequest()
@@ -105,7 +105,7 @@ class FeedbackResponseDaoTest@Autowired constructor(private val sql: DSLContext)
 
     @Test
     fun `test update response with append text`() {
-        val responseId = feedbackResponseDao.create(response1, loggedInUser)
+        val responseId = feedbackResponseDao.create(loggedInUser, response1)
 
         val updateFeedbackResponseRequest = UpdateFeedbackResponseRequest(
             responseId = responseId,
@@ -113,7 +113,7 @@ class FeedbackResponseDaoTest@Autowired constructor(private val sql: DSLContext)
             append = true
         )
 
-        val isUpdated = feedbackResponseDao.updateResponse(updateFeedbackResponseRequest, loggedInUser)
+        val isUpdated = feedbackResponseDao.updateResponse(loggedInUser, updateFeedbackResponseRequest)
 
         val actualRespond = feedbackResponseDao.getResponseById(companyId, responseId)
         val actualRespondAfterConvert = actualRespond.toCreateRespondRequest()
@@ -125,7 +125,7 @@ class FeedbackResponseDaoTest@Autowired constructor(private val sql: DSLContext)
 
     @Test
     fun `test update response with override text`() {
-        val responseId = feedbackResponseDao.create(response1, loggedInUser)
+        val responseId = feedbackResponseDao.create(loggedInUser, response1)
 
         val updateFeedbackResponseRequest = UpdateFeedbackResponseRequest(
             responseId = responseId,
@@ -133,7 +133,7 @@ class FeedbackResponseDaoTest@Autowired constructor(private val sql: DSLContext)
             append = false
         )
 
-        val isUpdated = feedbackResponseDao.updateResponse(updateFeedbackResponseRequest, loggedInUser)
+        val isUpdated = feedbackResponseDao.updateResponse(loggedInUser, updateFeedbackResponseRequest)
 
         val actualRespond = feedbackResponseDao.getResponseById(companyId, responseId)
         val actualRespondAfterConvert = actualRespond.toCreateRespondRequest()
