@@ -14,7 +14,7 @@ class FeedbackCreatorService(
         val loggedInUser = getLoggedInUser()
         validateCreateFeedbackRequest(createFeedbackRequest)
 
-        return feedbackDao.create(createFeedbackRequest, loggedInUser)
+        return feedbackDao.create(loggedInUser, createFeedbackRequest)
     }
 
     private fun validateCreateFeedbackRequest(request: CreateFeedbackRequest) {
