@@ -1,7 +1,7 @@
 package com.hibob.academy.employeeFeedback.dao
 
 import com.hibob.academy.employeeFeedback.dao.table.FeedbackResponseTable
-import com.hibob.academy.employeeFeedback.model.CreateResponseRequest
+import com.hibob.academy.employeeFeedback.model.CreateResponseRequestWithFeedbackId
 import com.hibob.academy.employeeFeedback.model.LoggedInUser
 import com.hibob.academy.employeeFeedback.model.Response
 import com.hibob.academy.employeeFeedback.model.UpdateFeedbackResponseRequest
@@ -11,8 +11,9 @@ import org.jooq.DSLContext
 import org.jooq.RecordMapper
 import org.jooq.Record
 import org.jooq.impl.DSL
+import org.springframework.stereotype.Repository
 
-
+@Repository
 class FeedbackResponseDao @Inject constructor(
     private val sql: DSLContext
 ) {
@@ -30,7 +31,7 @@ class FeedbackResponseDao @Inject constructor(
             lastModifiedAt = record[feedbackResponseTable.lastModifiedAt].toLocalDateTime().toLocalDate()        )
     }
 
-    fun create(createRespondRequest: CreateResponseRequest, loggedInUser: LoggedInUser) : Long {
+    fun create(createRespondRequest: CreateResponseRequestWithFeedbackId, loggedInUser: LoggedInUser) : Long {
         val record = sql.insertInto(feedbackResponseTable)
             .set(feedbackResponseTable.companyId, loggedInUser.companyId)
             .set(feedbackResponseTable.responderId, loggedInUser.id)
