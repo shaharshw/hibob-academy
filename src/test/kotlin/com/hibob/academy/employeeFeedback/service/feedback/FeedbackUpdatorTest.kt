@@ -2,6 +2,7 @@ package com.hibob.academy.employeeFeedback.service.feedback
 
 import com.hibob.academy.employeeFeedback.dao.FeedbackDao
 import com.hibob.academy.employeeFeedback.model.FeedbackStatus
+import com.hibob.academy.employeeFeedback.model.LoggedInUser
 import com.hibob.academy.employeeFeedback.model.UpdateFeedbackStatusRequest
 import jakarta.ws.rs.BadRequestException
 import org.junit.jupiter.api.Assertions.*
@@ -10,9 +11,11 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
-class FeedbackUpdateServiceTest {
+class FeedbackUpdatorTest {
+
     private val feedbackDaoMock = mock<FeedbackDao>{}
-    private val feedbackUpdateService = FeedbackUpdateService(feedbackDaoMock)
+    private val feedbackUpdateService = FeedbackUpdator(feedbackDaoMock)
+    private val loggedInUser = LoggedInUser(1L, 1L)
 
     @Test
     fun `test updateFeedbackStatus`() {
@@ -21,7 +24,7 @@ class FeedbackUpdateServiceTest {
         whenever(feedbackDaoMock.updateFeedbackStatus(any(), any(), any())).thenReturn(true)
 
         assertDoesNotThrow {
-            feedbackUpdateService.updateFeedbackStatus(feedbackId, updateFeedbackStatusRequest)
+            feedbackUpdateService.updateFeedbackStatus(loggedInUser, feedbackId, updateFeedbackStatusRequest)
         }
     }
 
@@ -32,7 +35,7 @@ class FeedbackUpdateServiceTest {
         whenever(feedbackDaoMock.updateFeedbackStatus(any(), any(), any())).thenReturn(false)
 
         val exception = assertThrows(BadRequestException::class.java) {
-            feedbackUpdateService.updateFeedbackStatus(feedbackId, updateFeedbackStatusRequest)
+            feedbackUpdateService.updateFeedbackStatus(loggedInUser, feedbackId, updateFeedbackStatusRequest)
         }
 
         assertEquals("Failed to update feedback status", exception.message)

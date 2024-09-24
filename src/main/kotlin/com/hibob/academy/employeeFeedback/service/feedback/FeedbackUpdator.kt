@@ -1,19 +1,17 @@
 package com.hibob.academy.employeeFeedback.service.feedback
 
 import com.hibob.academy.employeeFeedback.dao.FeedbackDao
-import com.hibob.academy.employeeFeedback.model.FeedbackStatus
+import com.hibob.academy.employeeFeedback.model.LoggedInUser
 import com.hibob.academy.employeeFeedback.model.UpdateFeedbackStatusRequest
-import com.hibob.academy.employeeFeedback.utils.getLoggedInUser
 import jakarta.ws.rs.BadRequestException
 import org.springframework.stereotype.Service
 
 @Service
-class FeedbackUpdateService(
+class FeedbackUpdator(
     private val feedbackDao: FeedbackDao
 ) {
 
-    fun updateFeedbackStatus(feedbackId: Long, updateFeedbackStatusRequest: UpdateFeedbackStatusRequest) {
-        val loggedInUser = getLoggedInUser()
+    fun updateFeedbackStatus(loggedInUser: LoggedInUser, feedbackId: Long, updateFeedbackStatusRequest: UpdateFeedbackStatusRequest) {
         val isSuccess = feedbackDao.updateFeedbackStatus(loggedInUser.companyId, feedbackId,updateFeedbackStatusRequest)
 
         if (!isSuccess) {

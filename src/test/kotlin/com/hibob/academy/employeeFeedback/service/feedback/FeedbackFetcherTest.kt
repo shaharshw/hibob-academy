@@ -1,20 +1,18 @@
 package com.hibob.academy.employeeFeedback.service.feedback
 
 import com.hibob.academy.employeeFeedback.dao.FeedbackDao
-import com.hibob.academy.employeeFeedback.model.Feedback
-import com.hibob.academy.employeeFeedback.model.FeedbackStatus
-import com.hibob.academy.employeeFeedback.model.FilterFeedbackRequest
-import com.hibob.academy.employeeFeedback.model.StatusResponse
+import com.hibob.academy.employeeFeedback.model.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
-class FeedbackFetcherServiceTest {
+class FeedbackFetcherTest {
 
     private val feedbackDaoMock = mock<FeedbackDao> {}
-    private val feedbackFetcherService = FeedbackFetcherService(feedbackDaoMock)
+    private val feedbackFetcherService = FeedbackFetcher(feedbackDaoMock)
+    private val loggedInUser = LoggedInUser(1L, 1L)
 
     @Test
     fun `test getFeedbackById`() {
@@ -22,7 +20,7 @@ class FeedbackFetcherServiceTest {
         val expectedFeedback = Feedback(feedbackId, 1L, "This is a feedback", false, FeedbackStatus.UNREVIEWED)
         whenever(feedbackDaoMock.getFeedbackById(any(), any())).thenReturn(expectedFeedback)
 
-        val result = feedbackFetcherService.getFeedbackById(feedbackId)
+        val result = feedbackFetcherService.getFeedbackById(loggedInUser, feedbackId)
 
         assertEquals(expectedFeedback, result)
     }
@@ -36,7 +34,7 @@ class FeedbackFetcherServiceTest {
         val filters = FilterFeedbackRequest(null, null, null, null)
         whenever(feedbackDaoMock.getFeedbacksByFilters(any(), any())).thenReturn(expectedFeedbacks)
 
-        val result = feedbackFetcherService.getFeedbacks(filters)
+        val result = feedbackFetcherService.getFeedbacks(loggedInUser, filters)
 
         assertEquals(expectedFeedbacks, result)
     }
@@ -47,7 +45,7 @@ class FeedbackFetcherServiceTest {
         val expectedStatus = StatusResponse(FeedbackStatus.UNREVIEWED)
         whenever(feedbackDaoMock.getFeedbackStatusById(any(), any())).thenReturn(expectedStatus)
 
-        val result = feedbackFetcherService.getFeedbackStatusById(feedbackId)
+        val result = feedbackFetcherService.getFeedbackStatusById(loggedInUser, feedbackId)
 
         assertEquals(expectedStatus, result)
     }
