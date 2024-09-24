@@ -1,14 +1,16 @@
 package com.hibob.academy.employeeFeedback.dao
 
 import com.hibob.academy.employeeFeedback.dao.table.FeedbackResponseTable
-import com.hibob.academy.employeeFeedback.model.CreateRespondRequest
+import com.hibob.academy.employeeFeedback.model.CreateResponseRequest
 import com.hibob.academy.employeeFeedback.model.LoggedInUser
-import com.hibob.academy.employeeFeedback.model.Respond
+import com.hibob.academy.employeeFeedback.model.Response
+import com.hibob.academy.employeeFeedback.model.UpdateFeedbackResponseRequest
 import jakarta.inject.Inject
 import jakarta.ws.rs.BadRequestException
 import org.jooq.DSLContext
 import org.jooq.RecordMapper
 import org.jooq.Record
+import org.jooq.impl.DSL
 
 
 class FeedbackResponseDao @Inject constructor(
@@ -17,29 +19,55 @@ class FeedbackResponseDao @Inject constructor(
 
     private val feedbackResponseTable = FeedbackResponseTable.instance
 
-    private val feedbackResponseMapper = RecordMapper<Record, Respond>
+    private val feedbackResponseMapper = RecordMapper<Record, Response>
     { record ->
-        Respond(
+        Response(
             id = record[feedbackResponseTable.id],
             feedbackId = record[feedbackResponseTable.feedbackId],
             responderId = record[feedbackResponseTable.responderId],
             text = record[feedbackResponseTable.text],
             createdAt = record[feedbackResponseTable.createdAt].toLocalDate(),
-            lastModifiedAt = record[feedbackResponseTable.lastModifiedAt].toLocalDate()
-        )
+            lastModifiedAt = record[feedbackResponseTable.lastModifiedAt].toLocalDateTime().toLocalDate()        )
     }
 
-    fun create(createRespondRequest: CreateRespondRequest, loggedInUser: LoggedInUser) : Long {
+    fun create(createRespondRequest: CreateResponseRequest, loggedInUser: LoggedInUser) : Long {
         val record = sql.insertInto(feedbackResponseTable)
             .set(feedbackResponseTable.companyId, loggedInUser.companyId)
             .set(feedbackResponseTable.responderId, loggedInUser.id)
             .set(feedbackResponseTable.feedbackId, createRespondRequest.feedbackId)
             .set(feedbackResponseTable.text, createRespondRequest.text)
+            .onConflict(feedbackResponseTable.companyId, feedbackResponseTable.feedbackId, feedbackResponseTable.responderId)
+            .doNothing()
             .returning(feedbackResponseTable.id)
-            .fetchOne() ?: throw BadRequestException("Failed to create respond")
+            .fetchOne() ?: throw BadRequestException("A response for feedback with ID: ${createRespondRequest.feedbackId} " +
+                "already exists in the company with ID: ${loggedInUser.companyId} from user with ID: ${loggedInUser.id}.")
 
         return record[feedbackResponseTable.id]
     }
 
+    fun getResponseById(companyId: Long, responseId: Long): Response {
+        return sql.select()
+            .from(feedbackResponseTable)
+            .where(feedbackResponseTable.id.eq(responseId))
+            .and(feedbackResponseTable.companyId.eq(companyId))
+            .fetchOne(feedbackResponseMapper) ?: throw BadRequestException("Respond with $responseId not found")
+    }
+
+    fun updateResponse(updateFeedbackResponseRequest: UpdateFeedbackResponseRequest, loggedInUser: LoggedInUser): Boolean {
+        val newText = if (updateFeedbackResponseRequest.append) {
+            DSL.concat(feedbackResponseTable.text, DSL.inline("\n"), DSL.inline(updateFeedbackResponseRequest.responseText))
+        } else {
+            DSL.inline(updateFeedbackResponseRequest.responseText)
+        }
+
+        val updateQuery = sql.update(feedbackResponseTable)
+            .set(feedbackResponseTable.text, newText)
+            .set(feedbackResponseTable.lastModifiedAt, DSL.currentTimestamp())
+            .where(feedbackResponseTable.id.eq(updateFeedbackResponseRequest.responseId))
+            .and(feedbackResponseTable.companyId.eq(loggedInUser.companyId))
+            .and(feedbackResponseTable.responderId.eq(loggedInUser.id))
+
+        return updateQuery.execute() > 0
+    }
 
 }

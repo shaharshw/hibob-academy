@@ -23,6 +23,7 @@ enum class Role {
     ADMIN
 }
 
+
 data class Feedback(
     val id: Long,
     val senderId: Long?,
@@ -31,7 +32,7 @@ data class Feedback(
     val status: FeedbackStatus
 )
 
-data class Respond(
+data class Response(
     val id: Long,
     val feedbackId: Long,
     val responderId: Long,
@@ -66,7 +67,7 @@ data class FeedbacksResponse(
     val feedbacks: List<Feedback>
 )
 
-data class CreateRespondRequest(
+data class CreateResponseRequest(
     val feedbackId: Long,
     val text: String
 )
@@ -80,6 +81,7 @@ data class UpdateFeedbackStatusRequest(
 )
 
 data class UpdateFeedbackResponseRequest(
+    val responseId: Long,
     val responseText: String,
     val append: Boolean = false
 )
