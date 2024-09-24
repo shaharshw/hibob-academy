@@ -1,6 +1,5 @@
 package com.hibob.academy.employeeFeedback.model
 
-import com.hibob.nullability.Department
 import java.time.LocalDate
 
 // Enum
@@ -56,7 +55,7 @@ data class CreateFeedbackRequest(
 )
 
 data class FilterFeedbackRequest(
-    val data : LocalDate?,
+    val date : LocalDate?,
     val department: Department?,
     val status: FeedbackStatus?,
     val isAnonymous: Boolean?
@@ -82,4 +81,5 @@ data class UpdateFeedbackResponseRequest(
     val responseText: String,
     val append: Boolean = false
 )
+
 
