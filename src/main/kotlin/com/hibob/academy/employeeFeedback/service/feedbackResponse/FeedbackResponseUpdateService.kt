@@ -15,7 +15,7 @@ class FeedbackResponseUpdateService(
         val loggedInUser = getLoggedInUser()
         validateUpdateResponseRequest(updateFeedbackResponseRequest)
 
-        return feedbackResponseDao.updateResponse(updateFeedbackResponseRequest, loggedInUser)
+        return feedbackResponseDao.updateResponse(loggedInUser, updateFeedbackResponseRequest)
     }
 
     private fun validateUpdateResponseRequest(request: UpdateFeedbackResponseRequest) {

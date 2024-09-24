@@ -18,7 +18,7 @@ class FeedbackResponseCreatorService(
         val createFeedbackResponseWithId = CreateResponseRequestWithFeedbackId(feedbackId, createFeedbackResponseRequest.text)
         validateCreateResponseRequest(createFeedbackResponseWithId)
 
-        return feedbackResponseDao.create(createFeedbackResponseWithId, loggedInUser)
+        return feedbackResponseDao.create(loggedInUser, createFeedbackResponseWithId)
     }
 
     private fun validateCreateResponseRequest(request: CreateResponseRequestWithFeedbackId) {
