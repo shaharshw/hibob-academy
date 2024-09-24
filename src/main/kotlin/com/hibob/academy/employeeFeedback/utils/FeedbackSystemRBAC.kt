@@ -18,7 +18,8 @@ class RoleCheckAspect(private val sessionService: SessionService) {
 
     @Before("@annotation(requireRole)")
     fun checkRole(requireRole: RequireRole) {
-        val currentUserRole = sessionService.getCurrentUserRole()
+        val token = "token" // TODO: get token from request
+        val currentUserRole = sessionService.getCurrentUserRole(token)
 
         if (!requireRole.roles.contains(currentUserRole)) {
             throw ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied for role: $currentUserRole")
