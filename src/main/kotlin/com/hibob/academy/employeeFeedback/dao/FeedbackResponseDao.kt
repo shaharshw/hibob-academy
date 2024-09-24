@@ -27,7 +27,6 @@ class FeedbackResponseDao @Inject constructor(
             feedbackId = record[feedbackResponseTable.feedbackId],
             responderId = record[feedbackResponseTable.responderId],
             text = record[feedbackResponseTable.text],
-            createdAt = record[feedbackResponseTable.createdAt].toLocalDate(),
         )
     }
 

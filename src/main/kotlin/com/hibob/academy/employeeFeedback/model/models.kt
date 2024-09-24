@@ -33,7 +33,6 @@ data class Response(
     val feedbackId: Long,
     val responderId: Long,
     val text: String,
-    val createdAt: LocalDate
 )
 
 data class LoggedInUser(
