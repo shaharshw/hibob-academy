@@ -28,7 +28,7 @@ class FeedbackResponseDao @Inject constructor(
             responderId = record[feedbackResponseTable.responderId],
             text = record[feedbackResponseTable.text],
             createdAt = record[feedbackResponseTable.createdAt].toLocalDate(),
-            lastModifiedAt = record[feedbackResponseTable.lastModifiedAt].toLocalDateTime().toLocalDate()        )
+        )
     }
 
     fun create(createRespondRequest: CreateResponseRequestWithFeedbackId, loggedInUser: LoggedInUser) : Long {

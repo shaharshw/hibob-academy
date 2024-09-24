@@ -1,6 +1,5 @@
 package com.hibob.academy.employeeFeedback.model
 
-import com.hibob.nullability.Department
 import java.time.LocalDate
 
 // Enum
