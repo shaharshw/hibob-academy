@@ -38,6 +38,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
 	implementation("org.springframework.boot:spring-boot-starter-jersey")
 	implementation("org.springframework.boot:spring-boot-starter-logging")
+	implementation("org.springframework.boot:spring-boot-starter-aop")
+
 
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("com.google.guava:guava:33.3.0-jre")
