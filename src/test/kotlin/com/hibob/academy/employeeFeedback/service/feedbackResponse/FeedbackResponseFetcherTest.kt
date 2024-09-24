@@ -14,8 +14,7 @@ class FeedbackResponseFetcherTest {
 
     private val feedbackResponseDaoMock = mock<FeedbackResponseDao>()
     private val feedbackResponseFetcherService = FeedbackResponseFetcher(feedbackResponseDaoMock)
-    private val loggedInUser = LoggedInUser(1L, 1L)
-
+    private val companyId = 1L
 
     @Test
     fun `test getResponseById`() {
@@ -24,7 +23,7 @@ class FeedbackResponseFetcherTest {
 
         whenever(feedbackResponseDaoMock.getResponseById(any(), any())).thenReturn(response)
 
-        val result = feedbackResponseFetcherService.getResponseById(loggedInUser, responseId)
+        val result = feedbackResponseFetcherService.getResponseById(companyId, responseId)
 
         verify(feedbackResponseDaoMock).getResponseById(any(),any())
         assertEquals(response, result)
@@ -37,7 +36,7 @@ class FeedbackResponseFetcherTest {
         whenever(feedbackResponseDaoMock.getResponseById(any(), any())).thenThrow(IllegalArgumentException("Respond with $responseId not found"))
 
         val exception = assertThrows(IllegalArgumentException::class.java) {
-            feedbackResponseFetcherService.getResponseById(loggedInUser, responseId)
+            feedbackResponseFetcherService.getResponseById(companyId, responseId)
         }
 
         assertEquals("Respond with $responseId not found", exception.message)
