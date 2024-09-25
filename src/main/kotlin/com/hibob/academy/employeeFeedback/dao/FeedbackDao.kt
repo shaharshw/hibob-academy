@@ -88,7 +88,7 @@ class FeedbackDao @Inject constructor(
             conditions.add(feedbackTable.createdAt.gt(sqlDate))
         }
         filters.status?.let {
-            conditions.add(feedbackTable.status.eq(it.name))
+            conditions.add(upper(feedbackTable.status).eq(it.name))
         }
         filters.isAnonymous?.let {
             conditions.add(feedbackTable.isAnonymous.eq(it))
