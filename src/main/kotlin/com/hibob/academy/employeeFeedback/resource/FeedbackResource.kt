@@ -41,7 +41,6 @@ class FeedbackResource(
     @Path("/submit")
     @RequireRole(Role.EMPLOYEE, Role.HR, Role.ADMIN)
     fun submitFeedback(@RequestBody createFeedbackRequest: CreateFeedbackRequest) : Response {
-
         val loggedInUser = getLoggedInUser()
         val feedbackId = feedbackCreator.createFeedback(loggedInUser, createFeedbackRequest)
         return Response.status(Response.Status.CREATED).entity(feedbackId).build()
@@ -51,7 +50,6 @@ class FeedbackResource(
     @Path("/view")
     @RequireRole(Role.HR, Role.ADMIN)
     fun viewFeedback(@RequestBody filters: FilterFeedbackRequest) : Response {
-
         val companyId = getLoggedInUser().companyId
         val feedbacks = feedbackFetcher.getFeedbacksByCompany(companyId, filters)
         return Response.status(Response.Status.OK).entity(feedbacks).build()
@@ -61,7 +59,6 @@ class FeedbackResource(
     @Path("/{feedback_id}/response")
     @RequireRole(Role.HR)
     fun submitFeedbackResponse(@PathParam("feedback_id") feedbackId: Long, @RequestBody createFeedbackResponseRequest: CreateResponseRequest) : Response {
-
         val loggedInUser = getLoggedInUser()
         val responseId = feedbackResponseCreator.createFeedbackResponse(loggedInUser, feedbackId, createFeedbackResponseRequest)
         return Response.status(Response.Status.CREATED).entity(responseId).build()
@@ -71,7 +68,6 @@ class FeedbackResource(
     @Path("/{feedback_id}/status")
     @RequireRole(Role.EMPLOYEE, Role.HR, Role.ADMIN)
     fun getFeedbackStatus(@PathParam("feedback_id") feedbackId: Long) : Response {
-
         val companyId = getLoggedInUser().companyId
         val status = feedbackFetcher.getFeedbackStatusById(companyId, feedbackId)
         return Response.status(Response.Status.OK).entity(status).build()
@@ -81,7 +77,6 @@ class FeedbackResource(
     @Path("/{feedback_id}/status")
     @RequireRole(Role.HR)
     fun updateFeedbackStatus(@PathParam("feedback_id") feedbackId: Long, @RequestBody updateFeedbackStatusRequest: UpdateFeedbackStatusRequest) : Response {
-
         val loggedInUser = getLoggedInUser()
         feedbackUpdator.updateFeedbackStatus(loggedInUser, feedbackId, updateFeedbackStatusRequest)
         return Response.status(Response.Status.OK).build()
@@ -91,7 +86,6 @@ class FeedbackResource(
     @Path("/{feedback_id}/response")
     @RequireRole(Role.HR)
     fun updateFeedbackResponse(@PathParam("feedback_id") feedbackId: Long, @RequestBody updateFeedbackResponseRequest: UpdateFeedbackResponseRequest) : Response {
-
         val loggedInUser = getLoggedInUser()
         feedbackResponseUpdator.updateFeedbackResponse(loggedInUser, feedbackId, updateFeedbackResponseRequest)
         return Response.status(Response.Status.OK).build()
