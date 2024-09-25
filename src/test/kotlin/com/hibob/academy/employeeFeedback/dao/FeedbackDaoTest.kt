@@ -133,8 +133,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
         val exceptedFeedbacks = listOf(anonymousFeedback1)
 
         assertEquals(1, feedbacks.size)
-        assertEquals(exceptedFeedbacks, feedbackAfterConvert)
-    }
+        assertTrue(feedbackAfterConvert.containsAll(exceptedFeedbacks))    }
 
     @Test
     fun `test get feedbacks with status filter`() {
@@ -155,7 +154,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
         val exceptedFeedbacks = listOf(feedback1)
 
         assertEquals(1, feedbacks.size)
-        assertEquals(exceptedFeedbacks, feedbackAfterConvert)
+        assertTrue(feedbackAfterConvert.containsAll(exceptedFeedbacks))
     }
 
     @Test
@@ -186,7 +185,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
         val exceptedFeedbacks2 = emptyList<CreateFeedbackRequest>()
 
         assertEquals(2, feedbacks1.size)
-        assertEquals(exceptedFeedbacks, feedbackAfterConvert)
+        assertTrue(feedbackAfterConvert.containsAll(exceptedFeedbacks))
 
         assertEquals(0, feedbacks2.size)
         assertEquals(exceptedFeedbacks2, feedbackAfterConvert2)
@@ -223,7 +222,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
         val exceptedFeedbacks = listOf(feedback1)
 
         assertEquals(1, feedbacks.size)
-        assertEquals(exceptedFeedbacks, feedbackAfterConvert)
+        assertTrue(feedbackAfterConvert.containsAll(exceptedFeedbacks))
 
         sql.delete(employeeTable).where(employeeTable.id.eq(employeeId)).execute()
     }
@@ -242,10 +241,10 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
 
         val feedbacks = feedbackDao.getFeedbacksByFilters(companyId, filters)
         val feedbackAfterConvert = feedbacks.map { it.toCreateFeedbackRequest() }.toSet()
-        val expectedFeedbacks = setOf(anonymousFeedback1, feedback1)
+        val exceptedFeedbacks = setOf(anonymousFeedback1, feedback1)
 
         assertEquals(2, feedbacks.size)
-        assertEquals(expectedFeedbacks, feedbackAfterConvert)
+        assertTrue(feedbackAfterConvert.containsAll(exceptedFeedbacks))
     }
 
     private fun Feedback.toCreateFeedbackRequest() = CreateFeedbackRequest(
