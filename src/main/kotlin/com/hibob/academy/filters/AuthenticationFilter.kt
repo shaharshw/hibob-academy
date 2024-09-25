@@ -1,6 +1,7 @@
 package com.hibob.academy.filters
 
 import com.hibob.academy.service.SessionService
+import com.hibob.academy.service.SessionService.Companion.SECRET_KEY
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jws
 import io.jsonwebtoken.Jwts
@@ -23,6 +24,10 @@ class AuthenticationFilter : ContainerRequestFilter {
         const val PATH_TO_SKIP = "api/auth/login"
 
         const val AUTH_COOKIE_NAME = "Authorization"
+
+        const val USER_ID = "userId"
+
+        const val COMPANY_ID = "companyId"
     }
 
     override fun filter(requestContext: ContainerRequestContext) {
@@ -39,6 +44,11 @@ class AuthenticationFilter : ContainerRequestFilter {
         }
 
         validateToken(token, requestContext)
+        val userId = extractUserId(token)
+        val companyId = extractCompanyId(token)
+
+        requestContext.setProperty(USER_ID, userId)
+        requestContext.setProperty(COMPANY_ID, companyId)
     }
 
      private fun validateToken(token: String, requestContext: ContainerRequestContext) {
@@ -58,5 +68,19 @@ class AuthenticationFilter : ContainerRequestFilter {
             Response.status(Response.Status.UNAUTHORIZED)
                 .entity("User can't access to the resource")
                 .build())
+    }
+
+    private fun extractUserId(token: String): Long {
+        return (Jwts.parser()
+            .setSigningKey(SECRET_KEY)
+            .parseClaimsJws(token)
+            .body["UserId"] as Int).toLong()
+    }
+
+    private fun extractCompanyId(token: String): Long {
+        return (Jwts.parser()
+            .setSigningKey(SECRET_KEY)
+            .parseClaimsJws(token)
+            .body["CompanyId"] as Int).toLong()
     }
 }
