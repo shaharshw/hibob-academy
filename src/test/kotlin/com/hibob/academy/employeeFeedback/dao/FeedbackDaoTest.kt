@@ -179,7 +179,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
 
         val feedbacks1 = feedbackDao.getFeedbacksByFilters(companyId, filter)
         val feedbackAfterConvert = feedbacks1.map { it.toCreateFeedbackRequest() }
-        val exceptedFeedbacks = listOf(feedback1, anonymousFeedback1)
+        val exceptedFeedbacks = listOf(anonymousFeedback1, feedback1)
 
         val feedbacks2 = feedbackDao.getFeedbacksByFilters(companyId, filter2)
         val feedbackAfterConvert2 = feedbacks2.map { it.toCreateFeedbackRequest() }
@@ -242,7 +242,7 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
 
         val feedbacks = feedbackDao.getFeedbacksByFilters(companyId, filters)
         val feedbackAfterConvert = feedbacks.map { it.toCreateFeedbackRequest() }
-        val expectedFeedbacks = listOf(feedback1, anonymousFeedback1)
+        val expectedFeedbacks = listOf(anonymousFeedback1, feedback1)
 
         assertEquals(2, feedbacks.size)
         assertEquals(expectedFeedbacks, feedbackAfterConvert)
