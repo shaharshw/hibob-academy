@@ -34,26 +34,11 @@ class SessionService(
             .compact()
     }
 
-    fun getCurrentUserRoleFromToken(token: String): Role {
+    fun getCurrentUserRoleFromToken(userId: Long, companyId: Long): Role {
 
-        val userId = extractUserId(token)
-        val companyId = extractCompanyId(token)
         val loggedInUser = LoggedInUser(userId, companyId)
 
         return employeeDao.getRoleFromLoggedInUser(loggedInUser)
     }
 
-    private fun extractUserId(token: String): Long {
-        return (Jwts.parser()
-            .setSigningKey(SECRET_KEY)
-            .parseClaimsJws(token)
-            .body["UserId"] as Int).toLong()
-    }
-
-    private fun extractCompanyId(token: String): Long {
-        return (Jwts.parser()
-            .setSigningKey(SECRET_KEY)
-            .parseClaimsJws(token)
-            .body["CompanyId"] as Int).toLong()
-    }
 }

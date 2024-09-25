@@ -12,7 +12,9 @@ class SessionServiceTest {
 
     private val employeeDaoMock = mock<EmployeeDao> {}
     private val sessionService = SessionService(employeeDaoMock)
-    private val loggedInUser = LoggedInUser(1L, 1L)
+    private val userId = 1L
+    private val companyId = 1L
+    private val loggedInUser = LoggedInUser(userId, companyId)
 
     @Test
     fun `test createJwtToken`() {
@@ -24,8 +26,7 @@ class SessionServiceTest {
     fun `test getCurrentUserRoleFromToken`() {
         whenever(employeeDaoMock.getRoleFromLoggedInUser(loggedInUser)).thenReturn(Role.ADMIN)
 
-        val token = sessionService.createJwtToken(loggedInUser)
-        val role = sessionService.getCurrentUserRoleFromToken(token)
+        val role = sessionService.getCurrentUserRoleFromToken(userId, companyId)
 
         assertEquals(Role.ADMIN, role)
     }
