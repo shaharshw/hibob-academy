@@ -23,6 +23,8 @@ class AuthenticationFilter : ContainerRequestFilter {
         const val PATH_TO_SKIP = "api/auth/login"
 
         const val AUTH_COOKIE_NAME = "Authorization"
+
+        const val TOKEN_ATTRIBUTE = "authToken"
     }
 
     override fun filter(requestContext: ContainerRequestContext) {
@@ -39,6 +41,7 @@ class AuthenticationFilter : ContainerRequestFilter {
         }
 
         validateToken(token, requestContext)
+        requestContext.setProperty(TOKEN_ATTRIBUTE, token)
     }
 
      private fun validateToken(token: String, requestContext: ContainerRequestContext) {
