@@ -69,4 +69,12 @@ class FeedbackResponseDao @Inject constructor(
 
         return updateQuery.execute() > 0
     }
+
+    fun getAllResponsesByFeedbackId(companyId: Long, feedbackId: Long): List<Response> {
+        return sql.select()
+            .from(feedbackResponseTable)
+            .where(feedbackResponseTable.feedbackId.eq(feedbackId))
+            .and(feedbackResponseTable.companyId.eq(companyId))
+            .fetch(feedbackResponseMapper)
+    }
 }

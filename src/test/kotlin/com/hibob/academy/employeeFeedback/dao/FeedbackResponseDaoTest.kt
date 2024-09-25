@@ -143,6 +143,35 @@ class FeedbackResponseDaoTest@Autowired constructor(private val sql: DSLContext)
         assertEquals(exceptedRespond, actualRespondAfterConvert)
     }
 
+    @Test
+    fun `test get all response by feedback id`() {
+        val feedbackId = feedbackDao.create(loggedInUser, feedback1)
+
+        val response1 = CreateResponseRequestWithFeedbackId(
+            feedbackId = feedbackId,
+            text = "Thank you for your feedback!"
+        )
+
+        val response2 = CreateResponseRequestWithFeedbackId(
+            feedbackId = feedbackId,
+            text = "You are welcome!"
+        )
+
+        val loggedInUser2 = LoggedInUser(2, companyId)
+
+        feedbackResponseDao.create(loggedInUser, response1)
+        feedbackResponseDao.create(loggedInUser2, response2)
+
+        val responses = feedbackResponseDao.getAllResponsesByFeedbackId(companyId, feedbackId)
+
+        val responsesAfterConvert = responses.map { it.toCreateRespondRequest() }
+
+        val expectedResponses = listOf(response1, response2)
+
+        assertEquals(2, responses.size)
+        assertTrue(responsesAfterConvert.containsAll(expectedResponses))
+    }
+
     private fun Response.toCreateRespondRequest(): CreateResponseRequestWithFeedbackId {
         return CreateResponseRequestWithFeedbackId(
             feedbackId = feedbackId,
