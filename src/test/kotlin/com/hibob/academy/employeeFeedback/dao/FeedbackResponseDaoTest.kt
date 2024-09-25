@@ -162,7 +162,7 @@ class FeedbackResponseDaoTest@Autowired constructor(private val sql: DSLContext)
         feedbackResponseDao.create(loggedInUser, response1)
         feedbackResponseDao.create(loggedInUser2, response2)
 
-        val responses = feedbackResponseDao.getAllResponsesByFeedbackId(companyId, feedbackId)
+        val responses = feedbackResponseDao.getResponsesByFeedbackId(companyId, feedbackId)
 
         val responsesAfterConvert = responses.map { it.toCreateRespondRequest() }
 
