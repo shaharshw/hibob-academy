@@ -20,14 +20,14 @@ class SessionService(
         const val SECRET_KEY: String = "secrethashkeyshahar12323445665713124jadnasdkllFSDFNSD89SLJNLASJNLD"
     }
 
-    fun createJwtToken(user : LoggedInUser): String {
+    fun createJwtToken(loggedInUser: LoggedInUser): String {
 
         val expirationDate : Date = Date.from(LocalDateTime.now().plusDays(1).toInstant(ZoneOffset.UTC))
 
         return Jwts.builder()
             .setHeaderParam("typ", "JWT")
-            .claim("UserId", user.id)
-            .claim("CompanyId", user.companyId)
+            .claim("UserId", loggedInUser.id)
+            .claim("CompanyId", loggedInUser.companyId)
             .setIssuedAt(Date.from(LocalDateTime.now().toInstant(ZoneOffset.UTC)))
             .setExpiration(expirationDate)
             .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
