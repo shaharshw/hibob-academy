@@ -1,9 +1,6 @@
 package com.hibob.academy.employeeFeedback.dao
 
-import com.hibob.academy.employeeFeedback.dao.filter.DateFilter
-import com.hibob.academy.employeeFeedback.dao.filter.DepartmentFilter
-import com.hibob.academy.employeeFeedback.dao.filter.IsAnonymousFilter
-import com.hibob.academy.employeeFeedback.dao.filter.StatusFilter
+import com.hibob.academy.employeeFeedback.dao.filter.*
 import com.hibob.academy.employeeFeedback.dao.table.EmployeeTable
 import com.hibob.academy.employeeFeedback.dao.table.FeedbackTable
 import com.hibob.academy.employeeFeedback.model.*
@@ -14,7 +11,6 @@ import org.jooq.DSLContext
 import org.jooq.RecordMapper
 import org.jooq.Record
 import org.springframework.stereotype.Repository
-import java.sql.Date
 
 @Repository
 class FeedbackDao @Inject constructor(
@@ -101,12 +97,11 @@ class FeedbackDao @Inject constructor(
 
     private fun buildFilterConditions(filters: FilterFeedbackRequest, employeeTable: EmployeeTable): List<Condition> {
         val filterList = listOfNotNull(
-            DepartmentFilter(filters.department).apply(employeeTable),
-            DateFilter(filters.date).apply(feedbackTable),
-            StatusFilter(filters.status).apply(feedbackTable),
-            IsAnonymousFilter(filters.isAnonymous).apply(feedbackTable)
+            Filter.DepartmentFilter(filters.department).apply(employeeTable),
+            Filter.DateFilter(filters.date).apply(feedbackTable),
+            Filter.StatusFilter(filters.status).apply(feedbackTable),
+            Filter.IsAnonymousFilter(filters.isAnonymous).apply(feedbackTable)
         )
         return filterList
     }
-
 }
