@@ -3,7 +3,6 @@ package com.hibob.academy.employeeFeedback.exception
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.ext.ExceptionMapper
 import jakarta.ws.rs.ext.Provider
-import org.springframework.http.HttpStatus
 import org.springframework.web.server.ResponseStatusException
 
 @Provider
