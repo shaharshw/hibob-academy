@@ -1,5 +1,9 @@
 package com.hibob.academy.employeeFeedback.dao
 
+import com.hibob.academy.employeeFeedback.dao.filter.DateFilter
+import com.hibob.academy.employeeFeedback.dao.filter.DepartmentFilter
+import com.hibob.academy.employeeFeedback.dao.filter.IsAnonymousFilter
+import com.hibob.academy.employeeFeedback.dao.filter.StatusFilter
 import com.hibob.academy.employeeFeedback.dao.table.EmployeeTable
 import com.hibob.academy.employeeFeedback.dao.table.FeedbackTable
 import com.hibob.academy.employeeFeedback.model.*
@@ -77,21 +81,7 @@ class FeedbackDao @Inject constructor(
 
     fun getFeedbacksByFilters(companyId: Long, filters: FilterFeedbackRequest): List<Feedback> {
         val employeeTable = EmployeeTable.instance
-        val conditions = mutableListOf<Condition>()
-
-        filters.department?.let {
-            conditions.add(employeeTable.department.eq(it.name))
-        }
-        filters.date?.let {
-            val sqlDate = Date.valueOf(it)
-            conditions.add(feedbackTable.createdAt.gt(sqlDate))
-        }
-        filters.status?.let {
-            conditions.add(feedbackTable.status.eq(it.name))
-        }
-        filters.isAnonymous?.let {
-            conditions.add(feedbackTable.isAnonymous.eq(it))
-        }
+        val conditions = buildFilterConditions(filters, employeeTable)
 
         val finalCondition = if (conditions.isEmpty()) {
             feedbackTable.companyId.eq(companyId)
@@ -104,8 +94,19 @@ class FeedbackDao @Inject constructor(
         val query = sql.select()
             .from(feedbackTable)
             .fullJoin(employeeTable).on(feedbackTable.senderId.eq(employeeTable.id))
-            .where(feedbackTable.companyId.eq(companyId).and(finalCondition))
+            .where(finalCondition)
 
         return query.fetch(feedbackMapper)
     }
+
+    private fun buildFilterConditions(filters: FilterFeedbackRequest, employeeTable: EmployeeTable): List<Condition> {
+        val filterList = listOfNotNull(
+            DepartmentFilter(filters.department).apply(employeeTable),
+            DateFilter(filters.date).apply(feedbackTable),
+            StatusFilter(filters.status).apply(feedbackTable),
+            IsAnonymousFilter(filters.isAnonymous).apply(feedbackTable)
+        )
+        return filterList
+    }
+
 }
