@@ -9,7 +9,6 @@ import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.RecordMapper
 import org.jooq.Record
-import org.jooq.impl.DSL.upper
 import org.springframework.stereotype.Repository
 import java.sql.Date
 
@@ -81,14 +80,14 @@ class FeedbackDao @Inject constructor(
         val conditions = mutableListOf<Condition>()
 
         filters.department?.let {
-            conditions.add(upper(employeeTable.department).eq(it.name))
+            conditions.add(employeeTable.department.eq(it.name))
         }
         filters.date?.let {
             val sqlDate = Date.valueOf(it)
             conditions.add(feedbackTable.createdAt.gt(sqlDate))
         }
         filters.status?.let {
-            conditions.add(upper(feedbackTable.status).eq(it.name))
+            conditions.add(feedbackTable.status.eq(it.name))
         }
         filters.isAnonymous?.let {
             conditions.add(feedbackTable.isAnonymous.eq(it))
