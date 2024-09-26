@@ -17,7 +17,21 @@ enum class Department {
 enum class Role {
     EMPLOYEE,
     HR,
-    ADMIN
+    ADMIN;
+
+    companion object {
+        val PERMISSIONS = mapOf(
+            Permission.EMPLOYEES_PERMISSION to listOf(EMPLOYEE, HR, ADMIN),
+            Permission.ADMIN_PERMISSION to listOf(HR, ADMIN),
+            Permission.HR_PERMISSION to listOf(HR)
+        )
+    }
+}
+
+enum class Permission {
+    EMPLOYEES_PERMISSION,
+    HR_PERMISSION,
+    ADMIN_PERMISSION
 }
 
 data class Feedback(

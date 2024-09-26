@@ -1,5 +1,6 @@
 package com.hibob.academy.employeeFeedback.utils
 
+import com.hibob.academy.employeeFeedback.model.Permission
 import com.hibob.academy.employeeFeedback.model.Role
 import com.hibob.academy.filters.AuthenticationFilter
 import com.hibob.academy.service.SessionService
@@ -12,7 +13,7 @@ import org.springframework.web.server.ResponseStatusException
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class RequireRole(vararg val roles: Role)
+annotation class RequirePermission(val permission: Permission)
 
 @Aspect
 @Component
@@ -21,14 +22,17 @@ class RoleCheckAspect(
     private val request: HttpServletRequest
 ) {
 
-    @Before("@annotation(requireRole)")
-    fun checkRole(requireRole: RequireRole) {
+    @Before("@annotation(requirePermission)")
+    fun checkPermission(requirePermission: RequirePermission) {
         val userId = request.getAttribute(AuthenticationFilter.USER_ID) as Long
         val companyId = request.getAttribute(AuthenticationFilter.COMPANY_ID) as Long
 
         val currentUserRole = sessionService.getCurrentUserRoleFromToken(userId, companyId)
 
-        if (!requireRole.roles.contains(currentUserRole)) {
+        val allowedRoles = Role.PERMISSIONS[requirePermission.permission]
+            ?: throw ResponseStatusException(HttpStatus.FORBIDDEN, "No roles configured for permission: ${requirePermission.permission}")
+
+        if (!allowedRoles.contains(currentUserRole)) {
             throw ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied for role: $currentUserRole")
         }
     }

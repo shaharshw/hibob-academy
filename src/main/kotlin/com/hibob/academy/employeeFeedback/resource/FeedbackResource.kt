@@ -7,7 +7,7 @@ import com.hibob.academy.employeeFeedback.service.feedback.FeedbackUpdator
 import com.hibob.academy.employeeFeedback.service.feedbackResponse.FeedbackResponseCreator
 import com.hibob.academy.employeeFeedback.service.feedbackResponse.FeedbackResponseFetcher
 import com.hibob.academy.employeeFeedback.service.feedbackResponse.FeedbackResponseUpdator
-import com.hibob.academy.employeeFeedback.utils.RequireRole
+import com.hibob.academy.employeeFeedback.utils.RequirePermission
 import com.hibob.academy.filters.AuthenticationFilter
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.*
@@ -39,7 +39,7 @@ class FeedbackResource(
 
     @POST
     @Path("/submit")
-    @RequireRole(Role.EMPLOYEE, Role.HR, Role.ADMIN)
+    @RequirePermission(Permission.EMPLOYEES_PERMISSION)
     fun submitFeedback(@RequestBody createFeedbackRequest: CreateFeedbackRequest) : Response {
         val loggedInUser = getLoggedInUser()
         val feedbackId = feedbackCreator.createFeedback(loggedInUser, createFeedbackRequest)
@@ -48,7 +48,7 @@ class FeedbackResource(
 
     @POST
     @Path("/view")
-    @RequireRole(Role.HR, Role.ADMIN)
+    @RequirePermission(Permission.ADMIN_PERMISSION)
     fun viewFeedback(@RequestBody filters: FilterFeedbackRequest) : Response {
         val companyId = getLoggedInUser().companyId
         val feedbacks = feedbackFetcher.getFeedbacksByCompany(companyId, filters)
@@ -57,7 +57,7 @@ class FeedbackResource(
 
     @POST
     @Path("/{feedback_id}/response")
-    @RequireRole(Role.HR)
+    @RequirePermission(Permission.HR_PERMISSION)
     fun submitFeedbackResponse(@PathParam("feedback_id") feedbackId: Long, @RequestBody createFeedbackResponseRequest: CreateResponseRequest) : Response {
         val loggedInUser = getLoggedInUser()
         val responseId = feedbackResponseCreator.createFeedbackResponse(loggedInUser, feedbackId, createFeedbackResponseRequest)
@@ -66,7 +66,7 @@ class FeedbackResource(
 
     @GET
     @Path("/{feedback_id}/status")
-    @RequireRole(Role.EMPLOYEE, Role.HR, Role.ADMIN)
+    @RequirePermission(Permission.EMPLOYEES_PERMISSION)
     fun getFeedbackStatus(@PathParam("feedback_id") feedbackId: Long) : Response {
         val companyId = getLoggedInUser().companyId
         val status = feedbackFetcher.getFeedbackStatusById(companyId, feedbackId)
@@ -75,7 +75,7 @@ class FeedbackResource(
 
     @PUT
     @Path("/{feedback_id}/status")
-    @RequireRole(Role.HR)
+    @RequirePermission(Permission.HR_PERMISSION)
     fun updateFeedbackStatus(@PathParam("feedback_id") feedbackId: Long, @RequestBody updateFeedbackStatusRequest: UpdateFeedbackStatusRequest) : Response {
         val loggedInUser = getLoggedInUser()
         feedbackUpdator.updateFeedbackStatus(loggedInUser, feedbackId, updateFeedbackStatusRequest)
@@ -84,7 +84,7 @@ class FeedbackResource(
 
     @PUT
     @Path("/{feedback_id}/response")
-    @RequireRole(Role.HR)
+    @RequirePermission(Permission.HR_PERMISSION)
     fun updateFeedbackResponse(@PathParam("feedback_id") feedbackId: Long, @RequestBody updateFeedbackResponseRequest: UpdateFeedbackResponseRequest) : Response {
         val loggedInUser = getLoggedInUser()
         feedbackResponseUpdator.updateFeedbackResponse(loggedInUser, feedbackId, updateFeedbackResponseRequest)
@@ -93,7 +93,7 @@ class FeedbackResource(
 
     @GET
     @Path("/{feedback_id}/response")
-    @RequireRole(Role.HR)
+    @RequirePermission(Permission.HR_PERMISSION)
     fun getResponsesByFeedbackId(@PathParam("feedback_id") feedbackId: Long) : Response {
         val companyId = getLoggedInUser().companyId
         val responses = feedbackResponseFetcher.getResponsesByFeedbackId(companyId, feedbackId)
