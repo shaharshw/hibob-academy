@@ -1,7 +1,7 @@
 package com.hibob.academy.employeeFeedback.service.feedbackResponse
 
 import com.hibob.academy.employeeFeedback.dao.FeedbackResponseDao
-import com.hibob.academy.employeeFeedback.model.CreateResponseRequest
+import com.hibob.academy.employeeFeedback.model.ResponseCreationRequest
 import com.hibob.academy.employeeFeedback.model.LoggedInUser
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -20,7 +20,7 @@ class FeedbackResponseCreatorTest {
     fun `test createFeedbackResponse`() {
         val responseId = 1L
         val feedbackId = 1L
-        val createFeedbackResponseRequest = CreateResponseRequest("response text")
+        val createFeedbackResponseRequest = ResponseCreationRequest("response text")
 
         whenever(feedbackResponseDaoMock.create(any(), any())).thenReturn(responseId)
 
@@ -32,7 +32,7 @@ class FeedbackResponseCreatorTest {
     @Test
     fun `test createFeedbackResponse with empty text`() {
         val feedbackId = 1L
-        val createFeedbackResponseRequest = CreateResponseRequest("")
+        val createFeedbackResponseRequest = ResponseCreationRequest("")
 
         val exception = assertThrows(IllegalArgumentException::class.java) {
             feedbackResponseCreatorService.createFeedbackResponse(loggedInUser, feedbackId, createFeedbackResponseRequest)
@@ -44,7 +44,7 @@ class FeedbackResponseCreatorTest {
     @Test
     fun `test createFeedbackResponse with less 10 characters`() {
         val feedbackId = 1L
-        val createFeedbackResponseRequest = CreateResponseRequest("short")
+        val createFeedbackResponseRequest = ResponseCreationRequest("short")
 
         val exception = assertThrows(IllegalArgumentException::class.java) {
             feedbackResponseCreatorService.createFeedbackResponse(loggedInUser, feedbackId, createFeedbackResponseRequest)

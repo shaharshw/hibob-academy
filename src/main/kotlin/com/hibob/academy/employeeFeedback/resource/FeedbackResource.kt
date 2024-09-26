@@ -58,7 +58,7 @@ class FeedbackResource(
     @POST
     @Path("/{feedback_id}/response")
     @RequirePermission(Permission.HR_PERMISSION)
-    fun submitFeedbackResponse(@PathParam("feedback_id") feedbackId: Long, @RequestBody createFeedbackResponseRequest: CreateResponseRequest) : Response {
+    fun submitFeedbackResponse(@PathParam("feedback_id") feedbackId: Long, @RequestBody createFeedbackResponseRequest: ResponseCreationRequest) : Response {
         val loggedInUser = getLoggedInUser()
         val responseId = feedbackResponseCreator.createFeedbackResponse(loggedInUser, feedbackId, createFeedbackResponseRequest)
         return Response.status(Response.Status.CREATED).entity(responseId).build()
