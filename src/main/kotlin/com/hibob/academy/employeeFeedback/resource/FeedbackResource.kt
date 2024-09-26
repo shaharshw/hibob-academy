@@ -90,5 +90,14 @@ class FeedbackResource(
         feedbackResponseUpdator.updateFeedbackResponse(loggedInUser, feedbackId, updateFeedbackResponseRequest)
         return Response.status(Response.Status.OK).build()
     }
+
+    @GET
+    @Path("/{feedback_id}/response")
+    @RequireRole(Role.HR)
+    fun getResponsesByFeedbackId(@PathParam("feedback_id") feedbackId: Long) : Response {
+        val companyId = getLoggedInUser().companyId
+        val responses = feedbackResponseFetcher.getResponsesByFeedbackId(companyId, feedbackId)
+        return Response.status(Response.Status.OK).entity(responses).build()
+    }
 }
 
