@@ -77,7 +77,8 @@ class FeedbackDao @Inject constructor(
 
     fun getFeedbacksByFilters(companyId: Long, filters: FilterFeedbackRequest): List<Feedback> {
         val employeeTable = EmployeeTable.instance
-        val conditions = buildFilterConditions(filters, employeeTable)
+        val feedbackFilters = convertFilters(filters)
+        val conditions = buildFilterConditions(feedbackFilters, employeeTable)
 
         val finalCondition = if (conditions.isEmpty()) {
             feedbackTable.companyId.eq(companyId)
@@ -95,13 +96,24 @@ class FeedbackDao @Inject constructor(
         return query.fetch(feedbackMapper)
     }
 
-    private fun buildFilterConditions(filters: FilterFeedbackRequest, employeeTable: EmployeeTable): List<Condition> {
-        val filterList = listOfNotNull(
-            Filter.DepartmentFilter(filters.department).apply(employeeTable),
-            Filter.DateFilter(filters.date).apply(feedbackTable),
-            Filter.StatusFilter(filters.status).apply(feedbackTable),
-            Filter.IsAnonymousFilter(filters.isAnonymous).apply(feedbackTable)
+
+    private fun buildFilterConditions(filters: List<Filter<*>>, employeeTable: EmployeeTable): List<Condition> {
+        return filters.mapNotNull { filter ->
+            when (filter) {
+                is Filter.DepartmentFilter -> filter.apply(employeeTable)
+                is Filter.DateFilter -> filter.apply(feedbackTable)
+                is Filter.StatusFilter -> filter.apply(feedbackTable)
+                is Filter.IsAnonymousFilter -> filter.apply(feedbackTable)
+            }
+        }
+    }
+
+    private fun convertFilters(filters: FilterFeedbackRequest): List<Filter<*>> {
+        return listOfNotNull(
+            filters.department?.let { Filter.DepartmentFilter(it) },
+            filters.date?.let { Filter.DateFilter(it) },
+            filters.status?.let { Filter.StatusFilter(it) },
+            filters.isAnonymous?.let { Filter.IsAnonymousFilter(it) }
         )
-        return filterList
     }
 }
