@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import java.time.LocalDate
+import com.hibob.academy.employeeFeedback.dao.filter.FilterFactory
 
 @BobDbTest
 class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
@@ -120,20 +120,16 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
     fun `test get feedbacks with isAnonymous filter`() {
         feedbackDao.create(loggedInUser, feedback1)
         feedbackDao.create(loggedInUser, anonymousFeedback1)
-
-        val filter = FilterFeedbackRequest(
-            date = null,
-            department = null,
-            status = null,
-            isAnonymous = true
-        )
+        val filterParams = mapOf("isAnonymous" to true)
+        val filter = FilterFactory.convertToGenericFilterRequest(filterParams)
 
         val feedbacks = feedbackDao.getFeedbacksByFilters(companyId, filter)
         val feedbackAfterConvert = feedbacks.map { it.toCreateFeedbackRequest() }
         val exceptedFeedbacks = listOf(anonymousFeedback1)
 
         assertEquals(1, feedbacks.size)
-        assertTrue(feedbackAfterConvert.containsAll(exceptedFeedbacks))    }
+        assertTrue(feedbackAfterConvert.containsAll(exceptedFeedbacks))
+    }
 
     @Test
     fun `test get feedbacks with status filter`() {
@@ -142,12 +138,8 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
 
         feedbackDao.updateFeedbackStatus(companyId, feedbackID, UpdateFeedbackStatusRequest(FeedbackStatus.REVIEWED))
 
-        val filter = FilterFeedbackRequest(
-            date = null,
-            department = null,
-            status = FeedbackStatus.REVIEWED,
-            isAnonymous = null
-        )
+        val filterParams = mapOf("status" to FeedbackStatus.REVIEWED.name)
+        val filter = FilterFactory.convertToGenericFilterRequest(filterParams)
 
         val feedbacks = feedbackDao.getFeedbacksByFilters(companyId, filter)
         val feedbackAfterConvert = feedbacks.map { it.toCreateFeedbackRequest() }
@@ -162,30 +154,22 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
         feedbackDao.create(loggedInUser, feedback1)
         feedbackDao.create(loggedInUser, anonymousFeedback1)
 
-        val filter = FilterFeedbackRequest(
-            date =  LocalDate.of(2024, 9, 22),
-            department = null,
-            status = null,
-            isAnonymous = null
-        )
+        val filterParams1 = mapOf("date" to "2024-09-22")
+        val filter1 = FilterFactory.convertToGenericFilterRequest(filterParams1)
 
-        val filter2 = FilterFeedbackRequest(
-            date =  LocalDate.of(2026, 9, 21),
-            department = null,
-            status = null,
-            isAnonymous = null
-        )
+        val filterParams2 = mapOf("date" to "2026-09-21")
+        val filter2 = FilterFactory.convertToGenericFilterRequest(filterParams2)
 
-        val feedbacks1 = feedbackDao.getFeedbacksByFilters(companyId, filter)
-        val feedbackAfterConvert = feedbacks1.map { it.toCreateFeedbackRequest() }.toSet()
-        val exceptedFeedbacks = setOf(anonymousFeedback1, feedback1)
+        val feedbacks1 = feedbackDao.getFeedbacksByFilters(companyId, filter1)
+        val feedbackAfterConvert1 = feedbacks1.map { it.toCreateFeedbackRequest() }.toSet()
+        val exceptedFeedbacks1 = setOf(anonymousFeedback1, feedback1)
 
         val feedbacks2 = feedbackDao.getFeedbacksByFilters(companyId, filter2)
         val feedbackAfterConvert2 = feedbacks2.map { it.toCreateFeedbackRequest() }
         val exceptedFeedbacks2 = emptyList<CreateFeedbackRequest>()
 
         assertEquals(2, feedbacks1.size)
-        assertTrue(feedbackAfterConvert.containsAll(exceptedFeedbacks))
+        assertTrue(feedbackAfterConvert1.containsAll(exceptedFeedbacks1))
 
         assertEquals(0, feedbacks2.size)
         assertEquals(exceptedFeedbacks2, feedbackAfterConvert2)
@@ -210,12 +194,8 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
 
         feedbackDao.create(loggedInUser2, feedback1)
 
-        val filter = FilterFeedbackRequest(
-            date = null,
-            department = Department.HR,
-            status = null,
-            isAnonymous = null
-        )
+        val filterParams = mapOf("department" to Department.HR.name)
+        val filter = FilterFactory.convertToGenericFilterRequest(filterParams)
 
         val feedbacks = feedbackDao.getFeedbacksByFilters(companyId, filter)
         val feedbackAfterConvert = feedbacks.map { it.toCreateFeedbackRequest() }
@@ -232,12 +212,8 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
         feedbackDao.create(loggedInUser, feedback1)
         feedbackDao.create(loggedInUser, anonymousFeedback1)
 
-        val filters = FilterFeedbackRequest(
-            date = null,
-            department = null,
-            status = null,
-            isAnonymous = null
-        )
+        val filterParams = emptyMap<String, Any>()
+        val filters = FilterFactory.convertToGenericFilterRequest(filterParams)
 
         val feedbacks = feedbackDao.getFeedbacksByFilters(companyId, filters)
         val feedbackAfterConvert = feedbacks.map { it.toCreateFeedbackRequest() }.toSet()
@@ -252,4 +228,3 @@ class FeedbackDaoTest @Autowired constructor(private val sql: DSLContext) {
         isAnonymous = isAnonymous
     )
 }
-

@@ -1,5 +1,6 @@
 package com.hibob.academy.employeeFeedback.model
 
+import com.hibob.academy.employeeFeedback.dao.filter.Filter
 import java.time.LocalDate
 
 enum class FeedbackStatus {
@@ -64,6 +65,10 @@ data class FilterFeedbackRequest(
     val department: Department?,
     val status: FeedbackStatus?,
     val isAnonymous: Boolean?
+)
+
+data class GenericFilterRequest(
+    val filterList: List<Filter<*>>
 )
 
 data class ResponseCreationRequest(

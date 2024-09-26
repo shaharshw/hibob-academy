@@ -81,9 +81,10 @@ class FeedbackDao @Inject constructor(
             .execute() > 0
     }
 
-    fun getFeedbacksByFilters(companyId: Long, filters: FilterFeedbackRequest): List<Feedback> {
+    fun getFeedbacksByFilters(companyId: Long, filters: GenericFilterRequest): List<Feedback> {
         val employeeTable = EmployeeTable.instance
-        val conditions = buildFilterConditions(filters, employeeTable)
+
+        val conditions: List<Condition> = FilterFactory.applyFilters(filters.filterList, employeeTable, feedbackTable)
 
         val finalCondition = if (conditions.isEmpty()) {
             feedbackTable.companyId.eq(companyId)
@@ -101,13 +102,4 @@ class FeedbackDao @Inject constructor(
         return query.fetch(feedbackMapper)
     }
 
-    private fun buildFilterConditions(filters: FilterFeedbackRequest, employeeTable: EmployeeTable): List<Condition> {
-        val filterList = listOfNotNull(
-            Filter.DepartmentFilter(filters.department).apply(employeeTable),
-            Filter.DateFilter(filters.date).apply(feedbackTable),
-            Filter.StatusFilter(filters.status).apply(feedbackTable),
-            Filter.IsAnonymousFilter(filters.isAnonymous).apply(feedbackTable)
-        )
-        return filterList
-    }
 }
