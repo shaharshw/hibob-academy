@@ -21,9 +21,9 @@ enum class Role {
 
     companion object {
         val PERMISSIONS = mapOf(
-            Permission.EMPLOYEES_PERMISSION to listOf(EMPLOYEE, HR, ADMIN),
-            Permission.ADMIN_PERMISSION to listOf(HR, ADMIN),
-            Permission.HR_PERMISSION to listOf(HR)
+            Permission.EMPLOYEES_PERMISSION to setOf(EMPLOYEE, HR, ADMIN),
+            Permission.ADMIN_PERMISSION to setOf(HR, ADMIN),
+            Permission.HR_PERMISSION to setOf(HR)
         )
     }
 }
