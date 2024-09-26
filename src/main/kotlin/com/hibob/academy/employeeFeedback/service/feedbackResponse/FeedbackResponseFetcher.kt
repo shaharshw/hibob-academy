@@ -12,4 +12,8 @@ class FeedbackResponseFetcher(
     fun getResponseById(companyId: Long, responseId: Long) : Response {
         return feedbackResponseDao.getResponseById(companyId, responseId)
     }
+
+    fun getResponsesByFeedbackId(companyId: Long, feedbackId: Long) : List<Response> {
+        return feedbackResponseDao.getResponsesByFeedbackId(companyId, feedbackId)
+    }
 }

@@ -41,4 +41,18 @@ class FeedbackResponseFetcherTest {
 
         assertEquals("Respond with $responseId not found", exception.message)
     }
+
+    @Test
+    fun `test getResponsesByFeedbackId`() {
+        val feedbackId = 1L
+        val response = mock(Response::class.java)
+        val responses = listOf(response)
+
+        whenever(feedbackResponseDaoMock.getResponsesByFeedbackId(any(), any())).thenReturn(responses)
+
+        val result = feedbackResponseFetcherService.getResponsesByFeedbackId(companyId, feedbackId)
+
+        verify(feedbackResponseDaoMock).getResponsesByFeedbackId(any(),any())
+        assertTrue(result.containsAll(responses))
+    }
 }
