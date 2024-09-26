@@ -60,13 +60,6 @@ data class CreateFeedbackRequest(
     val isAnonymous: Boolean
 )
 
-data class FilterFeedbackRequest(
-    val date : LocalDate?,
-    val department: Department?,
-    val status: FeedbackStatus?,
-    val isAnonymous: Boolean?
-)
-
 data class GenericFilterRequest(
     val filterList: List<Filter<*>>
 )
