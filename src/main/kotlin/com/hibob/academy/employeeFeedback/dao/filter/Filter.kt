@@ -14,7 +14,7 @@ sealed class Filter<T> {
     data class DepartmentFilter(private val department: Department?) : Filter<EmployeeTable>() {
         override fun apply(table: EmployeeTable): Condition? {
             return department?.name?.let {
-                table.department.eq(it.uppercase())
+                table.department.eq(it)
             }
         }
     }
@@ -28,7 +28,7 @@ sealed class Filter<T> {
     data class StatusFilter(private val status: FeedbackStatus?) : Filter<FeedbackTable>() {
         override fun apply(table: FeedbackTable): Condition? {
             return status?.name?.let {
-                table.status.eq(it.uppercase())
+                table.status.eq(it)
             }
         }
     }
