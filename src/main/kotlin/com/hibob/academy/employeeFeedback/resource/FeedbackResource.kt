@@ -68,8 +68,8 @@ class FeedbackResource(
     @Path("/{feedback_id}/status")
     @RequirePermission(Permission.EMPLOYEES_PERMISSION)
     fun getFeedbackStatus(@PathParam("feedback_id") feedbackId: Long) : Response {
-        val companyId = getLoggedInUser().companyId
-        val status = feedbackFetcher.getFeedbackStatusById(companyId, feedbackId)
+        val loggedInUser = getLoggedInUser()
+        val status = feedbackFetcher.getFeedbackStatusById(loggedInUser, feedbackId)
         return Response.status(Response.Status.OK).entity(status).build()
     }
 

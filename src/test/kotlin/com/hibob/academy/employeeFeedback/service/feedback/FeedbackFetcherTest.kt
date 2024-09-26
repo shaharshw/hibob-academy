@@ -13,6 +13,7 @@ class FeedbackFetcherTest {
     private val feedbackDaoMock = mock<FeedbackDao> {}
     private val feedbackFetcherService = FeedbackFetcher(feedbackDaoMock)
     private val companyId = 1L
+    private val loggedInUser = LoggedInUser(1L, companyId)
 
     @Test
     fun `test getFeedbackById`() {
@@ -45,7 +46,7 @@ class FeedbackFetcherTest {
         val expectedStatus = StatusResponse(FeedbackStatus.UNREVIEWED)
         whenever(feedbackDaoMock.getFeedbackStatusById(any(), any())).thenReturn(expectedStatus)
 
-        val result = feedbackFetcherService.getFeedbackStatusById(companyId, feedbackId)
+        val result = feedbackFetcherService.getFeedbackStatusById(loggedInUser, feedbackId)
 
         assertEquals(expectedStatus, result)
     }

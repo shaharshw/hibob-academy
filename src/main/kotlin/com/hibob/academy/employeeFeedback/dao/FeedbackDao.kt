@@ -59,12 +59,18 @@ class FeedbackDao @Inject constructor(
             .fetchOne(feedbackMapper) ?: throw BadRequestException("Feedback with $feedbackId not found")
     }
 
-    fun getFeedbackStatusById(companyId: Long, feedbackId: Long) : StatusResponse {
-        return sql.select(feedbackTable.status)
+    fun getFeedbackStatusById(loggedInUser: LoggedInUser, feedbackId: Long): StatusResponse {
+        val feedback = sql.select()
             .from(feedbackTable)
-            .where(feedbackTable.companyId.eq(companyId))
-            .and(feedbackTable.id.eq(feedbackId))
-            .fetchOne(statusResponseMapper) ?: throw BadRequestException("Feedback with $feedbackId not found")
+            .where(feedbackTable.id.eq(feedbackId))
+            .and(feedbackTable.companyId.eq(loggedInUser.companyId))
+            .fetchOne(feedbackMapper) ?: throw BadRequestException("Feedback with $feedbackId not found")
+
+        if (feedback.senderId != loggedInUser.id) {
+            throw BadRequestException("Logged in user is not the sender of the feedback")
+        }
+
+        return StatusResponse(status = feedback.status)
     }
 
     fun updateFeedbackStatus(companyId: Long, feedbackId: Long, updateFeedbackStatusRequest: UpdateFeedbackStatusRequest) : Boolean {
