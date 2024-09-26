@@ -2,6 +2,7 @@ package com.hibob.academy.employeeFeedback.service.feedback
 
 import com.hibob.academy.employeeFeedback.dao.FeedbackDao
 import com.hibob.academy.employeeFeedback.model.*
+import com.hibob.academy.employeeFeedback.dao.filter.FilterFactory
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -32,7 +33,8 @@ class FeedbackFetcherTest {
             Feedback(1L, 1L, "This is a feedback", false, FeedbackStatus.UNREVIEWED),
             Feedback(2L, 1L, "This is another feedback", true, FeedbackStatus.REVIEWED)
         )
-        val filters = FilterFeedbackRequest(null, null, null, null)
+        val filters = emptyMap<String, Any>()
+      //  val filters = FilterFactory.convertToGenericFilterRequest(filterParams)
         whenever(feedbackDaoMock.getFeedbacksByFilters(any(), any())).thenReturn(expectedFeedbacks)
 
         val result = feedbackFetcherService.getFeedbacksByCompany(companyId, filters)
