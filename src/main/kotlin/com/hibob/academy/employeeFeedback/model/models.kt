@@ -54,12 +54,6 @@ data class LoggedInUser(
     val companyId: Long,
 )
 
-data class LoggedInUserWithRole(
-    val id: Long,
-    val companyId: Long,
-    val role: Role
-)
-
 data class CreateFeedbackRequest(
     val feedbackText: String,
     val isAnonymous: Boolean
@@ -72,11 +66,7 @@ data class FilterFeedbackRequest(
     val isAnonymous: Boolean?
 )
 
-data class FeedbacksResponse(
-    val feedbacks: List<Feedback>
-)
-
-data class CreateResponseRequest(
+data class ResponseCreationRequest(
     val text: String
 )
 

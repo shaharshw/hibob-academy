@@ -3,7 +3,6 @@ package com.hibob.academy.employeeFeedback.service.feedback
 import com.hibob.academy.employeeFeedback.dao.FeedbackDao
 import com.hibob.academy.employeeFeedback.model.Feedback
 import com.hibob.academy.employeeFeedback.model.FilterFeedbackRequest
-import com.hibob.academy.employeeFeedback.model.LoggedInUser
 import com.hibob.academy.employeeFeedback.model.StatusResponse
 import org.springframework.stereotype.Service
 

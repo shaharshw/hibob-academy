@@ -18,5 +18,4 @@ class FeedbackUpdator(
             throw BadRequestException("Failed to update feedback status")
         }
     }
-
 }

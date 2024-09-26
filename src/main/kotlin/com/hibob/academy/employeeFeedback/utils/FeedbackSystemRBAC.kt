@@ -36,5 +36,4 @@ class RoleCheckAspect(
             throw ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied for role: $currentUserRole")
         }
     }
-
 }

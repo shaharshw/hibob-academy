@@ -5,7 +5,6 @@ import com.hibob.academy.employeeFeedback.model.LoggedInUser
 import com.hibob.academy.employeeFeedback.model.UpdateFeedbackResponseRequest
 import org.springframework.stereotype.Service
 
-
 @Service
 class FeedbackResponseUpdator(
     private val feedbackResponseDao: FeedbackResponseDao
