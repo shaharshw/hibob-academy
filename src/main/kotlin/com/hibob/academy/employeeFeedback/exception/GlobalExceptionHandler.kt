@@ -1,5 +1,6 @@
 package com.hibob.academy.employeeFeedback.exception
 
+import jakarta.ws.rs.BadRequestException
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.ext.ExceptionMapper
 import jakarta.ws.rs.ext.Provider
@@ -16,5 +17,12 @@ class IllegalArgumentExceptionMapper : ExceptionMapper<IllegalArgumentException>
 class ResponseStatusExceptionMapper : ExceptionMapper<ResponseStatusException> {
     override fun toResponse(ex: ResponseStatusException): Response {
         return Response.status(Response.Status.FORBIDDEN).entity(ex.reason).build()
+    }
+}
+
+@Provider
+class BadRequestExceptionMapper : ExceptionMapper<BadRequestException> {
+    override fun toResponse(ex: BadRequestException): Response {
+        return Response.status(Response.Status.BAD_REQUEST).entity(ex.message).build()
     }
 }
