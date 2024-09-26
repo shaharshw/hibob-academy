@@ -11,6 +11,7 @@ import org.jooq.DSLContext
 import org.jooq.RecordMapper
 import org.jooq.Record
 import org.springframework.stereotype.Repository
+import kotlin.reflect.full.memberProperties
 
 @Repository
 class FeedbackDao @Inject constructor(
@@ -96,6 +97,10 @@ class FeedbackDao @Inject constructor(
     }
 
     private fun buildFilterConditions(filters: FilterFeedbackRequest, employeeTable: EmployeeTable): List<Condition> {
+        val properties = filters::class.memberProperties
+
+        val filterList = properties.map { property ->
+
         val filterList = listOfNotNull(
             Filter.DepartmentFilter(filters.department).apply(employeeTable),
             Filter.DateFilter(filters.date).apply(feedbackTable),
