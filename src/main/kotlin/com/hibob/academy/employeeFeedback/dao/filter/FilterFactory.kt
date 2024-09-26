@@ -29,11 +29,4 @@ object FilterFactory {
 
         return GenericFilterRequest(filterList)
     }
-
-    fun applyFilters(filters: List<Filter<*>>, employeeTable: EmployeeTable, feedbackTable: FeedbackTable): List<Condition> {
-        val feedbackConditions = filters.filterIsInstance<FeedbackFilter>().mapNotNull { it.apply(feedbackTable) }
-        val employeeConditions = filters.filterIsInstance<EmployeeFilter>().mapNotNull { it.apply(employeeTable) }
-
-        return feedbackConditions + employeeConditions
-    }
 }
