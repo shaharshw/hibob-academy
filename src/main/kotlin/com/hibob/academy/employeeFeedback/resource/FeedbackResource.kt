@@ -49,7 +49,7 @@ class FeedbackResource(
     @POST
     @Path("/view")
     @RequirePermission(Permission.ADMIN_PERMISSION)
-    fun viewFeedback(@RequestBody filters: Map<String, Any>) : Response {
+    fun viewFeedback(@RequestBody filters: GenericFilterRequest) : Response {
         val companyId = getLoggedInUser().companyId
         val feedbacks = feedbackFetcher.getFeedbacksByCompany(companyId, filters)
         return Response.status(Response.Status.OK).entity(feedbacks).build()
